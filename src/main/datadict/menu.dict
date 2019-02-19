@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<DataDictionary UUID="B1EBD2E521D94EDF8332506FC8F7F5A1" description="菜单字典" name="menu"> 
+  
+  <DataField name="icon" PUBCODECNAME="图标" type="String" UUID="7E9E11F0A85A44F3B399210CA5368FDD" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="pId" PUBCODECNAME="父级ID" type="String" UUID="7D8A3BA594384D3CBE76A51348BD2723" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="level" PUBCODECNAME="等级" type="String" UUID="D8A607A2257E44B59BBAA0055F7B3D12" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="name" PUBCODECNAME="名称" type="String" UUID="82BFD5490AD7490CB6E707951AEE24E1" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="seq" PUBCODECNAME="排序序列" type="String" UUID="22E591A948FD48309674FFC685634AAD" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="state" PUBCODECNAME="状态" type="String" UUID="10946B8FD9B54F50A8F0EAD1BF016298" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="value" PUBCODECNAME="值" type="String" UUID="F6993557165048B19C5EFB8907A8F23D" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="isParent" PUBCODECNAME="是否父级" type="String" UUID="607A7E01B3AC4EE093A30C0D4A599E45" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="access" PUBCODECNAME="权限等级" type="Integer" UUID="CA21BE0456E541869033CD7457344889" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="type" PUBCODECNAME="类型" type="String" UUID="F5214FC4866B40B792AAFB44EDBB4F6F" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="lang" PUBCODECNAME="语种" type="String" UUID="F52CE1996DCF4BC29DE7D534CB4C6223" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField> 
+</DataDictionary>

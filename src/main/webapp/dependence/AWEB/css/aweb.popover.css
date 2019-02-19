@@ -1,0 +1,163 @@
+/*
+    desp:AWEB Popover 气泡
+    author:xieyirong.com.cn
+    date:2018-03-23
+    version：AUI 5.0.0 dev
+*/
+.aweb-popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1051;
+  display: none;
+  box-sizing: border-box;
+  padding: 1px;
+  font-size: sans-serif, Arial;
+  background-color: rgba(255, 255, 255, 0.98);
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 0 1em #666;
+  -moz-box-shadow: 0 0 1em #666;
+  box-shadow: 0 0 1em #666;
+  outline: none;
+}
+.aweb-popover.top {
+  margin-top: -10px;
+}
+.aweb-popover.right {
+  margin-left: 10px;
+}
+.aweb-popover.bottom {
+  margin-top: 10px;
+}
+.aweb-popover.left {
+  margin-left: -10px;
+}
+.aweb-popover.popover-lg {
+  width: 100% !important;
+  height: 100% !important;
+  left: 0 !important;
+  top: 0 !important;
+}
+.aweb-popover-header i.aweb-popover-header-icon {
+  margin-top: 6px;
+  margin-right: 9px;
+  font-size: 24px;
+  color: #a6a6a6;
+}
+.aweb-popover-header i.aweb-popover-header-icon:hover {
+  color: #888888;
+}
+.aweb-popover-header i.aweb-popover-header-icon.aui {
+  font-size: 18px;
+}
+.aweb-popover-header i.aweb-popover-header-icon.fa {
+  font-size: 18px;
+  font-weight: lighter;
+}
+.aweb-popover-header i.aweb-popover-header-icon.iconfont {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: bold;
+}
+.aweb-popover-header > .btn-group {
+  position: absolute;
+  top: 0.1em;
+  right: 0.1em;
+}
+.aweb-popover-header button {
+  display: inline-block;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.aweb-popover-title {
+  margin: 0;
+  padding: 8px 14px;
+  font-size: sans-serif, Arial;
+  background-color: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(242, 242, 242, 0.98);
+  border-radius: 5px 5px 0 0;
+}
+.aweb-popover-body {
+  position: relative;
+  overflow-y: auto;
+}
+.aweb-popover-content {
+  overflow-y: auto;
+}
+.aweb-popover > .arrow,
+.aweb-popover > .arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.aweb-popover > .arrow {
+  border-width: 11px;
+}
+.aweb-popover > .arrow:after {
+  border-width: 10px;
+  content: "";
+}
+.aweb-popover.top > .arrow {
+  left: 50%;
+  margin-left: -11px;
+  border-bottom-width: 0;
+  border-top-color: rgba(0, 0, 0, 0.25);
+  bottom: -11px;
+}
+.aweb-popover.top > .arrow:after {
+  content: " ";
+  bottom: 1px;
+  margin-left: -10px;
+  border-bottom-width: 0;
+  border-top-color: rgba(255, 255, 255, 0.99);
+}
+.aweb-popover.right > .arrow {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-left-width: 0;
+  border-right-color: rgba(0, 0, 0, 0.25);
+}
+.aweb-popover.right > .arrow:after {
+  content: " ";
+  left: 1px;
+  bottom: -10px;
+  border-left-width: 0;
+  border-right-color: rgba(255, 255, 255, 0.99);
+}
+.aweb-popover.bottom > .arrow {
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+  top: -11px;
+}
+.aweb-popover.bottom > .arrow:after {
+  content: " ";
+  top: 1px;
+  margin-left: -10px;
+  border-top-width: 0;
+  border-bottom-color: rgba(255, 255, 255, 0.99);
+}
+.aweb-popover.left > .arrow {
+  top: 50%;
+  right: -11px;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: rgba(0, 0, 0, 0.25);
+}
+.aweb-popover.left > .arrow:after {
+  content: " ";
+  right: 1px;
+  border-right-width: 0;
+  border-left-color: rgba(255, 255, 255, 0.99);
+  bottom: -10px;
+}
+/**********Popover End****************/

@@ -1,0 +1,64 @@
+{
+  "_from": "@aweb-plugins/app.title@^6.0.0",
+  "_id": "@aweb-plugins/app.title@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-RZjb5DNnLzaMTZlalb65uVtZUHk=",
+  "_location": "/@aweb-plugins/app.title",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.title@^6.0.0",
+    "name": "@aweb-plugins/app.title",
+    "escapedName": "@aweb-plugins%2fapp.title",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.title/download/@aweb-plugins/app.title-6.0.0.tgz",
+  "_shasum": "4598dbe433672f368c4d995a95beb9b95b595079",
+  "_spec": "@aweb-plugins/app.title@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取或设置网页标题",
+  "docs": {
+    "name": "title",
+    "desp": "获取或设置网页标题",
+    "params": [
+      {
+        "name": "title",
+        "type": "string",
+        "desp": "标题",
+        "details": "设置网页需要显示的标题",
+        "defaultValue": "AWEB 5.0",
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.title",
+    "returnValue": {
+      "name": "title",
+      "type": "string",
+      "desp": "标题",
+      "details": "返回当前网页显示的标题",
+      "defaultValue": "AWEB 5.0"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.title",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

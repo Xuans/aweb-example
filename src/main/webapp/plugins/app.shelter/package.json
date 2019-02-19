@@ -1,0 +1,139 @@
+{
+  "_from": "@aweb-plugins/app.shelter@^6.0.0",
+  "_id": "@aweb-plugins/app.shelter@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-1JvhSUww/5HYYK90iL1+px4LYQA=",
+  "_location": "/@aweb-plugins/app.shelter",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.shelter@^6.0.0",
+    "name": "@aweb-plugins/app.shelter",
+    "escapedName": "@aweb-plugins%2fapp.shelter",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.shelter/download/@aweb-plugins/app.shelter-6.0.0.tgz",
+  "_shasum": "d49be1494c30ff91d860af7488bd7ea71e0b6100",
+  "_spec": "@aweb-plugins/app.shelter@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {
+    "@aweb-plugins/app.getUID": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "遮罩",
+  "docs": {
+    "name": "shelter",
+    "desp": "遮罩",
+    "details": "实现遮罩的显示和隐藏,用于禁止在获取后台数据或加载数据等短时间内用户的操作",
+    "belongTo": "class",
+    "appJsCode": "app.shelter",
+    "cInterfaces": [
+      {
+        "name": "show",
+        "desp": "显示遮罩",
+        "details": "显示遮罩，显示超时时间为60秒",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "tips",
+            "type": "string",
+            "desp": "提示语句",
+            "details": "遮罩显示的内容，非必需",
+            "necessary": false
+          },
+          {
+            "name": "timeout",
+            "type": "number",
+            "desp": "超时时间",
+            "details": "遮罩超时时间，缺省值60000ms，即60s。遮罩超过60s则报错超时错误并隐藏遮罩。非必需",
+            "defaultValue": 60000,
+            "necessary": false
+          },
+          {
+            "name": "immediate",
+            "type": "boolean",
+            "desp": "是否立刻执行",
+            "details": "是否立即显示遮罩，缺省值220ms后显示。非必需",
+            "necessary": false
+          },
+          {
+            "name": "$context",
+            "type": "jQuery选择器",
+            "desp": "遮罩显示范围的jQuery选择器",
+            "details": "参数为undefined时，默认当前页面模型的父容器，当接口为移动端版本时，该参数无效",
+            "necessary": false
+          }
+        ]
+      },
+      {
+        "name": "hide",
+        "desp": "隐藏最顶部的遮罩",
+        "hasReturn": false
+      },
+      {
+        "name": "hideAll",
+        "desp": "隐藏所有遮罩，不推荐使用",
+        "hasReturn": false
+      },
+      {
+        "name": "lowerZIndex",
+        "desp": "恢复遮罩层z-index",
+        "hasReturn": false
+      },
+      {
+        "name": "upperZIndex",
+        "desp": "提升遮罩层z-index",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "alertZIndex",
+            "desp": "提示栏z-index",
+            "type": "string",
+            "details": "提升提示栏的z-index，缺省值1052。为false时，表示不设置",
+            "defaultValue": "1052",
+            "necessary": false
+          },
+          {
+            "name": "maskZIndex",
+            "desp": "遮罩层的z-index",
+            "type": "string",
+            "details": "提升遮罩层的z-index，缺省值4。右侧边栏的z-index为1062",
+            "defaultValue": "4",
+            "necessary": false
+          },
+          {
+            "name": "alertTop",
+            "desp": "提示栏的top",
+            "type": "string",
+            "details": "设置提示栏的top，缺省值auto。为false时，表示不设置",
+            "defaultValue": "auto",
+            "necessary": false
+          }
+        ]
+      }
+    ],
+    "compatibility": "ie8",
+    "edition": {
+      "mobile": "app.shelter_mobile"
+    }
+  },
+  "edition": "app.shelter_mobile",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.shelter",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

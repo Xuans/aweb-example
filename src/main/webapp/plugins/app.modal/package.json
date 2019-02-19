@@ -1,0 +1,215 @@
+{
+  "_from": "@aweb-plugins/app.modal@^6.0.0",
+  "_id": "@aweb-plugins/app.modal@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-MzXjSuXPWM46gXb7TuVlRd7ROiE=",
+  "_location": "/@aweb-plugins/app.modal",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.modal@^6.0.0",
+    "name": "@aweb-plugins/app.modal",
+    "escapedName": "@aweb-plugins%2fapp.modal",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller",
+    "/@aweb-plugins/app.ajax",
+    "/@aweb-plugins/app.alert",
+    "/@aweb-plugins/app.tips"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.modal/download/@aweb-plugins/app.modal-6.0.0.tgz",
+  "_shasum": "3335e34ae5cf58ce3a8176fb4ee56545ded13a21",
+  "_spec": "@aweb-plugins/app.modal@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {
+    "@aweb-plugins/app.getUID": "^6.0.0",
+    "@aweb-plugins/app.reset": "^6.0.0",
+    "@aweb-plugins/app.screen": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "弹窗",
+  "docs": {
+    "name": "modal",
+    "desp": "弹窗",
+    "belongTo": "closure",
+    "appJsCode": "app.modal",
+    "params": [
+      {
+        "name": "option",
+        "desp": "配置",
+        "type": "object",
+        "children": [
+          {
+            "name": "title",
+            "type": "string",
+            "desp": "标题",
+            "defaultValue": "弹窗",
+            "details": "弹窗标题，非必填",
+            "necessary": false
+          },
+          {
+            "name": "content",
+            "type": "string",
+            "desp": "弹窗内容",
+            "defaultValue": "弹窗内容",
+            "details": "可以是html字符串；或函数，返回内容的jQuery对象",
+            "necessary": true
+          },
+          {
+            "name": "btnConfirm",
+            "type": "string",
+            "desp": "确定按钮显示的内容",
+            "defaultValue": "确定",
+            "details": "如果填写false，则不会显示确定按钮",
+            "necessary": false
+          },
+          {
+            "name": "btnCancel",
+            "type": "string",
+            "desp": "取消按钮显示的内容",
+            "defaultValue": "取消",
+            "details": "如果填写false，则不会显示取消按钮",
+            "necessary": false
+          },
+          {
+            "name": "btnIgnore",
+            "type": "string",
+            "desp": "忽略按钮显示的内容",
+            "details": "如果没有填写忽略按钮的内容，则不会显示忽略按钮",
+            "necessary": false
+          },
+          {
+            "name": "init",
+            "type": "handler",
+            "desp": "初始化函数",
+            "defaultValue": "function(){}",
+            "details": "打开弹窗时，加载的方法，其中入参为agrs的参数，this指向内容的DOM对象",
+            "necessary": false
+          },
+          {
+            "name": "confirmHandler",
+            "type": "handler",
+            "desp": "确定按钮点击事件",
+            "defaultValue": "function(){}",
+            "details": "确定按钮点击事件，其中入参为agrs的参数，this指向按钮的DOM对象，当return false时，将不隐藏弹窗",
+            "necessary": true
+          },
+          {
+            "name": "cancelHandler",
+            "type": "handler",
+            "desp": "取消按钮点击事件",
+            "defaultValue": "function(){}",
+            "details": "取消按钮点击事件，其中入参为agrs的参数，this指向按钮的DOM对象，当return false时，将不隐藏弹窗",
+            "necessary": false
+          },
+          {
+            "name": "ignoreHandler",
+            "type": "handler",
+            "desp": "忽略按钮点击事件",
+            "defaultValue": "function(){}",
+            "details": "忽略按钮点击事件，其中入参为agrs的参数，this指向按钮的DOM对象，当return false时，将不隐藏弹窗",
+            "necessary": false
+          },
+          {
+            "name": "args",
+            "type": "array",
+            "desp": "入参",
+            "defaultValue": [],
+            "necessary": false
+          },
+          {
+            "name": "isLargeModal",
+            "type": "boolean",
+            "desp": "是否为大的弹窗",
+            "defaultValue": true,
+            "necessary": false
+          },
+          {
+            "name": "isDialog",
+            "type": "boolean",
+            "desp": "是否为对话框",
+            "defaultValue": true,
+            "necessary": false
+          },
+          {
+            "name": "backdrop",
+            "type": "string",
+            "desp": "遮罩配置",
+            "defaultValue": "static",
+            "details": "遮罩可选项为true|false|\"static\"",
+            "necessary": false
+          },
+          {
+            "name": "height",
+            "type": "string",
+            "desp": "高度",
+            "defaultValue": "80%",
+            "details": "当isLargeModal=true,isDialog=false时，可配置高度",
+            "necessary": false
+          },
+          {
+            "name": "width",
+            "type": "string",
+            "desp": "宽度",
+            "defaultValue": "80%",
+            "details": "当isLargeModal=true,isDialog=false时，可配置宽度",
+            "necessary": false
+          },
+          {
+            "name": "noHeader",
+            "type": "boolean",
+            "desp": "取消顶部标题",
+            "defaultValue": false,
+            "necessary": false
+          },
+          {
+            "name": "noFooter",
+            "type": "boolean",
+            "desp": "取消底部按钮",
+            "defaultValue": false,
+            "necessary": false
+          }
+        ],
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "returnValue": {
+      "name": "warp",
+      "type": "object",
+      "desp": "包裹成弹窗",
+      "details": "将普通容器包括成弹窗",
+      "children": [
+        {
+          "name": "$modalBody",
+          "type": "object",
+          "desp": "需要被包括的内容的jQuery对象"
+        },
+        {
+          "name": "option",
+          "desp": "详细配置",
+          "type": "object",
+          "details": "详细配置与app.modal入参一致"
+        }
+      ]
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.modal",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

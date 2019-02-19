@@ -1,0 +1,71 @@
+
+.bootstrap-upload>i{
+    font-size: 5em;
+    color: #05c697;
+    cursor:pointer;
+}
+.bootstrap-upload + p{
+    margin-top: 1em;
+}
+.bootstrap-upload + p .file-upload-btn{
+    background-color: #363636;
+    color: #fff;
+    background-image: none;
+    padding: .3em 1.3em;
+}
+/*-----------ä¸Šä¼ æŒ‰é’®çš„åŠ¨ç”»å¼€å§‹-----------*/
+.bootstrap-upload>i:hover{
+    animation:hvr-scale 1s  ease-out;
+    -webkit-animation:hvr-scale 1s  ease-out;
+}
+@keyframes hvr-scale{
+    100%{
+        opacity:0;
+        -webkit-transform:scale(2);
+        -moz-transform:scale(2);
+    }
+}
+@-webkit-keyframes hvr-scale{
+    100%{
+        opacity:0;
+        -webkit-transform:scale(2);
+        -moz-transform:scale(2);
+    }
+}
+
+i.cloud-upload {
+    position: absolute;
+    top: 105px;
+    font-size: 5em;
+    left: 163px;
+    z-index: -1;
+    color: #05c697;
+}
+
+.bootstrap-upload{
+    position: relative;
+    text-align: center;
+}
+.bootstrap-upload-input{
+    position: absolute;
+    z-index: 1;
+    top:0;
+    opacity: 0;
+}
+.bootstrap-upload-title{
+    position: relative;
+    margin:0 auto;
+    max-width: 320px;
+}
+.bootstrap-upload-title>span{
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bootstrap-upload-title>i{
+    position: absolute;
+    right: -1em;
+    top: -1em;
+}

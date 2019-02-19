@@ -1,0 +1,111 @@
+{
+  "_from": "@aweb-plugins/app.getUA@^6.0.0",
+  "_id": "@aweb-plugins/app.getUA@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-9OzaGFnxyAd4ljrTcKqc/Cz8JCM=",
+  "_location": "/@aweb-plugins/app.getUA",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.getUA@^6.0.0",
+    "name": "@aweb-plugins/app.getUA",
+    "escapedName": "@aweb-plugins%2fapp.getUA",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.getUA/download/@aweb-plugins/app.getUA-6.0.0.tgz",
+  "_shasum": "f4ecda1859f1c80778963ad370aa9cfc2cfc2423",
+  "_spec": "@aweb-plugins/app.getUA@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [
+    {
+      "category": "设备终端类型",
+      "valueArray": [
+        "app.getUA.TYPE.WEIXIN_IPAD",
+        "app.getUA.TYPE.WEIXIN_IPHONE",
+        "app.getUA.TYPE.WEIXIN_ANDROID_PHONE",
+        "app.getUA.TYPE.WEIXIN_ANDROID_PAD",
+        "app.getUA.TYPE.ALIPAY_IPAD",
+        "app.getUA.TYPE.ALIPAY_IPHONE",
+        "app.getUA.TYPE.ALIPAY_ANDROID_PHONE",
+        "app.getUA.TYPE.ALIPAY_ANDROID_PAD",
+        "app.getUA.TYPE.IPHONE",
+        "app.getUA.TYPE.IPAD",
+        "app.getUA.TYPE.ANDROID_PHONE",
+        "app.getUA.TYPE.ANDROID_PAD",
+        "app.getUA.TYPE.MSIE",
+        "app.getUA.TYPE.IE11",
+        "app.getUA.TYPE.MICROSOFT_EDGE",
+        "app.getUA.TYPE.PC_NOT_IE",
+        "app.getUA.TYPE.IONIC_IPAD",
+        "app.getUA.TYPE.IONIC_IPHONE",
+        "app.getUA.TYPE.IONIC_ANDROID_PHONE",
+        "app.getUA.TYPE.IONIC_ANDROID_PAD",
+        "app.getUA.TYPE.CORDOVA_IPAD",
+        "app.getUA.TYPE.CORDOVA_IPHONE",
+        "app.getUA.TYPE.CORDOVA_ANDROID_PHONE",
+        "app.getUA.TYPE.CORDOVA_ANDROID_PAD"
+      ],
+      "despArray": [
+        "iPad版微信",
+        "iPhone版微信",
+        "安卓手机版微信",
+        "安卓平板版微信",
+        "iPad版支付宝",
+        "iPhone版支付宝",
+        "安卓手机版支付宝",
+        "安卓平板版支付宝",
+        "iPhone版网页",
+        "iPad版网页",
+        "安卓手机版网页",
+        "安卓平板版网页",
+        "IE6~10",
+        "IE11+",
+        "Edge浏览器",
+        "其他PC浏览器",
+        "iPad版Ionic App",
+        "iPhone版Ionic App",
+        "安卓手机版Ionic App",
+        "安卓手机版Ionic App",
+        "iPad版cordova App",
+        "iPhone版cordova App",
+        "安卓手机版Cordova App",
+        "安卓平板版Cordova App"
+      ]
+    }
+  ],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取设备终端信息",
+  "docs": {
+    "name": "getUA",
+    "desp": "获取设备终端信息",
+    "belongTo": "closure",
+    "hasReturn": true,
+    "appJsCode": "app.getUA",
+    "ReturnValue": {
+      "name": "result",
+      "type": "string",
+      "desp": "设备终端信息,包含浏览器环境（weixin--\"微信\"、Alipay--\"支付宝\"、Cordova--类似于cordova环境、Ionic--类似于Ionic环境）、设备类型（PC(非IE内核）、IE、iPad、iPhone、androidPhone、androidPad)",
+      "defaultValue": "weixin iPhone"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.getUA",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

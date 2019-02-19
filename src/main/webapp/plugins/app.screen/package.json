@@ -1,0 +1,138 @@
+{
+  "_from": "@aweb-plugins/app.screen@^6.0.0",
+  "_id": "@aweb-plugins/app.screen@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-quhq5Es5P6mjmb7OH3bLd5kW68Q=",
+  "_location": "/@aweb-plugins/app.screen",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.screen@^6.0.0",
+    "name": "@aweb-plugins/app.screen",
+    "escapedName": "@aweb-plugins%2fapp.screen",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller",
+    "/@aweb-plugins/app.modal"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.screen/download/@aweb-plugins/app.screen-6.0.0.tgz",
+  "_shasum": "aae86ae44b393fa9a399bece1f76cb779916ebc4",
+  "_spec": "@aweb-plugins/app.screen@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "视图监听类",
+  "docs": {
+    "require": true,
+    "name": "screen",
+    "desp": "视图监听类",
+    "belongTo": "class",
+    "appJsCode": "app.screen",
+    "cInterfaces": [
+      {
+        "name": "addResizeHandler",
+        "desp": "添加窗口大小变化监听事件",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "options",
+            "desp": "选项",
+            "type": "object",
+            "children": [
+              {
+                "name": "uid",
+                "desp": "唯一的id",
+                "type": "string",
+                "details": "如果可以isGlobal=true，uid可以通过app.getUID()获取，否则则等于某个页面内的handler.domID，必需",
+                "necessary": true
+              },
+              {
+                "name": "isGlobal",
+                "type": "boolean",
+                "desp": "整个页面框架起作用",
+                "details": "布尔型，是否是整个页面框架起作用，如果在某个页面起作用的话，则为false，必需",
+                "necessary": true
+              },
+              {
+                "name": "timeout",
+                "desp": "延迟",
+                "type": "number",
+                "defaultValue": 0,
+                "details": "数字型，窗口大小改变之后，延迟多少毫秒执行，缺省值0，即一旦窗口大小改变立即执行，非必需",
+                "necessary": false
+              },
+              {
+                "name": "callback",
+                "desp": "回调函数",
+                "type": "handler",
+                "details": "函数，窗口大小改变后执行，必需",
+                "necessary": true
+              }
+            ],
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "triggerResizeHandler",
+        "desp": "模拟触发触发窗口大小变化事件",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "uid",
+            "desp": "唯一的id",
+            "type": "string",
+            "details": "如果可以isGlobal=true，uid可以通过app.getUID()获取，否则则等于某个页面内的handler.domID，必需",
+            "necessary": true
+          },
+          {
+            "name": "isGlobal",
+            "type": "boolean",
+            "desp": "整个页面框架起作用",
+            "details": "布尔型，是否是整个页面框架起作用，如果在某个页面起作用的话，则为false，必需",
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "removeResizeHandler",
+        "desp": "移除窗口大小变化回调",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "uid",
+            "desp": "唯一的id",
+            "type": "string",
+            "details": "如果可以isGlobal=true，uid可以通过app.getUID()获取，否则则等于某个页面内的handler.domID，必需",
+            "necessary": true
+          },
+          {
+            "name": "isGlobal",
+            "type": "boolean",
+            "desp": "整个页面框架起作用",
+            "details": "布尔型，是否是整个页面框架起作用，如果在某个页面起作用的话，则为false，必需",
+            "necessary": true
+          }
+        ]
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.screen",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

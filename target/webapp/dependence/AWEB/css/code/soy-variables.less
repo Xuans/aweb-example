@@ -1,0 +1,150 @@
+/*
+    desp:变量表
+    author:lijiancheng@agree.com.cn
+    date:2017-01-19
+    version：AUI 4.2.0 dev
+*/
+
+// Grays
+// -------------------------
+@black: #000;
+@grayDarker: #222;
+@grayDark: #333;
+@gray: #555;
+@grayLight: #999;
+@grayLightC: #ccc;
+@white: #fff;
+
+@linkColor: #26a2ff;
+@linkColorHover: darken(@linkColor, 20%);
+
+@themeColorBackground: #eeeef2;
+@themeColorBackgroundLight: #f7f7f7;
+@themeColor: @themeColorBackgroundLight;
+@activeColor: @themeColorBackground;
+
+// Scaffolding
+// -------------------------
+@textColor: @grayDarker;
+
+//gutter
+@gutterTop: 1em 0 0;
+@gutterBottom: 0 0 1em;
+@gutterTopBottom: 1em 0;
+@gutterBoth: 1em;
+
+// Typography
+// -------------------------
+@sansFontFamily: sans-serif, Arial;
+@serifFontFamily: Georgia, "Times New Roman", Times, serif;
+@monoFontFamily: Monaco, Menlo, Consolas, "Courier New", monospace;
+@mobileFontFamily: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, Tahoma, Simsun, sans-serif;
+
+
+@baseFontSize: 12px;
+@baseFontFamily: @sansFontFamily;
+
+@baseComputeSize: 14px;
+@baseLineHeight: 1.428571429; // 20/14
+@computedLineHeight: floor((@baseComputeSize * @baseLineHeight)); // ~20px
+@inputHeight: @computedLineHeight + 10px; // base line-height + 8px vertical padding + 2px top/bottom border
+
+@modalBackgroundColor: @white;
+@modalFooterBackgroundColor: transparent;
+
+@baseBorderRadius: 4px;
+@borderRadiusLarge: 6px;
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+// Z-index master list
+// -------------------------
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+@zindexDropdown: 1000;
+@zindexModalBackdrop: 1040;
+@zindexModal: 1050;
+@zindexTabCtnMenu: 3;
+
+// Input placeholder text color
+// -------------------------
+@placeholderText: @grayLight;
+
+@navListBackgroundColorHover: lighten(@themeColor, 25%);
+@navListPadding: .6em .5em .6em 2em;
+
+//nav-tabs总页签导航
+//--------------------------
+@tabOptionBackground: #fafafa;
+@tabOptionActiveBackground: fade(@white, 90%);
+@tabsBorderRadius: 0;
+@tabsActiveFontColor: #00a4af;
+@tabsFontColor: #a6a6a6;
+@navTabsTextSize: 1.1667em;
+@navTabsPadding: 8px;
+
+//alert list 右上角消息弹出列表
+@alertContainerPadding: .5em 1.5em;
+@alertCloseTop: .1em;
+@alertCloseRight: .1em;
+@alertCloseSize: 2em;
+
+// Dropdowns
+// -------------------------
+@dropdownMinWidth: 140px;
+@dropdownListPadding: 5px 12px;
+@dropdownBackground: @white;
+@dropdownBorder: rgba(0, 0, 0, .2);
+@dropdownDividerTop: #e5e5e5;
+@dropdownDividerBottom: @white;
+
+@dropdownLinkColor: @grayDark;
+@dropdownLinkColorHover: @white;
+@dropdownLinkColorActive: @white;
+
+@dropdownLinkBackgroundActive: @linkColor;
+@dropdownLinkBackgroundHover: @dropdownLinkBackgroundActive;
+
+//  alerts
+// -------------------------
+@alertPadding: 8px 35px 8px 14px;
+@alertShadow: 0 1px 0 rgba(255, 255, 255, .5);
+@alertColseColor: @grayDark;
+@warningText: #CD8309;
+@warningBackground: #fcf8e3;
+@warningBorder: darken(spin(@warningBackground, -10), 3%);
+
+@errorText: #b94a48;
+@errorBackground: #f2dede;
+@errorBorder: darken(spin(@errorBackground, -10), 3%);
+
+@successText: #49cf49;
+@successBackground: #dff0d8;
+@successBorder: darken(spin(@successBackground, -10), 5%);
+
+@infoText: #0A9EE6;
+@infoBackground: #d9edf7;
+@infoBorder: darken(spin(@infoBackground, -10), 7%);
+
+@pinkText: #F985C4;
+@pinkBackground: lighten(spin(@pinkText, -10), 20%);
+@pinkBorder: lighten(spin(@pinkText, -10), 20%);
+
+//  mask
+// -------------------------
+@maskBackground: @black;
+@maskOpacity: 35;
+
+
+// Default 940px grid
+// -------------------------
+@gridColumns: 12;
+@gridColumnWidth: 64px;
+@gridGutterWidth: 20px;
+@gridRowWidth: (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+
+// Fluid grid
+// -------------------------
+@fluidGridColumnWidth: percentage((@gridColumnWidth/@gridRowWidth));
+@fluidGridGutterWidth: percentage((@gridGutterWidth/@gridRowWidth));

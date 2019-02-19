@@ -1,0 +1,87 @@
+{
+  "_from": "@aweb-plugins/app.parseJSObject@^6.0.0",
+  "_id": "@aweb-plugins/app.parseJSObject@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-ywczndILULA/U+mm88sEwSwEV0A=",
+  "_location": "/@aweb-plugins/app.parseJSObject",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.parseJSObject@^6.0.0",
+    "name": "@aweb-plugins/app.parseJSObject",
+    "escapedName": "@aweb-plugins%2fapp.parseJSObject",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.parseJSObject/download/@aweb-plugins/app.parseJSObject-6.0.0.tgz",
+  "_shasum": "cb07339dd20b50b03f53e9a6f3cb04c12c045740",
+  "_spec": "@aweb-plugins/app.parseJSObject@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "将对象字符串转化成JavaScript对象",
+  "docs": {
+    "name": "parseJSObject",
+    "desp": "将对象字符串转化成JavaScript对象",
+    "params": [
+      {
+        "name": "objectString",
+        "desp": "JavaScript函数字符串",
+        "type": "string",
+        "defaultValue": "'{\"key1\":\"value1\",\"key2\":true,\"key3\":[],\"key4\":{}}'",
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.parseJSObject",
+    "returnValue": {
+      "name": "result",
+      "type": "object",
+      "desp": "将JavaScript对象序列化后的结果",
+      "children": [
+        {
+          "name": "key1",
+          "desp": "键名1",
+          "type": "string",
+          "defaultValue": "value1"
+        },
+        {
+          "name": "key2",
+          "desp": "键名2",
+          "type": "boolean",
+          "defaultValue": true
+        },
+        {
+          "name": "key3",
+          "desp": "键名3",
+          "type": "array",
+          "defaultValue": []
+        },
+        {
+          "name": "key4",
+          "desp": "键名4",
+          "type": "object",
+          "defaultValue": {}
+        }
+      ]
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.parseJSObject",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

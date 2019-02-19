@@ -1,0 +1,80 @@
+{
+  "_from": "@aweb-plugins/app.scrollTop@^6.0.0",
+  "_id": "@aweb-plugins/app.scrollTop@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-Kl17UclZSl3mRUdMHatoGt+iKpU=",
+  "_location": "/@aweb-plugins/app.scrollTop",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.scrollTop@^6.0.0",
+    "name": "@aweb-plugins/app.scrollTop",
+    "escapedName": "@aweb-plugins%2fapp.scrollTop",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.scrollTop/download/@aweb-plugins/app.scrollTop-6.0.0.tgz",
+  "_shasum": "2a5d7b51c9594a5de645474c1dab681adfa22a95",
+  "_spec": "@aweb-plugins/app.scrollTop@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "滚动至父容器顶部",
+  "docs": {
+    "require": true,
+    "name": "scrollTop",
+    "desp": "滚动至父容器顶部",
+    "hasReturn": false,
+    "appJsCode": "app.scrollTop",
+    "params": [
+      {
+        "name": "$container",
+        "type": "jQuery",
+        "desp": "可滚动的容器jQuery对象",
+        "details": "可滚动的容器jQuery对象，必需",
+        "necessary": true
+      },
+      {
+        "name": "$content",
+        "type": "jQuery",
+        "desp": "需要滚动到顶部的jQuery对象",
+        "details": "需要滚动到顶部的jQuery对象，必需；其中$content必需在$container内",
+        "necessary": true
+      },
+      {
+        "name": "speed",
+        "type": "number",
+        "desp": "滚动速度",
+        "details": "滚动速度，单位毫秒，缺省值200，非必需",
+        "defaultValue": 200,
+        "necessary": false
+      },
+      {
+        "name": "marginTop",
+        "type": "number",
+        "desp": "在滚动上还需要移动的高度",
+        "details": "数值型，必需大于0，在滚动上，还需要移动的高度，缺省值0，非必需",
+        "defaultValue": 0,
+        "necessary": false
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.scrollTop",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

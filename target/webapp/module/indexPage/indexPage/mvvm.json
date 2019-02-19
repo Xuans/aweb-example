@@ -1,0 +1,13 @@
+{
+        "views": {
+          "indexPage": {
+            "template": "indexPage.html",
+            "js": "indexPage.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "indexPage"
+          }
+        ]
+      }

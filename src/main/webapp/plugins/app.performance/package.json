@@ -1,0 +1,95 @@
+{
+  "_from": "@aweb-plugins/app.performance@^6.0.0",
+  "_id": "@aweb-plugins/app.performance@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-ML3pSTjZy8cvUxp6Att8zRylhLo=",
+  "_location": "/@aweb-plugins/app.performance",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.performance@^6.0.0",
+    "name": "@aweb-plugins/app.performance",
+    "escapedName": "@aweb-plugins%2fapp.performance",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.performance/download/@aweb-plugins/app.performance-6.0.0.tgz",
+  "_shasum": "30bde94938d9cbc72f531a7a02db7ccd1ca584ba",
+  "_spec": "@aweb-plugins/app.performance@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "伪异步、多线程操作",
+  "const": [],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "伪异步、多线程操作",
+  "docs": {
+    "name": "performance",
+    "desp": "伪异步、多线程操作",
+    "belongTo": "class",
+    "appJsCode": "app.performance",
+    "cInterfaces": [
+      {
+        "name": "longDelay",
+        "desp": "长延时操作",
+        "details": "用于长延时操作，用于数据处理量大或即时渲染要求低的处理的延时调用",
+        "hasReturn": false,
+        "params": [
+          {
+            "type": "handler",
+            "desp": "操作内容",
+            "name": "callback",
+            "defaultValue": "function(){}",
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "shortDelay",
+        "desp": "短延时操作",
+        "details": "用于短延时操作，用于数据处理量小或即时渲染要求低的处理的延时调用",
+        "hasReturn": false,
+        "params": [
+          {
+            "type": "handler",
+            "desp": "操作内容",
+            "name": "callback",
+            "defaultValue": "function(){}",
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "require": true,
+        "name": "sleep",
+        "desp": "浏览器休眠",
+        "details": "用于模拟浏览器休眠，用于暂停一段时间后执行代码",
+        "hasReturn": false,
+        "params": [
+          {
+            "type": "number",
+            "desp": "休眠时间",
+            "name": "timeout",
+            "necessary": true
+          }
+        ]
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.performance",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

@@ -1,0 +1,74 @@
+{
+  "_from": "@aweb-plugins/app.getFormatData@^6.0.0",
+  "_id": "@aweb-plugins/app.getFormatData@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-aZaGuoKzhUjeL2k40xd9ZTHfhjo=",
+  "_location": "/@aweb-plugins/app.getFormatData",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.getFormatData@^6.0.0",
+    "name": "@aweb-plugins/app.getFormatData",
+    "escapedName": "@aweb-plugins%2fapp.getFormatData",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.getFormatData/download/@aweb-plugins/app.getFormatData-6.0.0.tgz",
+  "_shasum": "699686ba82b38548de2f6938d3177d6531df863a",
+  "_spec": "@aweb-plugins/app.getFormatData@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "const": [
+    {
+      "category": "数据格式转换",
+      "valueArray": [
+        "app.getFormatData.TYPE.MONEY",
+        "app.getFormatData.TYPE.BANDCARD"
+      ],
+      "despArray": [
+        "转换金额格式",
+        "转换银行卡格式"
+      ]
+    }
+  ],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "数字格式转换",
+  "docs": {
+    "name": "getFormatData",
+    "desp": "数字格式转换",
+    "belongTo": "closure",
+    "params": [
+      {
+        "name": "num",
+        "desp": "需要处理的数字",
+        "type": "number",
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.getFormatData",
+    "returnValue": {
+      "name": "translatedNum",
+      "type": "number",
+      "desp": "处理完的数字"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.getFormatData",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

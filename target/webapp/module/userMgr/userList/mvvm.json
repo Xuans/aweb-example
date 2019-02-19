@@ -1,0 +1,13 @@
+{
+        "views": {
+          "userList": {
+            "template": "userList.html",
+            "js": "userList.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "userList"
+          }
+        ]
+      }

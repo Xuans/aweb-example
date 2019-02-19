@@ -1,0 +1,73 @@
+{
+  "_from": "@aweb-plugins/app.getNewQueryStringURL@^6.0.0",
+  "_id": "@aweb-plugins/app.getNewQueryStringURL@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-EV0MMh+hvHWB3yZLTRA7oUZDEjo=",
+  "_location": "/@aweb-plugins/app.getNewQueryStringURL",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.getNewQueryStringURL@^6.0.0",
+    "name": "@aweb-plugins/app.getNewQueryStringURL",
+    "escapedName": "@aweb-plugins%2fapp.getNewQueryStringURL",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.getNewQueryStringURL/download/@aweb-plugins/app.getNewQueryStringURL-6.0.0.tgz",
+  "_shasum": "115d0c321fa1bc7581df264b4d103ba14643123a",
+  "_spec": "@aweb-plugins/app.getNewQueryStringURL@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取更新后的页面内查询字符串",
+  "docs": {
+    "name": "getNewQueryStringURL",
+    "desp": "获取更新后的页面内查询字符串",
+    "hasReturn": true,
+    "appJsCode": "app.getNewQueryStringURL",
+    "params": [
+      {
+        "name": "newParams",
+        "type": "object",
+        "desp": "新加入的参数",
+        "details": "fullscreen=true为例",
+        "necessary": true,
+        "children": [
+          {
+            "name": "fullscreen",
+            "type": "string",
+            "desp": "键值对",
+            "defaultValue": "true",
+            "necessary": true
+          }
+        ]
+      }
+    ],
+    "returnValue": {
+      "name": "newQueryString",
+      "type": "string",
+      "desp": "页面内查询字符串列表",
+      "details": "以http://localhost:8080/index.html?timeStamp=12465为例",
+      "defaultValue": "timeStamp=12346&fullscreen=true"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.getNewQueryStringURL",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

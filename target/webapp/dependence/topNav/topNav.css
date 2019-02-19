@@ -1,0 +1,374 @@
+    /*所有适用的样式*/
+    .topNav {
+        position: relative;
+        background-color: #ffffff;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+        height:70px;
+        border-bottom: 1px solid #ccc;
+    }
+    .topNav * {
+        margin: 0; padding: 0;
+        font-size: 1em;
+    }
+    .topNav a {
+        text-decoration: none;
+        border-radius: 4px;
+        color:#4d4d4d
+    }
+    .topNav i {
+        display:inline;
+        color:#f2f2f2;
+    }
+    .topNav ul {
+        list-style: none;
+    }
+    .topNav>div {
+        float: left;
+    }
+
+    .topNav>div.right-menus {
+        float: right;
+        margin-right: 1.66em;
+        position: relative;
+    }
+    .topNav>div.message-area {
+        float: right;
+    }
+    .topNav::after {
+        content: ''; display: block;  clear: both;
+    }
+    /*logo样式*/
+    .topNav .logo {
+        margin: 1.33em 2em;
+        width: 152px; height: 38px; line-height: 38px;
+    }
+    .topNav .logo img {
+        width: 100%; height: 100%;
+    }
+    /*子菜单样式*/
+    .topNav .submenu {
+        display: none;
+        color: #ffffff;
+        background-color: #ffffff;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, .3);
+        filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, .3));
+        border-radius: 4px;
+        position: absolute;
+        word-break: keep-all;
+        z-index: 5;
+    }
+    .topNav .submenu::before {
+        content: '';
+        width: 0; height: 0;
+        color: inherit;
+        border: 3.535px solid;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        transform: rotate(-45deg);
+        position: absolute;
+        top:-3.5px; left: 0; right: 0; margin: 0 auto;
+    }
+    .topNav .submenu ul>li>a {
+        display: block;
+        font-size: 1em;
+        height: 40px; line-height: 40px;
+        padding: 0 1em;
+    }
+    .topNav .submenu ul>li>a>* {
+        color: inherit;
+        font-size: inherit;
+    }
+    .topNav .left-menus a>i:first-child::before {
+        margin-right: .66em
+    }
+    .topNav .left-menus a>i:last-child::before {
+        margin-left: .66em;
+    }
+        /*子级菜单hover样式*/
+    .topNav .submenu ul>li:hover>a {
+        background-color: #eeeeee;
+    }
+        /*子级菜单选中样式*/
+    .topNav .submenu ul>li.checked>a {
+        font-weight: 600;
+        background-color: #f7f7f7;
+    }
+    /*左一级菜单基本样式*/
+    .topNav .left-menus ul.ul-1>li {
+        float: left;
+        margin-left: 2.5em;
+        color: #f2f2f2;
+        font-size: 16px;
+    }
+    .topNav .left-menus ul.ul-1>li:first-child{
+        margin-left: 0;
+    }
+    .topNav .left-menus ul.ul-1>li i:last-child{
+        color:#4d4d4d;
+    }
+    .topNav .left-menus ul.ul-1::after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+    .topNav .left-menus .layers-3 ul.ul-1>li>.menu-2-bg {
+        /*一级菜单hover时二级菜单的背景*/
+        content: '';
+        display: none;
+        width:100%; height: 40px;
+        border-top: 1px solid #e5e5e5;
+        border-bottom: 1px solid #e5e5e5;
+        background-color: #f7f7f7;
+        position: absolute;
+        left: 0; z-index: 4; 
+    }
+    .topNav .left-menus ul.ul-1>li>a {
+        display: block;
+        font-size: 1em;
+         height: 70px; line-height: 70px;
+    }
+    .topNav .left-menus ul.ul-1>li.hav-sub>a>i:last-child::before{
+        content: '\f106';
+    }
+    .topNav .left-menus ul.ul-1>li.hav-fake-sub>a>i:last-child::before{
+        content: '\f107';
+    }
+    .topNav .left-menus ul.ul-1>li>a>* {
+        color: inherit;
+        font-size: 1em;
+    }
+        /*左一级菜单hover样式*/
+    .topNav .left-menus ul.ul-1>li:hover .menu-2 {
+        display: block;
+    }
+    .topNav .left-menus ul.ul-1>li:hover>a {
+        color: #00a4af;
+    }
+
+    .topNav .left-menus ul.ul-1>li.open-sub>a>i:last-child::before{
+        content: '\f106';
+    }
+    .topNav .left-menus ul.ul-1>li.hav-sub:hover>a>i:last-child::before{
+        content: '\f107';
+    }
+
+        /*左一级菜单选中样式*/
+    .topNav .left-menus ul.ul-1>li.checked>a {
+        font-weight: 600;
+        color: #00a4af;
+        height: 67px; border-bottom: 3px solid #00a4af;
+    }
+
+
+    /*三层时二层菜单基本样式*/
+    .topNav .left-menus .layers-3 .menu-2 {
+        background-color: transparent;
+        background-clip: padding-box;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        box-shadow: 0px 0px 0 transparent;
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li {
+        float: left;
+        margin-right: 2.5em;
+        font-size:14px;
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li>a {
+        padding: 0; 
+        background-color: transparent;
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li>a>i:first-child {
+        /*前置图标*/
+        font-size: 1em;
+    }
+
+    .topNav .left-menus .layers-3 ul.ul-2>li.hav-sub>a>i:last-child::before {
+        /*后置图标*/
+        content: '\f106';
+    }
+    .topNav .left-menus .layers-3 ul.ul-1>li:hover>.menu-2-bg {
+        /*一级菜单hover时二级菜单的背景*/
+        display: block;
+    }
+        /*三层时二级菜单hover样式*/
+    .topNav .left-menus .layers-3 ul.ul-1>li:hover .menu-2::before {/*消除三角形*/
+        display: none;
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li:hover .menu-3 {
+        display: block;
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li:hover>a {
+        color: #00a4af;
+    }
+    .topNav .left-menus .layers-3 ul.ul-3>li{
+     font-size:14px;
+    }
+    .topNav .left-menus .layers-3 ul.ul-2>li.hav-sub:hover>a>i:last-child::before {
+        /*hover后置图标*/
+        content: '\f107';
+    }
+        /*三层时二级菜单选中样式*/
+    .topNav .left-menus .layers-3 ul.ul-2>li.checked>a {
+        color: #00a4af;
+    }
+    /*右一级菜单基本样式*/
+    .topNav .right-menus ul.ul-1>li.hasCircle {
+        float: left;
+        margin-left: 1em;
+        position: relative;
+    }
+    .topNav .right-menus ul.ul-1>li {
+        float: left;
+        margin-left: 1em;
+        position: relative;
+    }
+    .topNav .right-menus ul.ul-1::after {
+        content: ''; display: block; clear: both;
+    }
+    .topNav .right-menus ul.ul-1>li.hasCircle>a {
+        display: block;
+        font-size: 1em;
+        height: 70px;
+        line-height: 70px;
+    }
+    .topNav .right-menus ul.ul-1>li.hasCircle>a>span {
+        padding: 0 .83em;
+    }
+    .topNav .right-menus ul.ul-1>li>a {
+        display: block;
+        font-size: 1em;
+        height: 70px;
+        line-height: 70px;
+    }
+    .topNav .right-menus ul.ul-1>li>a>span {
+        padding: 0 .83em;
+    }
+    .topNav .right-menus ul.ul-1>li.hasCircle>a>i:first-child {
+        /*右一级菜单图标(左边)*/
+        font-size: 1em;
+        display: inline-block;
+        width:36px;
+        height: 36px;
+        line-height: 36px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: #f2f2f2;
+    }
+    .topNav .right-menus ul.ul-1>li.hav-sub>a>span+i::before {
+        content: '\f106';
+    }
+    .topNav .right-menus ul.ul-1>li>a>* {
+        color: inherit;
+        font-size: inherit;
+    }
+        /*右一级菜单hover样式*/
+    .topNav .right-menus ul.ul-1>li:hover .menu-2 {
+        display: block;
+    }
+    .topNav .right-menus ul.ul-1>li:last-child .menu-2 {
+        right: 0;
+    }
+    .topNav .right-menus ul.ul-1>li:last-child .menu-2::before {
+        left: auto; right: 1.66em;
+    }
+    .topNav .right-menus ul.ul-1>li.hasCircle:hover>a {
+        color: #00a4af;
+    }
+    .topNav .right-menus ul.ul-1>li.hasCircle:hover>a>i:first-child {
+        color: #ffffff;
+        background-color: #04bebd;
+    }
+    .topNav .right-menus ul.ul-1>li.hav-sub:hover>a>span+i::before  {
+        content: '\f107';
+    }
+    /*右二级菜单基本样式*/
+    .topNav .right-menus ul.ul-2>li>a>i:first-child {
+        font-size: 1em;
+    }
+    .topNav .right-menus ul.ul-2>li>a {
+        padding: 0 1em;
+    }
+    .topNav .right-menus ul.ul-2>li>a>span {
+        padding: 0 .83em;
+    }
+    /*右二级菜单hover样式*/
+    .topNav .right-menus ul.ul-2>li:hover>a {
+        color: #ffffff;
+        background-color: #04bebd;
+    }
+
+    /*信息域的基本样式*/
+    .topNav .message-area {
+        position: relative; width: 150px; 
+    }
+    .topNav .message-area>a {
+        display: block;
+        height: 70px; line-height: 70px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .topNav .message-area>a>span {
+        color: inherit;
+        font-size: inherit;
+    }
+    .topNav .message-area>a>span.title {
+        margin: 0 .66em;
+        font-weight: bold;
+    }
+    .topNav .message-area>a>i {
+        font-size: 1em;
+        color: #999999;
+    }
+    .topNav .message-area>a>i::before {
+        color: inherit;
+        font-size: inherit;
+    }
+    .topNav .message-area>div {
+        display: none;
+        padding: .83em 1em;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, .3);
+        filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, .3));
+        border-radius: 4px;
+        position: absolute;
+        background-color: #ffffff;
+        color: #ffffff;
+        z-index: 5;word-break:break-all;
+    }
+    .topNav .message-area>div::before {
+        content: '';
+        width: 0; height: 0;
+        border: 3.535px solid ;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        transform: rotate(-45deg);
+        position: absolute;
+        top:-3.5px; left: 0;  right: 0;
+        margin: 0 auto;
+    }
+    .topNav .message-area>div>span {
+        color: #888;
+    }
+    .topNav .message-area>div>hr {
+        margin: .41em 0;
+        border: 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #fff;
+    }
+    .topNav .message-area:hover>div {
+        display: block;
+    }
+    .topNav .topNav-badge{
+        position: relative;
+    }
+    .topNav .topNav-badge>i{
+        display:block;
+        background:#f00;
+        border-radius:50%;
+        width:5px;
+        height:5px;
+        top:0;
+        right:0;
+        position:absolute;
+    }

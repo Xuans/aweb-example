@@ -1,0 +1,62 @@
+{
+  "_from": "@aweb-plugins/app.eval@^6.0.0",
+  "_id": "@aweb-plugins/app.eval@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-LnpAvW5uD3cScb1zhGFyKZNtUO8=",
+  "_location": "/@aweb-plugins/app.eval",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.eval@^6.0.0",
+    "name": "@aweb-plugins/app.eval",
+    "escapedName": "@aweb-plugins%2fapp.eval",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.eval/download/@aweb-plugins/app.eval-6.0.0.tgz",
+  "_shasum": "2e7a40bd6e6e0f771271bd7384617229936d50ef",
+  "_spec": "@aweb-plugins/app.eval@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "将函数字符串转化成可执行函数，并将代码的作用域限定在闭包中",
+  "docs": {
+    "name": "eval",
+    "desp": "将函数字符串转化成可执行函数，并将代码的作用域限定在闭包中",
+    "hasReturn": true,
+    "appJsCode": "app.eval",
+    "params": [
+      {
+        "name": "functionString",
+        "defaultValue": "function(key){console.log(key);}",
+        "desp": "JavaScript函数字符串",
+        "type": "string",
+        "necessary": true
+      }
+    ],
+    "returnValue": {
+      "name": "func",
+      "type": "function",
+      "desp": "转义后的代码"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.eval",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

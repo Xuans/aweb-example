@@ -1,0 +1,48 @@
+{
+  "_from": "@aweb-plugins/app.collapse@^6.0.0",
+  "_id": "@aweb-plugins/app.collapse@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-jfIbWfFPRMCjGB3OfKlr+eQyzoY=",
+  "_location": "/@aweb-plugins/app.collapse",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.collapse@^6.0.0",
+    "name": "@aweb-plugins/app.collapse",
+    "escapedName": "@aweb-plugins%2fapp.collapse",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.collapse/download/@aweb-plugins/app.collapse-6.0.0.tgz",
+  "_shasum": "8df21b59f14f44c0a3181dce7ca96bf9e432ce86",
+  "_spec": "@aweb-plugins/app.collapse@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "折叠菜单功能",
+  "docs": {
+    "require": true,
+    "name": "collapse",
+    "desp": "折叠菜单功能",
+    "belongTo": "closure",
+    "appJsCode": "app.collapse",
+    "hasReturn": false
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.collapse",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

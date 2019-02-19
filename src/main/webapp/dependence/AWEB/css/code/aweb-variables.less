@@ -1,0 +1,250 @@
+/*
+    desp:变量表
+    author:lijiancheng@agree.com.cn
+    date:2017-01-19
+    version：AUI 4.2.0 dev
+*/
+
+// Grays
+// -------------------------
+@black: #000;
+@grayDarker: #222;
+@grayDark: #333;
+@darkTransparent: rgba(0, 0, 0, 0.7);
+@gray: #555;
+@grayLight: #999;
+@grayLightC: #ccc;
+@grayLighter: #eee;
+@white: #fff;
+@blueGray: #E9EDF1;
+@blueGrayLighter: #fff;
+
+// Accent colors
+// -------------------------
+@blue: #049cdb;
+@blueDark: #0064cd;
+@green: #46a546;
+@red: #9d261d;
+@yellow: #ffc40d;
+@orange: #f89406;
+
+@linkColor: #26a2ff;
+@linkColorHover: darken(@linkColor, 20%);
+//status color
+@noStartColor: #b0b1b1;
+
+@themeColorLabel: #007acc;
+@themeColorBackground: #eeeef2;
+@themeColorBackgroundLight: #f7f7f7;
+@themeColor: @themeColorBackgroundLight;
+@activeColor: @themeColorBackground;
+
+// Scaffolding
+// -------------------------
+@bodyBackground: @white;
+@textColor: @grayDarker;
+@borderColor: #e5e5e5;
+
+//gutter
+@gutterTop: 1em 0 0;
+@gutterBottom: 0 0 1em;
+@gutterTopBottom: 1em 0;
+@gutterBoth: 1em;
+
+// Typography
+// -------------------------
+@sansFontFamily: sans-serif, Arial;
+@serifFontFamily: Georgia, "Times New Roman", Times, serif;
+@monoFontFamily: Monaco, Menlo, Consolas, "Courier New", monospace;
+
+@baseFontSize: 12px;
+@baseFontFamily: @sansFontFamily;
+
+@baseComputeSize: 14px;
+@baseLineHeight: 1.428571429; // 20/14
+@computedLineHeight: floor((@baseComputeSize * @baseLineHeight)); // ~20px
+@inputHeight: (@computedLineHeight + 10px); // base line-height + 8px vertical padding + 2px top/bottom border
+@headingsFontFamily: "Segoe UI Historic", '黑体', 'Helvetica Neue', 'sans-serif'; // empty to use BS default, @baseFontFamily
+@headingsFontWeight: 200; // instead of browser default, bold
+@headingsFontSize: (@baseFontSize * 1.25); // instead of browser default, bold
+@headingsColor: inherit; // empty to use BS default, @textColor
+
+// Component sizing
+// -------------------------
+// Based on 14px font-size and 20px line-height
+
+@fontSizeLarge: (@baseFontSize * 1.25);
+@fontSizeSmall: (@baseFontSize * 0.85);
+@fontSizeMini: (@baseFontSize * 0.75);
+
+@paddingLarge: 11px 19px;
+@paddingSmall: 2px 10px;
+@paddingMini: 0 6px;
+
+@baseBorderRadius: 4px;
+@borderRadiusLarge: 6px;
+@borderRadiusSmall: 2px;
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+// Z-index master list
+// -------------------------
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+@zindexDropdown: 1000;
+@zindexTooltip: 1030;
+@zindexModalBackdrop: 1040;
+@zindexModal: 1050;
+@zindexPopover: 1051;
+@zindexPreview: 1041;
+@zindexTabCtnMenu: 3;
+@zindexAsideLeft: 2;
+
+// Input placeholder text color
+// -------------------------
+@placeholderText: @grayLight;
+
+// Hr border color
+// -------------------------
+@hrBorder: @grayLighter;
+
+@navListBackgroundColorHover: lighten(@themeColor, 25%);
+@navListPadding: .6em .5em .6em 2em;
+
+//nav-tabs总页签导航
+//--------------------------
+
+@tabOptionBackground: #fafafa;
+@tabOptionActiveBackground: @white;
+@tabsBorderRadius: 0;
+@tabsActiveFontColor: #00a4af;
+@tabsFontColor: #a6a6a6;
+@navTabsTextSize: 1.1667em;
+@navTabsPadding: 8px;
+
+//modals 弹窗
+//--------------------------
+@modalWidth: 560px;
+@modalHeagerPadding: 9px 20px;
+@modalBackgroundColor: @white;
+@modalHeagerBackgroundColor: #fafafa;
+@modalHeagerColor: #4d4d4d;
+@modalBodyMinHeight: 400px;
+@modalBodyPadding: 20px;
+@modalBodymargin: 20px;
+@modalFooterPadding: 14px 15px 15px;
+@modalFooterBackgroundColor: transparent;
+
+//== Popovers
+
+@popoverBackground: rgba(255, 255, 255, 0.75);
+@popoverMaxWidth: 276px;
+@popoverBorderColor: rgba(0, 0, 0, .2);
+@popoverFallbackBorderColor: #ccc;
+@popoverTitleBackground: rgba(255, 255, 255, 0.75);
+@popoverArrowWidth: 10px;
+@popoverArrowColor: @popoverBackground;
+@popoverArrowOuterWidth: (@popoverArrowWidth + 1);
+@popoverArrowOuterColor: fadein(@popoverBorderColor, 5%);
+@popoverArrowOuterFallbackColor: darken(@popoverFallbackBorderColor, 20%);
+
+//alert list 右上角消息弹出列表
+@alertCloseTop: .1em;
+@alertCloseRight: .1em;
+@alertCloseSize: 2em;
+
+//mask  遮罩
+//--------------------------
+@maskBackground: @black;
+@maskOpacity: 35;
+@maskOptionColor: @blue;
+@maskCircleLight: fade(@blue, 10%);
+@maskCircleDark: fade(@blue, 60%);
+
+// Buttons	按钮 按钮组
+// -------------------------
+@btnFontSize: 1.1667em;
+@btnHoverBackground: #c9def5; //fadeIn(@activeColor,90%);
+@btnActiveBackground: darken(@btnHoverBackground, 10%);
+@btnborderRadiusSmall: @borderRadiusSmall;
+@btnBorderRadiusBase: 4px;
+@btnBorderRadiusLarge: @borderRadiusLarge;
+
+@btnBackground: @white;
+@btnBackgroundHighlight: darken(@white, 10%);
+@btnBorderColor: @grayLightC;
+
+@btnPrimaryBackground: @linkColor;
+@btnPrimaryBackgroundHighlight: @btnPrimaryBackground; //spin(@btnPrimaryBackground, 20%);
+
+@btnInfoBackground: #5bc0de;
+@btnInfoBackgroundHighlight: darken(@btnInfoBackground, 5%); // #2f96b4;
+
+@btnSuccessBackground: #62c462;
+@btnSuccessBackgroundHighlight: darken(@btnSuccessBackground, 5%); //#51a351;
+
+@btnWarningBackground: lighten(@orange, 15%);
+@btnWarningBackgroundHighlight: darken(@btnWarningBackground, 5%); //@orange;
+
+@btnDangerBackground: #ee5f5b;
+@btnDangerBackgroundHighlight: darken(@btnDangerBackground, 5%); //#bd362f;
+
+@btnInverseBackground: #444;
+@btnInverseBackgroundHighlight: darken(@btnInverseBackground, 5%); // @grayDarker;
+
+@btnFocusBackground: #4a5659;
+@btnFocusBackgroundHighlight: darken(@btnFocusBackground, 5%); // @grayDarker;
+
+// Dropdowns
+// -------------------------
+@dropdownMinWidth: 140px;
+@dropdownListPadding: 5px 12px;
+@dropdownBackground: @white;
+@dropdownBorder: rgba(0, 0, 0, .2);
+@dropdownDividerTop: #e5e5e5;
+@dropdownDividerBottom: @white;
+
+@dropdownLinkColor: @grayDark;
+@dropdownLinkColorHover: @white;
+@dropdownLinkColorActive: @white;
+
+@dropdownLinkBackgroundActive: @linkColor;
+@dropdownLinkBackgroundHover: @dropdownLinkBackgroundActive;
+
+//  alerts
+// -------------------------
+@alertPadding: 8px 35px 8px 14px;
+@alertShadow: 0 1px 0 rgba(255, 255, 255, .5);
+@alertColseColor: @grayDark;
+@warningText: #CD8309;
+@warningBackground: #fcf8e3;
+@warningBorder: darken(spin(@warningBackground, -10), 3%);
+
+@errorText: #b94a48;
+@errorBackground: #f2dede;
+@errorBorder: darken(spin(@errorBackground, -10), 3%);
+
+@successText: #49cf49;
+@successBackground: #dff0d8;
+@successBorder: darken(spin(@successBackground, -10), 5%);
+
+@infoText: #0A9EE6;
+@infoBackground: #d9edf7;
+@infoBorder: darken(spin(@infoBackground, -10), 7%);
+
+@pinkText: #F985C4;
+@pinkBackground: lighten(spin(@pinkText, -10), 20%);
+@pinkBorder: lighten(spin(@pinkText, -10), 20%);
+
+// Default 940px grid
+// -------------------------
+@gridColumns: 12;
+@gridColumnWidth: 64px;
+@gridGutterWidth: 20px;
+@gridRowWidth: ((@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1)));
+
+// Fluid grid
+// -------------------------
+@fluidGridColumnWidth: percentage((@gridColumnWidth/@gridRowWidth));
+@fluidGridGutterWidth: percentage((@gridGutterWidth/@gridRowWidth));

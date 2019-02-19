@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:component-scan base-package="cn.com.agree.aweb.pa.hibernate" />
+	<!-- 配置 SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 注入连接池 ，是druid连接池 -->
+		<property name="dataSource" ref="druidDataSource"></property>
+		<!-- 配置其他属性 -->
+		<property name="hibernateProperties">
+			<!-- 具体属性名及作用可查看 org.hibernate.cfg.AvailableSettings -->
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.connection.autocommit">false</prop>
+				<!-- hibernate.jdbc.batch_size参数，用来指定每次提交SQL的数量 -->
+				<prop key="hibernate.jdbc.batch_size">100</prop>
+				<!-- 开启二级缓存，默认为开启 -->
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<!-- 配置缓存提供商为 EHCache -->
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+				<!-- 开启查询缓存，只对查询语句和参数都相同的 hql/sql 才进行缓存 -->
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+			</props>
+		</property>
+		<!-- 扫描实体包 -->
+		<property name="packagesToScan" value="cn.com.agree.aweb"></property>
+	</bean>
+	<!-- 阿里数据库连接池 -->
+	<bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<!-- 基本属性 url、user、password -->
+		<property name="url" value="jdbc:mysql://localhost:3306/aweb_testcase" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="10" />
+		<property name="minIdle" value="50" />
+		<property name="maxActive" value="50" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="false" />
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+		<!-- 配置监控统计拦截的filters -->
+<!-- 		<property name="filters" value="stat" /> -->
+	</bean>
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 配置 HibernateRepository 数据库操作对象 -->
+	<bean id="repository" class="cn.com.agree.aweb.pa.hibernate.HibernateRepository">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+
+	<!-- 配置spring的声明式事务 -->
+	<!-- 配置 Hibernate 事务管理器 -->
+	<bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 
+		使用基于注解的声明式事务，如果不设置 transaction-manager 属性，则默认值为 transactionManager。
+		tx:annotation-driven ： 激活 @Transactional 注解，否则基于注解的事务不生效。
+	-->
+	<tx:annotation-driven transaction-manager="txManager"/>
+</beans>

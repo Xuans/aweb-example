@@ -1,0 +1,188 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cn.com.agree.aweb</groupId>
+  <artifactId>demoproject</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>demoproject Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+		<spring.version>4.3.18.RELEASE</spring.version>
+		<aweb.version>6.0.0</aweb.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<logback.version>1.2.3</logback.version>
+		<junit.version>4.12</junit.version>
+		<servlet.version>3.1.0</servlet.version>
+	</properties>
+	
+	  <repositories>
+		<repository>
+			<id>aweb-release</id>
+			<name>aweb-release</name>
+			<url>https://www.awebide.com:7600/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+ </repositories>
+  
+  
+	<dependencies>
+		
+		 <!-- aweb依赖 -->
+	  <dependency>
+		   <groupId>galaxy.ide.tech.cpt.lib</groupId>
+		   <artifactId>galaxy.ide.tech.cpt.lib</artifactId>
+		   <version>1.0</version>
+	   </dependency>
+		
+	   <dependency>
+			<groupId>cn.com.agree.aweb</groupId>
+			<artifactId>aweb-asapi</artifactId>
+			<version>${aweb.version}</version>
+		</dependency> 
+		
+	   <dependency>
+			<groupId>cn.com.agree.aweb</groupId>
+			<artifactId>aweb-component</artifactId>
+			<version>${aweb.version}</version>
+		</dependency> 
+		
+		 <dependency>
+			<groupId>cn.com.agree.aweb</groupId>
+			<artifactId>aweb-webmvc</artifactId>
+			<version>${aweb.version}</version>
+		</dependency> 
+		 <dependency>
+			<groupId>cn.com.agree.aweb</groupId>
+			<artifactId>aweb-core</artifactId>
+			<version>${aweb.version}</version>
+		</dependency> 
+		
+		<dependency>
+			<groupId>cn.com.agree.aweb</groupId>
+			<artifactId>aweb-pa-hibernate</artifactId>
+			<version>${aweb.version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.9.8</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.9.8</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/javax.el/el-api -->
+		<dependency>
+		    <groupId>javax.el</groupId>
+		    <artifactId>el-api</artifactId>
+		    <version>2.2</version>
+		</dependency>
+		
+       <!-- mysql 连接驱动 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.46</version>
+		</dependency>
+		<!-- druid 连接池 -->
+		<dependency>
+	        <groupId>com.alibaba</groupId>
+	        <artifactId>druid</artifactId>
+	        <version>1.1.9</version>
+	    </dependency>
+		
+ 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>  
+		
+	   <dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency> 
+		
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>5.4.2.Final</version>
+		</dependency>
+		
+		<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+		</dependency> 
+	</dependencies>
+	
+	<build>
+	    <finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.15</version>
+				<configuration>
+					<workingDirectory>${basedir}/target</workingDirectory>
+					<threadCount>4</threadCount>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<!-- <webappDirectory>/</webappDirectory> -->
+					<webappDirectory>${basedir}/target/webapp</webappDirectory>
+					<warSourceExcludes>**/*.awb,**/*.layout,**/*.srv,**/*.ctrl,**/*.dict, **/*.fbcpt</warSourceExcludes>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<path></path>
+					<port>8080</port>
+					<uriEncoding>UTF-8</uriEncoding>
+					<warSourceDirectory>${basedir}/target/webapp</warSourceDirectory>
+					<contextReloadable>false</contextReloadable>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>

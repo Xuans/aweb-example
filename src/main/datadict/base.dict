@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<DataDictionary UUID="2CDCE5668C7643F0B49A822C4655B88E" description="基础数据字典" name="base"> 
+  
+  <DataField name="accCode" PUBCODECNAME="权限码" type="Integer" UUID="711A2B16DE7F46E39C906D93D1AFB8E6" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="createTime" PUBCODECNAME="创建时间" type="Date" UUID="96686F2DF990446FA0A78A3196FF422A" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="lockTime" PUBCODECNAME="锁定时间" type="Date" UUID="70F0C1E2F3634AFB92B87B26D7ADEEE1" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="remark" PUBCODECNAME="备注" type="String" UUID="5DAC07E6AD3142839AAE02B9C6C587BB" DICTTYPE="2" VerifyExpression="^[\\s\\S]+$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^[\\s\\S]+$</Expression>  
+      
+      <Message>备注不能为空</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^[\\s\\S]+$</Expression>  
+      
+      <Message>备注不能为空</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="nickname" PUBCODECNAME="别名" type="String" UUID="9C3A6913E6BF44BABEB0E12CB2973E12" DICTTYPE="2" VerifyExpression="^[\\u4e00-\\u9fa5]{4,8}$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^[\\u4e00-\\u9fa5]{4,8}$</Expression>  
+      
+      <Message>昵称必须为中文，长度为4至8位</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^[\\u4e00-\\u9fa5]{4,8}$</Expression>  
+      
+      <Message>昵称必须为中文，长度为4至8位</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="updateTime" PUBCODECNAME="更新时间" type="Date" UUID="E6BA43118BA446349B5FCA895C124B0C" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="lastFailedLoginTime" PUBCODECNAME="最后登录失败时间" type="Date" UUID="0D266835E8E44BF0B032E530DD91E367" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="roleName" PUBCODECNAME="角色名" type="String" UUID="9BD371540814488BAA5CAD968D358F79" DICTTYPE="2" VerifyExpression="^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$</Expression>  
+      
+      <Message>角色名必须字母开头，是字母、数字或下划线中的任两种的组合，长度为6至20位</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$</Expression>  
+      
+      <Message>角色名必须字母开头，是字母、数字或下划线中的任两种的组合，长度为6至20位</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="password" PUBCODECNAME="密码" type="String" UUID="25580FD0E381433198ED8729B48BB79B" DICTTYPE="2" VerifyExpression="^(?!^\\d+$)(?!^[a-zA-Z]+$)(?!^[~!#@&amp;%\\^\\$_\\(\\)\\*\\.]+$)(.{6,30})$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^(?!^\\d+$)(?!^[a-zA-Z]+$)(?!^[~!#@&amp;%\\^\\$_\\(\\)\\*\\.]+$)(.{6,30})$</Expression>  
+      
+      <Message>密码长度需在6-30之间，并且包含数字、字母和符号</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^(?!^\\d+$)(?!^[a-zA-Z]+$)(?!^[~!#@&amp;%\\^\\$_\\(\\)\\*\\.]+$)(.{6,30})$</Expression>  
+      
+      <Message>密码长度需在6-30之间，并且包含数字、字母和符号</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="failedLoginCount" PUBCODECNAME="登录失败次数" type="Integer" UUID="D5C796560F154AD1BE96F98851808CC8" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="userType" PUBCODECNAME="用户类型" type="String" UUID="8F4F9CA3541C4CF68BE819EC14C4EB5C" DICTTYPE="2" VerifyExpression="^\\w+$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^\\w+$</Expression>  
+      
+      <Message>用户类型不能为空</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^\\w+$</Expression>  
+      
+      <Message>用户类型不能为空</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="id" PUBCODECNAME="唯一标识" type="String" UUID="3DCDD817B05647B89070C76A1DE4CA5A" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="lastHostAddress" PUBCODECNAME="最后登录的主机地址" type="String" UUID="AB267947089D4936A436E92C5E33217F" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="username" PUBCODECNAME="用户名" type="String" UUID="D2757220479142BD822698C920A6805E" DICTTYPE="2" VerifyExpression="^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$</Expression>  
+      
+      <Message>用户名必须字母开头，是字母、数字或下划线中的任两种的组合，长度为6至20位</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$</Expression>  
+      
+      <Message>用户名必须字母开头，是字母、数字或下划线中的任两种的组合，长度为6至20位</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="createUser" PUBCODECNAME="创建人" type="String" UUID="A9821AB16B944CB787A3BF05DF263A2D" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="email" PUBCODECNAME="邮箱" type="String" UUID="C8A430A5F7514ED6BA677CF1FB4A0A6D" DICTTYPE="2" VerifyExpression="^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,4}$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,4}$</Expression>  
+      
+      <Message>请输入正确的邮箱格式</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,4}$</Expression>  
+      
+      <Message>请输入正确的邮箱格式</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="userId" PUBCODECNAME="用户唯一标识" type="String" UUID="B4BD7ADCF3B94FD092AC5839AEB208F0" DICTTYPE="2" VerifyExpression="^(?!\\d+$)(?![a-zA-Z]+$)(?!_+$)[a-zA-Z]{1}[a-zA-Z0-9_]{5,19}$"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="encryptPassword" PUBCODECNAME="加密密码" type="String" UUID="08D0E263D2084C2CBC630DB48979E469" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="accDesc" PUBCODECNAME="权限描述" type="String" UUID="2BD1C0B17A47402DAE282D6FA8903FB7" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="telephone" PUBCODECNAME="手机号" type="String" UUID="9A697874B7CF48B5A949AC1AA9E9D134" DICTTYPE="2" VerifyExpression="^[0-9]{6,11}$"> 
+    
+    <Domain> 
+      
+      <Type>ui</Type>  
+      
+      <Expression>^[0-9]{6,11}$</Expression>  
+      
+      <Message>手机不能为空</Message> 
+    
+    </Domain>  
+    
+    <Domain> 
+      
+      <Type>service</Type>  
+      
+      <Expression>^[0-9]{6,11}$</Expression>  
+      
+      <Message>手机不能为空</Message> 
+    
+    </Domain>  
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="lastLoginTime" PUBCODECNAME="最后成功登录时间" type="Date" UUID="07AFDA3382614F20AEFEFE97D0BA4AC2" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="roleIds" PUBCODECNAME="角色ID列表" type="String" COLSCALE="" UUID="2B943C1F264B47ADB795EC5A64215E3E" DICTTYPE="2" VALUEAREA=""> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField>  
+  
+  <DataField name="roleId" PUBCODECNAME="角色ID" type="String" UUID="D4ECD7C2D8F74BE09576E7AE069D27A6" DICTTYPE="2"> 
+    
+    <Parameter pname="字段长度"/> 
+  
+  </DataField> 
+</DataDictionary>

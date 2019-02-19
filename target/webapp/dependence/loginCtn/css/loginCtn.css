@@ -1,0 +1,50 @@
+[data-widget-type="aweb3DivCtn"] .login-panel{
+    background-color: #ffffff;
+    min-width: 272px;
+    min-height: 448px;
+    position: relative;
+    border-radius: 8px;
+    padding: 0 5em;
+    max-width: 296px;
+}
+[data-widget-type="aweb3DivCtn"] .login-panel input,[data-widget-type="aweb3DivCtn"] .login-panel button{
+    font-size:14px;
+}
+[data-widget-type="aweb3DivCtn"] .login-panel .login-circle-block{
+    background-color: #04bebd;
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    position: absolute;
+    left: 50%;
+    margin-left: -50px; /* (width + padding)/2 */
+    top: -50px;
+}
+[data-widget-type="aweb3DivCtn"] .login-panel  .login-none-block{
+    background-color: transparent !important;
+    height: 200px;
+    width: 150px;
+    border-radius: 100%;
+    position: absolute;
+    left: 50%;
+    margin-left: -75px; /* (width + padding)/2 */
+    top: -100px;
+}
+[data-widget-type="aweb3DivCtn"] .login-panel .login-item-title{
+    margin-bottom: 20px;
+    padding-top: 70px;
+    color: #a6a6a6;
+    font-size: 28px;
+    text-align: center;
+}
+
+[data-widget-type="aweb3DivCtn"] .login-panel span.login-logo{
+    position: relative;
+    top: -4%;
+    left: 13%;
+    font-size: 6em;
+    color: #ffffff;
+}
+[data-widget-type="aweb3DivCtn"] .login-panel span.login-logo img{
+    max-width: none;
+}

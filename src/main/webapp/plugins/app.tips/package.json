@@ -1,0 +1,91 @@
+{
+  "_from": "@aweb-plugins/app.tips@^6.0.0",
+  "_id": "@aweb-plugins/app.tips@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-LmYn8rBifOz4D2nf2C0TmOOx9gk=",
+  "_location": "/@aweb-plugins/app.tips",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.tips@^6.0.0",
+    "name": "@aweb-plugins/app.tips",
+    "escapedName": "@aweb-plugins%2fapp.tips",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.tips/download/@aweb-plugins/app.tips-6.0.0.tgz",
+  "_shasum": "2e6627f2b0627cecf80f69dfd82d1398e3b1f609",
+  "_spec": "@aweb-plugins/app.tips@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": {
+    "name": "lijiancheng@agree.com.cn"
+  },
+  "bundleDependencies": false,
+  "const": [
+    {
+      "category": "提示弹框类型",
+      "valueArray": [
+        "app.tips.ERROR",
+        "app.tips.SUCCESS",
+        "app.tips.WARNING",
+        "app.tips._DEFAULT"
+      ],
+      "despArray": [
+        "提示错误类型",
+        "提示成功类型",
+        "提示警告类型",
+        "默认类型"
+      ]
+    }
+  ],
+  "dependencies": {
+    "@aweb-plugins/app.alert": "^6.0.0",
+    "@aweb-plugins/app.modal": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "提示弹框的简单封装",
+  "docs": {
+    "name": "tips",
+    "desp": "提示弹框",
+    "belongTo": "closure",
+    "params": [
+      {
+        "name": "title",
+        "type": "string",
+        "desp": "标题",
+        "details": "消息标题，必需",
+        "necessary": true
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "desp": "提示信息",
+        "details": "可以使HTML代码，消息内容，必需",
+        "necessary": true
+      },
+      {
+        "name": "type",
+        "type": "string_select",
+        "desp": "提示类型",
+        "details": "有“_DEFAULT\"(默认),\"SUCCESS\"(成功),\"ERROR\"(错误),\"WARNING\"(警告)四种类型，使用时许引用app.tips.showType",
+        "necessary": true
+      }
+    ],
+    "appJsCode": "app.tips",
+    "hasReturn": false,
+    "compatibility": "ie8"
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.tips",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

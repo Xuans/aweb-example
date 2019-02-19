@@ -1,0 +1,196 @@
+
+.upload-ul {
+    position: relative;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+.upload-ul li {
+    position: relative;
+    float: left;
+    display: inline-block;
+    width: 259px;
+    height: 186px;
+    margin: 0 10px 10px 0;
+    padding: 0;
+    cursor: pointer;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.upload-pick {
+    /*background: url(./img/upload-bj.png) no-repeat 0 0;*/
+    text-align: center;
+    vertical-align: middle;
+    border: 1px dashed #cccccc;
+}
+
+.upload-pick-content i {
+    color: #008ec3;
+    font-size: 3em;
+    margin-top: 1em;
+
+}
+
+.upload-pick-content .upload-tip-title {
+    color: #666666;
+    font-size: 1.2em;
+    padding: 1em .5em .5em .5em;
+}
+
+.upload-pick-content .upload-tip {
+    color: #bbbbbb;
+    font-size: 1em;
+    line-height: 1.4em;
+    padding: .2em 5em;
+    word-wrap: break-word;
+}
+
+/*.upload-pick:hover{ background: url(./img/upload-bj.png) no-repeat 0 -90px; }*/
+.upload-pick-content {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    height: 100%;
+}
+
+.upload-label {
+    opacity: 0;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+    background: #fff;
+}
+.upload-fack {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    /*width: 120px;*/
+    /*height: 90px;*/
+    overflow: hidden;
+    bottom: 0;
+    right: 0;
+}
+.webuploader-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.webuploader-container.disabled-pick{
+    background-color: #eee;
+}
+
+.webuploader-container label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.webuploader-element-invisible {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+
+    clip: rect(1px 1px 1px 1px);
+    clip: rect(1px, 1px, 1px, 1px);
+}
+
+.viewThumb {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: .3rem;
+}
+
+.viewThumb img {
+    width: 100%;
+    height: 100%
+}
+
+.diyBar {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(./img/bgblack.png);
+    z-index: 3;
+}
+
+.diyProgress {
+    position: absolute;
+    left: 0;
+    top: 33px;
+    width: 100%;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    background: #0AA8F1;
+    z-index: 3;
+}
+
+.diyControl {
+    position: absolute;
+    display: block;
+    right: 4px;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    z-index: 3;
+    border-radius: 1em;
+    background-color: #000;
+    opacity: 0.5
+}
+
+.viewThumb:hover .diyControl {
+    display: block;
+}
+
+.diyControl span {
+    display: inline-block;
+}
+
+.diyControl span i {
+    display: block;
+    width: 12px;
+    height: 11px;
+    opacity: .7;
+    position: absolute;
+    right: 5px;
+    top: 8px;
+}
+
+.diyControl span i:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/*.diyLeft{ margin-left: 3px; }
+.diyLeft{ margin-right: 3px; }
+.diyLeft i{ margin-left: 3px; background: url(./img/upload-icon1.png) no-repeat 0 0; }*/
+.diyCancel i {
+    background: url(./img/upload-icon1.png) no-repeat 0 -11px;
+}
+
+/*.diyRight i{ margin-right: 3px; background: url(./img/upload-icon1.png) no-repeat 0 -22px; }*/
+.goods-edit .upload-tip {
+    font: 12px/23px "Microsoft YaHei";
+    color: #a3a3a3;
+    vertical-align: top;
+}

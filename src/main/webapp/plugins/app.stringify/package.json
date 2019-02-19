@@ -1,0 +1,92 @@
+{
+  "_from": "@aweb-plugins/app.stringify@^6.0.0",
+  "_id": "@aweb-plugins/app.stringify@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-hBq1NJGhUqOqmOdQVgKP4T4mqNk=",
+  "_location": "/@aweb-plugins/app.stringify",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.stringify@^6.0.0",
+    "name": "@aweb-plugins/app.stringify",
+    "escapedName": "@aweb-plugins%2fapp.stringify",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.setData"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.stringify/download/@aweb-plugins/app.stringify-6.0.0.tgz",
+  "_shasum": "841ab53491a152a3aa98e75056028fe13e26a8d9",
+  "_spec": "@aweb-plugins/app.stringify@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "将JavaScript对象转化成字符串，并将函数、对象序列化",
+  "docs": {
+    "name": "stringify",
+    "desp": "将JavaScript对象转化成字符串，并将函数、对象序列化",
+    "params": [
+      {
+        "name": "object",
+        "desp": "必需，JavaScript对象",
+        "type": "object",
+        "children": [
+          {
+            "name": "key1",
+            "desp": "键名1",
+            "type": "string",
+            "defaultValue": "value1",
+            "necessary": true
+          },
+          {
+            "name": "key2",
+            "desp": "键名2",
+            "type": "boolean",
+            "defaultValue": true,
+            "necessary": true
+          },
+          {
+            "name": "key3",
+            "desp": "键名3",
+            "type": "array",
+            "defaultValue": [],
+            "necessary": true
+          },
+          {
+            "name": "key4",
+            "desp": "键名4",
+            "type": "object",
+            "defaultValue": {},
+            "necessary": true
+          }
+        ],
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.stringify",
+    "returnValue": {
+      "name": "result",
+      "type": "string",
+      "desp": "将JavaScript对象序列化后的结果",
+      "defaultValue": "'{\"key1\":\"value1\",\"key2\":true,\"key3\":[],\"key4\":{}}'"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.stringify",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

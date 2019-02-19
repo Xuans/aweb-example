@@ -1,0 +1,62 @@
+{
+  "_from": "@aweb-plugins/app.getQueryStringMap@^6.0.0",
+  "_id": "@aweb-plugins/app.getQueryStringMap@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-XDf8fR+xC0aRMYtJo8mTkzTSBGc=",
+  "_location": "/@aweb-plugins/app.getQueryStringMap",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.getQueryStringMap@^6.0.0",
+    "name": "@aweb-plugins/app.getQueryStringMap",
+    "escapedName": "@aweb-plugins%2fapp.getQueryStringMap",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.getQueryStringMap/download/@aweb-plugins/app.getQueryStringMap-6.0.0.tgz",
+  "_shasum": "5c37fc7d1fb10b4691318b49a3c9939334d20467",
+  "_spec": "@aweb-plugins/app.getQueryStringMap@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取页面内查询字符串映射表",
+  "docs": {
+    "name": "getQueryStringMap",
+    "desp": "获取页面内查询字符串映射表",
+    "hasReturn": true,
+    "appJsCode": "app.getQueryStringMap",
+    "returnValue": {
+      "name": "queryStringMap",
+      "type": "object",
+      "desp": "页面内查询字符串列表",
+      "details": "以http://localhost:8080/index.html?timeStamp=12465为例",
+      "children": [
+        {
+          "name": "timeStamp",
+          "type": "string",
+          "desp": "键值对",
+          "defaultValue": "12465"
+        }
+      ]
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.getQueryStringMap",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

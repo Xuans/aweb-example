@@ -1,0 +1,182 @@
+{
+  "_from": "@aweb-plugins/app.validate@^6.0.5",
+  "_id": "@aweb-plugins/app.validate@6.0.5",
+  "_inBundle": false,
+  "_integrity": "sha1-1dx390UkhCehh+fSuvZo4xRkXBA=",
+  "_location": "/@aweb-plugins/app.validate",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.validate@^6.0.5",
+    "name": "@aweb-plugins/app.validate",
+    "escapedName": "@aweb-plugins%2fapp.validate",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.5",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.5"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.ajax"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.validate/download/@aweb-plugins/app.validate-6.0.5.tgz",
+  "_shasum": "d5dc77f745248427a187e7d2baf668e314645c10",
+  "_spec": "@aweb-plugins/app.validate@^6.0.5",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "const": [],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "表单校验",
+  "docs": {
+    "name": "validate",
+    "desp": "表单校验",
+    "belongTo": "closure",
+    "params": [
+      {
+        "name": "data",
+        "desp": "校验的元素",
+        "type": "array",
+        "children": [
+          {
+            "name": "name",
+            "type": "string",
+            "details": "必需，表示需要传输到后台的名称，在AWEB中，name由别名和名称组成（alias+name）",
+            "desp": "字段名称",
+            "necessary": true
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "desp": "值",
+            "details": "非必需，表示需要传输到后台的值",
+            "necessary": true
+          },
+          {
+            "name": "validate",
+            "type": "object",
+            "desp": "校验的信息",
+            "details": "必需，表示需要校验的信息",
+            "children": [
+              {
+                "name": " context",
+                "desp": "jQuery对象或者选择器",
+                "type": "jQuery",
+                "details": "表示输入元素DOM对象的上下文"
+              },
+              {
+                "name": "id",
+                "desp": "输入元素的jQuery选择器",
+                "type": "string",
+                "details": "如果data[i].value为空，则从此处获取元素的值"
+              },
+              {
+                "name": "regex",
+                "desp": "校验类型或正则表达式",
+                "type": "string",
+                "details": "如果为false、undefined、null，则表示无需校验。校验类型，可以通过app.validate.TYPE获取"
+              },
+              {
+                "name": "errorMsg",
+                "details": "需要校验时必需，校验错误是记录或显示的提示语句",
+                "type": "string",
+                "desp": "校验类型或者正则"
+              }
+            ],
+            "necessary": true
+          }
+        ],
+        "necessary": true
+      },
+      {
+        "name": "successCallback",
+        "type": "handler",
+        "desp": "校验正确后执行的函数",
+        "details": "函数，非必需，表示校验正确后执行的函数。$elem，jQuery对象，表示被校验的元素，由$(data.id,data.context)获取",
+        "necessary": false
+      },
+      {
+        "name": "errorCallback",
+        "type": "handler",
+        "desp": "校验失败后执行的函数",
+        "details": "数，非必需，表示校验错误后执行的函数。$elem，jQuery对象，表示被校验的元素，由$(data.id,data.context)获取，errorMsg，字符串，表示错误校验失败的提示语句",
+        "necessary": false
+      },
+      {
+        "name": "cleanCallback",
+        "type": "handler",
+        "desp": "清理错误提示回调函数",
+        "details": "函数，非必需，表示清理错误提示回调函数。其中函数中的this指向被校验的DOM元素",
+        "necessary": false
+      },
+      {
+        "name": "isContinue",
+        "type": "boolean",
+        "desp": "校验错误后是否继续校验data余下部分",
+        "details": "布尔值，非必需，表示校验错误后是否继续校验data余下部分",
+        "necessary": false
+      },
+      {
+        "name": "isValidate",
+        "type": "boolean",
+        "desp": "是否进行校验",
+        "details": "布尔值，非必需，如果等于false，则直接返回data部分的实际数据",
+        "defaultValue": true,
+        "necessary": false
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.validate",
+    "returnValue": {
+      "name": "validateResult",
+      "type": "object",
+      "desp": "校验结果对象",
+      "children": [
+        {
+          "name": "result",
+          "type": "boolean",
+          "desp": "是否校验正确",
+          "details": "布尔值，表示是否校验正确，当data中的所有元素都校验成功时，就返回true，否则返回false"
+        },
+        {
+          "name": "data",
+          "type": "array",
+          "desp": "校验元素的信息",
+          "details": "数组对象，记录校验元素的信息",
+          "children": [
+            {
+              "name": "name",
+              "desp": "校验字段的名称",
+              "type": "string",
+              "details": "字符串，校验字段的名称，与data[i].name相同"
+            },
+            {
+              "name": "value",
+              "details": "字符串，校验字段的值，与data[i].value||$(data.id,data.context).val()相同",
+              "type": "string",
+              "desp": "校验字段的值"
+            },
+            {
+              "name": "errorMsg",
+              "details": "字符串，校验失败时，出现的错误提示",
+              "type": "string",
+              "desp": "错误提示"
+            }
+          ]
+        }
+      ]
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.validate",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.5"
+}

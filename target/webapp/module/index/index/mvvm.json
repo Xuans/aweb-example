@@ -1,0 +1,13 @@
+{
+        "views": {
+          "index": {
+            "template": "index.html",
+            "js": "index.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "index"
+          }
+        ]
+      }

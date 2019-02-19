@@ -1,0 +1,13 @@
+{
+        "views": {
+          "loginPage": {
+            "template": "loginPage.html",
+            "js": "loginPage.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "loginPage"
+          }
+        ]
+      }

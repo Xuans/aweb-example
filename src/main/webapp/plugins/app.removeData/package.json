@@ -1,0 +1,72 @@
+{
+  "_from": "@aweb-plugins/app.removeData@^6.0.0",
+  "_id": "@aweb-plugins/app.removeData@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-YOlC59fL1YcEkwNdkTdPhis3WxU=",
+  "_location": "/@aweb-plugins/app.removeData",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.removeData@^6.0.0",
+    "name": "@aweb-plugins/app.removeData",
+    "escapedName": "@aweb-plugins%2fapp.removeData",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.removeData/download/@aweb-plugins/app.removeData-6.0.0.tgz",
+  "_shasum": "60e942e7d7cbd5870493035d91374f862b375b15",
+  "_spec": "@aweb-plugins/app.removeData@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {
+    "@aweb-plugins/app.setData": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "删除浏览器数据",
+  "docs": {
+    "name": "removeData",
+    "desp": "删除浏览器数据",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "desp": "存储的数据名称",
+        "details": "字符串，删除数据的名称，必需",
+        "necessary": true
+      },
+      {
+        "name": "fromCookie",
+        "type": "boolean",
+        "desp": "是否从cookie中获取数据",
+        "defaultValue": false,
+        "details": "布尔型，是否从cookie中删除数据，默认情况先尝试从localStorage中删除，如果失败，则尝试从cookie删除，非必需",
+        "necessary": false
+      }
+    ],
+    "appJsCode": "app.removeData",
+    "hasReturn": true,
+    "returnValue": {
+      "name": "result",
+      "type": "boolean",
+      "desp": "删除结果",
+      "details": "布尔型，是否删除数据成功"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.removeData",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

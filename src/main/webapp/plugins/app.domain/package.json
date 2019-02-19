@@ -1,0 +1,145 @@
+{
+  "_from": "@aweb-plugins/app.domain@^6.0.0",
+  "_id": "@aweb-plugins/app.domain@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-kV6DLCw9B15UXLlgGo8Hvm7GPE8=",
+  "_location": "/@aweb-plugins/app.domain",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.domain@^6.0.0",
+    "name": "@aweb-plugins/app.domain",
+    "escapedName": "@aweb-plugins%2fapp.domain",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.domain/download/@aweb-plugins/app.domain-6.0.0.tgz",
+  "_shasum": "915e832c2c3d075e545cb9601a8f07be6ec63c4f",
+  "_spec": "@aweb-plugins/app.domain@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "公共数据缓存池",
+  "docs": {
+    "name": "domain",
+    "desp": "公共数据缓存池",
+    "belongTo": "class",
+    "appJsCode": "app.domain",
+    "cInterfaces": [
+      {
+        "name": "exports",
+        "desp": "将数据写入公共数据缓存池",
+        "params": [
+          {
+            "name": "namespace",
+            "type": "string",
+            "desp": "命名空间",
+            "defaultValue": "page",
+            "details": "必需，字符串类型，储存数据的命名空间；",
+            "necessary": true
+          },
+          {
+            "name": "data",
+            "type": "object",
+            "desp": "JavaScript对象数据",
+            "details": "必需，json数据，需要跨页储存的数据；",
+            "necessary": true,
+            "children": [
+              {
+                "name": "key1",
+                "desp": "键名1",
+                "type": "string",
+                "defaultValue": "value1",
+                "necessary": true
+              },
+              {
+                "name": "key2",
+                "desp": "键名2",
+                "type": "boolean",
+                "defaultValue": true,
+                "necessary": false
+              },
+              {
+                "name": "key3",
+                "desp": "键名3",
+                "type": "array",
+                "defaultValue": [],
+                "necessary": false
+              },
+              {
+                "name": "key4",
+                "desp": "键名4",
+                "type": "object",
+                "defaultValue": {},
+                "necessary": false
+              }
+            ]
+          }
+        ],
+        "hasReturn": false
+      },
+      {
+        "name": "get",
+        "desp": "获取公共数据缓存池的数据",
+        "params": [
+          {
+            "name": "namespace",
+            "type": "string",
+            "desp": "命名空间",
+            "defaultValue": "page",
+            "details": "必需，字符串类型，储存数据的命名空间；",
+            "necessary": true
+          },
+          {
+            "name": "key",
+            "type": "string",
+            "desp": "存取数据的键",
+            "defaultValue": "key4",
+            "details": "非必需，字符串类型，储存数据的键",
+            "necessary": false
+          }
+        ],
+        "hasReturn": true,
+        "returnValue": {
+          "name": "data",
+          "type": "object",
+          "defaultValue": {},
+          "desp": "当键（key）没有声明的情况下，将返回命名空间下所有的数据副本 ；否则将返回该命名空间下该键中的数据副本"
+        }
+      },
+      {
+        "name": "clearScope",
+        "desp": "清除公共数据缓存池某个命名空间下的数据",
+        "params": [
+          {
+            "name": "namespace",
+            "type": "string",
+            "desp": "命名空间",
+            "details": "必需，字符串类型，储存数据的命名空间",
+            "necessary": true
+          }
+        ],
+        "hasReturn": false
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.domain",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

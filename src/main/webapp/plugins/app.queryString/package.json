@@ -1,0 +1,64 @@
+{
+  "_from": "@aweb-plugins/app.queryString@^6.0.0",
+  "_id": "@aweb-plugins/app.queryString@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-FZEokUfsGCjp08V/5CcMNJ1C60E=",
+  "_location": "/@aweb-plugins/app.queryString",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.queryString@^6.0.0",
+    "name": "@aweb-plugins/app.queryString",
+    "escapedName": "@aweb-plugins%2fapp.queryString",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.queryString/download/@aweb-plugins/app.queryString-6.0.0.tgz",
+  "_shasum": "1591289147ec1828e9d3c57fe4270c349d42eb41",
+  "_spec": "@aweb-plugins/app.queryString@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "数据操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取页面内查询字符串",
+  "docs": {
+    "name": "queryString",
+    "desp": "获取页面内查询字符串",
+    "params": [
+      {
+        "name": "key",
+        "type": "string",
+        "desp": "queryString的键名",
+        "details": "以http://localhost:8080/index.html?timeStamp=12465为例",
+        "defaultValue": "timeStamp",
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.queryString",
+    "returnValue": {
+      "name": "value",
+      "type": "string",
+      "desp": "queryString对应键名的值",
+      "details": "字符串，返回queryString对应键名的值，若queryString不存在该键名的值，则返回空字符串",
+      "defaultValue": "12465"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.queryString",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

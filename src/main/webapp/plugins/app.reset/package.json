@@ -1,0 +1,65 @@
+{
+  "_from": "@aweb-plugins/app.reset@^6.0.0",
+  "_id": "@aweb-plugins/app.reset@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-cJwuBJIpTkZaQx/u7kUPjjt9tTA=",
+  "_location": "/@aweb-plugins/app.reset",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.reset@^6.0.0",
+    "name": "@aweb-plugins/app.reset",
+    "escapedName": "@aweb-plugins%2fapp.reset",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.modal"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.reset/download/@aweb-plugins/app.reset-6.0.0.tgz",
+  "_shasum": "709c2e0492294e465a431feeee450f8e3b7db530",
+  "_spec": "@aweb-plugins/app.reset@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "重置表单",
+  "docs": {
+    "name": "reset",
+    "desp": "重置表单",
+    "details": "将表单内的表单元素的值设置为空或清除选中。弃用接口，不建议使用",
+    "hasReturn": false,
+    "appJsCode": "app.reset",
+    "params": [
+      {
+        "name": "$form",
+        "type": "jQuery",
+        "desp": "表单容器的jQuery对象",
+        "details": "必需，表示表单容器的jQuery对象",
+        "necessary": true
+      },
+      {
+        "name": "auiCtx",
+        "type": "object",
+        "desp": "页面上下文",
+        "details": "必需，就填auiCtx这个对象，表示页面的上下文",
+        "necessary": true
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.reset",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

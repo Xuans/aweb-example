@@ -1,0 +1,25 @@
+{
+    "status": true,
+    "errorMsg": "",
+    "content": {
+        "result": [{
+            "name": "AWEB 社区",
+            "href": "https://www.awebide.com/"
+        }, {
+            "name": "AWEB 开发者中心",
+            "href": "https://www.awebide.com/develop/"
+        }, {
+            "name": "资源市场",
+            "href": "https://www.awebide.com:7002"
+        }, {
+            "name": "桌面示例",
+            "href": "https://www.awebide.com/testCase/"
+        }, {
+            "name": "监控示例",
+            "href": "https://www.awebide.com/monitorCase/"
+        }, {
+            "name": "移动示例",
+            "href": "https://www.awebide.com/AWEB_Mobile/"
+        }]
+    }
+}

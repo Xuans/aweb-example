@@ -1,0 +1,13 @@
+{
+        "views": {
+          "changePassword": {
+            "template": "changePassword.html",
+            "js": "changePassword.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "changePassword"
+          }
+        ]
+      }

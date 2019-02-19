@@ -1,0 +1,215 @@
+
+/*
+    desp:AWEB Popover 气泡
+    author:xieyirong.com.cn
+    date:2018-03-23
+    version：AUI 5.0.0 dev
+*/
+
+// Drop shadows
+.box-shadow(@shadow) {
+  -webkit-box-shadow: @shadow;
+  -moz-box-shadow: @shadow;
+  box-shadow: @shadow;
+}
+
+//base
+@sansFontFamily:        sans-serif,Arial;
+@borderRadiusLarge:     6px;
+
+
+//== Popovers
+
+//zindex
+@zindexPopover:           1051;
+
+@popoverFontColor:                 #a6a6a6;
+@popoverBackground:                 rgba(255,255,255,0.98);
+@popoverMaxWidth:                   276px;
+@popoverBorderColor:                rgba(0,0,0,.2);
+@popoverTitleBackground:            rgba(255,255,255,0.98);
+@popoverArrowWidth:                 10px;
+@popoverArrowColor:                 rgba(255, 255, 255, 0.99);
+@popoverArrowOuterWidth:           (@popoverArrowWidth + 1);
+@popoverArrowOuterColor:           fadein(@popoverBorderColor, 5%);
+
+
+.aweb-popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: @zindexPopover;
+  display: none;
+  box-sizing: border-box;
+  padding: 1px;
+  font-size: @sansFontFamily;
+
+  background-color: @popoverBackground;
+  background-clip: padding-box;
+  border: 1px solid @popoverBorderColor;
+  border-radius: @borderRadiusLarge;
+  .box-shadow(0 0 1em #666);
+  outline: none;
+
+  // Offset the popover to account for the popover arrow
+  &.top     { margin-top: -@popoverArrowWidth; }
+  &.right   { margin-left: @popoverArrowWidth; }
+  &.bottom  { margin-top: @popoverArrowWidth; }
+  &.left    { margin-left: -@popoverArrowWidth; }
+
+  &.popover-lg {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+}
+
+
+.aweb-popover-header {
+
+  // icon
+  i.aweb-popover-header-icon {
+    margin-top: 6px;
+    margin-right: 9px;
+    font-size: 24px;
+    color: @popoverFontColor;
+    &:hover{
+      color: #888888;
+    }
+    
+    &.aui {
+      font-size: 18px;
+    }
+
+    &.fa {
+      font-size: 18px;
+      font-weight: lighter;
+    }
+
+    &.iconfont {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: bold;
+    }
+
+  }
+
+  > .btn-group {
+    position: absolute;
+    top: 0.1em;
+    right: 0.1em;
+  }
+
+  button {
+    display: inline-block;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+}
+
+.aweb-popover-title {
+  margin: 0; // reset heading margin
+  padding: 8px 14px;
+  font-size: @sansFontFamily;
+  background-color: @popoverTitleBackground;
+  border-bottom: 1px solid darken(@popoverTitleBackground, 5%);
+  border-radius: (@borderRadiusLarge - 1) (@borderRadiusLarge - 1) 0 0;
+}
+
+.aweb-popover-body {
+  position: relative;
+  overflow-y: auto;
+}
+
+.aweb-popover-content {
+  overflow-y: auto;
+}
+
+// Arrows
+//
+// .arrow is outer, .arrow:after is inner
+
+.aweb-popover > .arrow {
+  &,
+  &:after {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+  }
+}
+.aweb-popover > .arrow {
+  border-width: @popoverArrowOuterWidth;
+}
+.aweb-popover > .arrow:after {
+  border-width: @popoverArrowWidth;
+  content: "";
+}
+
+.aweb-popover {
+  &.top > .arrow {
+    left: 50%;
+    margin-left: -@popoverArrowOuterWidth;
+    border-bottom-width: 0;
+    border-top-color: @popoverArrowOuterColor;
+    bottom: -@popoverArrowOuterWidth;
+    &:after {
+      content: " ";
+      bottom: 1px;
+      margin-left: -@popoverArrowWidth;
+      border-bottom-width: 0;
+      border-top-color: @popoverArrowColor;
+    }
+  }
+  &.right > .arrow {
+    top: 50%;
+    left: -@popoverArrowOuterWidth;
+    margin-top: -@popoverArrowOuterWidth;
+    border-left-width: 0;
+    border-right-color: @popoverArrowOuterColor;
+    &:after {
+      content: " ";
+      left: 1px;
+      bottom: -@popoverArrowWidth;
+      border-left-width: 0;
+      border-right-color: @popoverArrowColor;
+    }
+  }
+  &.bottom > .arrow {
+    left: 50%;
+    margin-left: -@popoverArrowOuterWidth;
+    border-top-width: 0;
+    border-bottom-color: @popoverArrowOuterColor;
+    top: -@popoverArrowOuterWidth;
+    &:after {
+      content: " ";
+      top: 1px;
+      margin-left: -@popoverArrowWidth;
+      border-top-width: 0;
+      border-bottom-color: @popoverArrowColor;
+    }
+  }
+
+  &.left > .arrow {
+    top: 50%;
+    right: -@popoverArrowOuterWidth;
+    margin-top: -@popoverArrowOuterWidth;
+    border-right-width: 0;
+    border-left-color: @popoverArrowOuterColor;
+    &:after {
+      content: " ";
+      right: 1px;
+      border-right-width: 0;
+      border-left-color: @popoverArrowColor;
+      bottom: -@popoverArrowWidth;
+    }
+  }
+}
+
+/**********Popover End****************/

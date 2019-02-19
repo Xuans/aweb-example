@@ -1,0 +1,104 @@
+@borderStyle: 1px solid #EFEFEF;
+@btnSize:34px;
+@fontColor:#666;
+@themeColor:#04bebd;
+
+[data-widget-type="aweb4FoundationWysiwyg"]{
+    .ws-fullscreen{
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: white;
+        height: 100%;
+        z-index: 1052;
+        overflow: hidden;
+
+        [data-role=editor]{
+            position: absolute;
+            top: @btnSize + 10px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: auto;
+        }
+    }
+
+
+    .ws-btn-toolbar{
+        display: block;
+        border-bottom: @borderStyle;
+        margin-bottom: 1em;
+        line-height: 0;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none
+    }
+
+    .ws-btn-group{
+        position: relative;
+        display: inline-block;
+        text-align: center;
+
+        >.ws-btn{
+            display: inline-block;
+            line-height: @btnSize;
+            height: @btnSize;
+            width: @btnSize;
+            padding: 0 1em;
+            overflow: hidden;
+            color:@fontColor;
+
+            &:hover{
+                color:@themeColor;
+            }
+
+            &.ws-btn-active{
+                background-color: #f2f2f2;
+            }
+        }
+
+        >[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            overflow: hidden;
+            opacity: 0;
+            z-index: 1;
+            cursor: pointer;
+
+            &:hover {
+                + .ws-btn {
+                    color: @themeColor;
+                }
+            }
+        }
+
+        +.ws-btn-group{
+            border-left:@borderStyle;
+        }
+    }
+
+    [data-role=editor]{
+        line-height: 1.25;
+        padding:10px;
+        border:none;
+        outline:0;
+        height:300px;
+        overflow: auto;
+
+        *{
+            line-height: 1.8;
+        }
+
+        ol,li{
+            list-style-type: decimal;
+        }
+    }
+}

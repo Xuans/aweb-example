@@ -1,0 +1,46 @@
+.example{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+}
+.example-content{
+    width:100%;
+    max-width:800px;
+}
+
+.example-pharse{
+    font-size:18px;
+}
+.example-link-list{
+    display:flex;
+    width:100%;
+    margin:10px 0;
+}
+.example-link-item{
+    padding:2em;
+    margin:1em;
+    border-radius:6px;
+    box-shadow: 3px 4px 1px 1px #efefef;
+}
+.example-btn-groups{
+    margin:3em;
+}
+.example-btn-groups .btn{
+    border-radius:2em;
+    background-color:#04bebd;
+}
+.example-btn-groups .btn:hover,
+.example-btn-groups .btn:focus,
+.example-btn-groups .btn:active{
+    background-color:#00a4af;
+}
+
+.example-footer{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color:white;
+    padding:1em 0;
+    text-align:center;
+}

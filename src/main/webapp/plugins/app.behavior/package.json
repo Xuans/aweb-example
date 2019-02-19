@@ -1,0 +1,102 @@
+{
+  "_from": "@aweb-plugins/app.behavior@^6.0.0",
+  "_id": "@aweb-plugins/app.behavior@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-hdeMxpaLNtWLG6+7ttxX4EiEmg0=",
+  "_location": "/@aweb-plugins/app.behavior",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.behavior@^6.0.0",
+    "name": "@aweb-plugins/app.behavior",
+    "escapedName": "@aweb-plugins%2fapp.behavior",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.behavior/download/@aweb-plugins/app.behavior-6.0.0.tgz",
+  "_shasum": "85d78cc6968b36d58b1bafbbb6dc57e048849a0d",
+  "_spec": "@aweb-plugins/app.behavior@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [
+    {
+      "category": "行为接口比较条件",
+      "valueArray": [
+        "app.behavior.LESS_THAN",
+        "app.behavior.EQUAL",
+        "app.behavior.GREAT_THAN",
+        "app.behavior.NOT",
+        "app.behavior.INCLUDES",
+        "app.behavior.NOT_INCLUDES",
+        "app.behavior.STARTS_WITH"
+      ],
+      "despArray": [
+        "小于",
+        "等于",
+        "大于",
+        "不等于",
+        "包含",
+        "不包含",
+        "以…开头"
+      ]
+    }
+  ],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "行为接口",
+  "docs": {
+    "name": "behavior",
+    "desp": "行为接口",
+    "belongTo": "closure",
+    "appJsCode": "app.behavior",
+    "params": [
+      {
+        "name": "input1",
+        "desp": "输入值",
+        "details": "输入值一般从组件中获取,比较类型：小于、大于时：数字；等于、不等于时：字符串、数字、对象、数组、null；包含、不包含时：字符串、数组、对象；其中数组的格式为[1,2,3,\"a\",\"b\",\"c\"]，对象格式为{\"a\":1,\"b\":[],\"c\":\"abc\"}",
+        "type": "string",
+        "necessary": true
+      },
+      {
+        "name": "input2",
+        "desp": "比较值",
+        "details": "比较类型：小于、大于时：数字；等于、不等于时：字符串、数字、对象、数组、null；包含、不包含时：字符串、数组、对象；其中数组的格式为[1,2,3,\"a\",\"b\",\"c\"]，对象格式为{\"a\":1,\"b\":[],\"c\":\"abc\"}",
+        "type": "string",
+        "necessary": true
+      },
+      {
+        "desp": "比较条件",
+        "name": "condition",
+        "details": "比较字段值和输入值返回结果。例如：\n小于：字段值0，比较值1，返回true；\n等于：字段值0，比较值1，返回false；\n不等于：字段值：1，比较值2，返回true；\n包含：字段值\"abc\"，比较值\"startabc\"，返回true；\n字段值\"a\"，比较值[1,2,]，返回true；\n开头：字段值\"abc\"，比较值\"abcd\"，返回true；",
+        "type": "string",
+        "necessary": true
+      },
+      {
+        "desp": "回调函数",
+        "name": "callback",
+        "defaultValue": "function(result,input1,input2,condition){}",
+        "details": "将比较结果（result）、输入值（input1）、比较值（input2）、比较条件（condition）传个回调函数，进行处理",
+        "type": "handler",
+        "necessary": true
+      }
+    ],
+    "hasReturn": false,
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.behavior",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

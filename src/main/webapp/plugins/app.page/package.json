@@ -1,0 +1,172 @@
+{
+  "_from": "@aweb-plugins/app.page@^6.0.0",
+  "_id": "@aweb-plugins/app.page@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-YKYXgC5hdqTfiuAyNzq05FygRNA=",
+  "_location": "/@aweb-plugins/app.page",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.page@^6.0.0",
+    "name": "@aweb-plugins/app.page",
+    "escapedName": "@aweb-plugins%2fapp.page",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.page/download/@aweb-plugins/app.page-6.0.0.tgz",
+  "_shasum": "60a617802e6176a4df8ae032373ab4e45ca044d0",
+  "_spec": "@aweb-plugins/app.page@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "标签页",
+  "const": [],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "标签页操作",
+  "docs": {
+    "name": "page",
+    "desp": "标签页操作",
+    "belongTo": "class",
+    "appJsCode": "app.page",
+    "cInterfaces": [
+      {
+        "name": "refresh",
+        "desp": "刷新当前标签页",
+        "hasReturn": false
+      },
+      {
+        "name": "close",
+        "desp": "关闭当前标签页",
+        "hasReturn": false
+      },
+      {
+        "name": "closeAll",
+        "desp": "关闭所有页面",
+        "hasReturn": false,
+        "params": [
+          {
+            "name": "tips",
+            "type": "string",
+            "details": "关闭窗口时的提示，如果为空，则不显示遮罩",
+            "desp": "关闭窗口遮罩提示",
+            "necessary": false
+          }
+        ]
+      },
+      {
+        "name": "updateCurrentInterval",
+        "desp": "更新当前页面轮询配置",
+        "params": [
+          {
+            "type": "string",
+            "desp": "轮询操作唯一标识",
+            "name": "uniqueId",
+            "defaultValue": "auiCtx.intervals.轮询ID",
+            "necessary": true
+          },
+          {
+            "type": "object",
+            "desp": "轮询参数",
+            "name": "option",
+            "children": [
+              {
+                "type": "number",
+                "desp": "时钟（ms）",
+                "details": "超时时间或轮询时间",
+                "name": "clock",
+                "defaultValue": "1000"
+              },
+              {
+                "type": "boolean",
+                "desp": "立即执行",
+                "details": "页面初始化时是否直接执行代码不用等待时钟超时",
+                "name": "immediate",
+                "defaultValue": "false"
+              },
+              {
+                "type": "boolean",
+                "desp": "切出暂停",
+                "details": "切出页面时暂停轮询",
+                "name": "isPause",
+                "defaultValue": "true"
+              },
+              {
+                "type": "number",
+                "desp": "执行次数",
+                "details": "轮询执行次数，当为0时表示页面生命周期内不断执行",
+                "placeholder": "当为0时表示页面生命周期内不断执行",
+                "name": "times",
+                "defaultValue": "0"
+              }
+            ],
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "fullscreen",
+        "desp": "全屏",
+        "params": [
+          {
+            "type": "boolean",
+            "desp": "是否全屏",
+            "name": "fullscreen",
+            "defaultValue": "true",
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "isFullScreen",
+        "desp": "是否全屏中",
+        "hasReturn": true,
+        "returnValue": {
+          "name": "screenIsFull",
+          "type": "boolean",
+          "desp": "是否全屏中",
+          "defaultValue": "true"
+        }
+      },
+      {
+        "name": "displayNav",
+        "desp": "显示或隐藏导航",
+        "params": [
+          {
+            "type": "boolean",
+            "desp": "是否显示导航",
+            "name": "show",
+            "defaultValue": "true",
+            "necessary": true
+          }
+        ]
+      },
+      {
+        "name": "isDisplayNav",
+        "desp": "是否显示导航栏中",
+        "hasReturn": true,
+        "returnValue": {
+          "name": "NavIsDisplay",
+          "type": "boolean",
+          "desp": "是否显示导航栏中",
+          "defaultValue": "true"
+        }
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.page",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

@@ -1,0 +1,50 @@
+{
+  "_from": "@aweb-plugins/app.select@^6.0.0",
+  "_id": "@aweb-plugins/app.select@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-ZRo/f8y5xQFxp4UDYLWwJZz5zIQ=",
+  "_location": "/@aweb-plugins/app.select",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.select@^6.0.0",
+    "name": "@aweb-plugins/app.select",
+    "escapedName": "@aweb-plugins%2fapp.select",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.select/download/@aweb-plugins/app.select-6.0.0.tgz",
+  "_shasum": "651a3f7fccb9c50171a7850360b5b0259cf9cc84",
+  "_spec": "@aweb-plugins/app.select@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [],
+  "dependencies": {},
+  "deprecated": false,
+  "description": "选择",
+  "docs": {
+    "name": "select",
+    "desp": "选择",
+    "hidden": true,
+    "hasReturn": false,
+    "appJsCode": "app.select",
+    "details": "该方法用于表格单选、多选",
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.select",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

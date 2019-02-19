@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<DataDictionary UUID="D3485760281143018909E802E31C98EF" description="we" type="fwee">
+  <DataField name="str" PUBCODECNAME="字符串类型" type="String" UUID="43446E02D93845A1A5E6484E3130E8C3" DICTTYPE="0">
+    <Parameter pname="字段长度"/>
+  </DataField>
+  <DataField name="date" PUBCODECNAME="日期类型" type="Date" UUID="A794A6312B2B4A8FB07E9FC97D3211FA" DICTTYPE="0">
+    <Parameter pname="字段长度"/>
+  </DataField>
+  <DataField name="clob" PUBCODECNAME="Clob类型" type="Clob" UUID="3D189AB8B88440F3B2D2D88EB764E8CA" DICTTYPE="0">
+    <Parameter pname="字段长度"/>
+  </DataField>
+  <DataField name="time" PUBCODECNAME="时间类型" type="Time" UUID="6D9EBF1BB2274E26AC0BA677EA16E919" DICTTYPE="0">
+    <Parameter pname="字段长度"/>
+  </DataField>
+</DataDictionary>

@@ -1,0 +1,13 @@
+{
+        "views": {
+          "roleList": {
+            "template": "roleList.html",
+            "js": "roleList.js"
+          }
+        },
+        "flows": [
+          {
+            "id": "roleList"
+          }
+        ]
+      }

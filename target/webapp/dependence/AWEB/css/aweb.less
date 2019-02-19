@@ -1,0 +1,1813 @@
+/*
+    desp:AWEB UI框架
+    author:lijiancheng@agree.com.cn
+    date:2017-01-19
+    version：AUI 4.2.0 dev
+*/
+
+//变量
+@import "./code/aweb-variables.less";
+//函数
+@import "./code/aweb-mixins.less";
+
+//重置
+/*******************标签 Start****************************/
+html {
+  height:100%;
+  font-size: @baseFontSize;
+  //font-size: 75%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: transparent;
+  margin: 0;
+  font-family: @baseFontFamily;
+  font-size: @baseFontSize;
+  line-height: @baseLineHeight;
+  color: @textColor;
+  cursor: default;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+  display: block;
+}
+
+audio,
+canvas,
+video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+
+audio:not([controls]) {
+  display: none;
+}
+
+a {
+  color: @linkColor;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:focus {
+    .tab-focus();
+  }
+
+  &:hover,
+  &:active {
+    outline: 0;
+  }
+
+  &:hover,
+  &:focus {
+    color: @linkColorHover;
+    text-decoration: underline;
+
+    &.muted {
+      color: darken(@grayLight, 10%);
+    }
+    &.text-warning {
+      color: darken(@warningText, 10%);
+    }
+    &.text-error {
+      color: darken(@errorText, 10%);
+    }
+    &.text-info {
+      color: darken(@infoText, 10%);
+    }
+    &.text-success {
+      color: darken(@successText, 10%);
+    }
+  }
+}
+
+
+img {
+  /* Responsive images (ensure images don't scale beyond their parents) */
+  max-width: 100%; /* Part 1: Set a maxium relative to the parent */
+  //width: auto\9; /* IE7-8 need help adjusting responsive images */
+  height: auto; /* Part 2: Scale the height according to the width, otherwise you get stretching */
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font-size: 100%;
+  vertical-align: middle;
+  font-family: @baseFontFamily;
+  border:none ;
+  outline:0 ;
+}
+//兼容firefox
+input,textarea{
+   &[required],
+   &:focus,
+   &[pattern],
+   &:required{
+     &:invalid{
+       box-shadow: none;
+       -moz-box-shadow:none;
+     }
+   }
+}
+
+button,
+input {
+  *overflow: visible; // Inner spacing ie IE6/7
+  line-height: normal; // FF3/4 have !important on line-height in UA stylesheet
+
+  &::-moz-focus-inner,
+  &::-moz-focus-inner { // Inner padding and border oddities in FF3/4
+    padding: 0;
+    border: 0;
+  }
+}
+
+
+button,
+input[type="button"], // Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio` and `video` controls.
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button; // Corrects inability to style clickable `input` types in iOS.
+  cursor: pointer; // Improves usability and consistency of cursor style between image-type `input` and others.
+}
+
+label,
+select,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+input[type="radio"],
+input[type="checkbox"] {
+  cursor: pointer; // Improves usability and consistency of cursor style between image-type `input` and others.
+}
+
+input[type="search"] { // Appearance in Safari/Chrome
+  .box-sizing(content-box);
+  -webkit-appearance: textfield;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
+}
+
+textarea {
+  overflow: auto; // Remove vertical scrollbar in IE6-9
+  vertical-align: top; // Readability and alignment cross-browser
+}
+
+.btn {
+  display: inline-block;
+  .ie7-inline-block();
+  margin-bottom: 0; // For input.btn
+  font-size:@btnFontSize;
+  line-height: @baseLineHeight;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
+  border: 1px solid @btnBorderColor;
+  *border: 0; // Remove the border to prevent IE7's black border on input:focus
+  border-bottom-color: darken(@btnBorderColor, 10%);
+  .border-radius(@btnBorderRadiusBase);
+
+
+  // Hover/focus state
+  &:hover,
+  &:focus {
+    color: @grayDark;
+
+  }
+
+  &:focus {
+    .tab-focus();
+  }
+
+
+  &.active,
+  &:active {
+
+    outline: 0;
+
+  }
+
+  // Disabled state
+  &.disabled,
+  &[disabled] {
+    //background-image: none;
+    .opacity(30);
+    .box-shadow(none);
+    cursor: no-drop;
+  }
+
+
+  &-large {
+    padding: @paddingLarge;
+    font-size: @fontSizeLarge;
+    .border-radius(@btnBorderRadiusLarge);
+  }
+
+
+  &-small {
+    padding: @paddingSmall;
+    font-size: @fontSizeSmall;
+    .border-radius(@btnborderRadiusSmall);
+  }
+
+  &-mini {
+    padding: @paddingMini;
+    font-size: @fontSizeMini;
+    .border-radius(@btnborderRadiusSmall);
+  }
+
+  &-block {
+    display: block;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    .box-sizing(border-box);
+
+    & + .btn-block {
+      margin-top: 5px;
+    }
+  }
+
+
+  &-primary.active,
+  &-warning.active,
+  &-danger.active,
+  &-success.active,
+  &-info.active,
+  &-inverse.active {
+    color: rgba(255,255,255,.75);
+  }
+
+  &-primary {.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight); }
+  &-warning {
+    .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
+    //.buttonBackgroundImage(transparent 30%,rgba(0,0,0,.3));
+  }
+  &-danger {
+    .buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+    //.buttonBackgroundImage(transparent 30%,rgba(0,0,0,.3));
+  }
+  &-success {
+    .buttonBackground(@btnSuccessBackground, @btnSuccessBackgroundHighlight);
+    //.buttonBackgroundImage(transparent 30%,rgba(0,0,0,.3));
+  }
+  &-info {
+    .buttonBackground(@btnInfoBackground, @btnInfoBackgroundHighlight);
+    //.buttonBackgroundImage(transparent 30%,rgba(0,0,0,.3));
+  }
+  &-inverse {
+    .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
+    //.buttonBackgroundImage(transparent 30%,rgba(0,0,0,.3));
+  }
+  &-focus {
+    background-color:@btnFocusBackground;
+    *background-color: @btnFocusBackground;
+    background-image: none;
+    color: @white;
+    .reset-filter();
+    &.btn{
+      background-image: none;
+      text-shadow: none;
+    }
+
+  }
+  &-normal {
+    border:1px solid !important;
+    border-color:#4a5659;
+    background-color: transparent;
+    background:rgba(255, 255, 255, 0) none repeat scroll 0 0 ;/*实现FF背景透明，文字不透明*/
+    color: #4a5659;
+    line-height: 1.3!important;
+  }
+  &-normal:hover,
+  &-normal:focus{
+    border-color:#5e6a6d;
+    color:#5e6a6d;
+  }
+  &-focus:hover,
+  &-focus:focus{
+    background-color:#546063;
+    color:@white
+  }
+
+
+  &-link,
+  &-link:active,
+  &-link[disabled] {
+    background-color: transparent;
+    background-image: none;
+    .box-shadow(none);
+  }
+  &-link {
+    border-color: transparent;
+    cursor: pointer;
+    color: @linkColor;
+    .border-radius(0);
+  }
+  &-link:hover,
+  &-link:focus {
+    color: @linkColorHover;
+    //text-decoration: underline;
+    background-color: transparent;
+  }
+  &-link[disabled]:hover,
+  &-link[disabled]:focus {
+    color: @grayDark;
+    text-decoration: none;
+  }
+
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  &.btn-block {
+    width: 100%;
+  }
+}
+
+button.btn,
+input[type="submit"].btn {
+
+  // Firefox 3.6 only I believe
+  &::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+  }
+
+  // IE7 has some default padding on button controls
+  *padding-top: 3px;
+  *padding-bottom: 3px;
+
+  &.btn-large {
+    *padding-top: 7px;
+    *padding-bottom: 7px;
+  }
+  &.btn-small {
+    *padding-top: 3px;
+    *padding-bottom: 3px;
+  }
+  &.btn-mini {
+    *padding-top: 1px;
+    *padding-bottom: 1px;
+  }
+}
+
+
+ul,li{
+  list-style: none;
+}
+ul, ol {
+  padding: 0;
+  margin: 0 0 (@computedLineHeight / 2) 25px;
+  list-style-type: none;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-bottom: 0;
+}
+li {
+  line-height: @baseLineHeight;
+}
+
+// Remove default list styles
+ul.unstyled,
+ol.unstyled {
+  margin-left: 0;
+  list-style: none;
+}
+
+p {
+  margin: 0 0 (@computedLineHeight / 2);
+}
+
+small   { font-size: 85%; }
+
+strong  { font-weight: bold; }
+em      { font-style: italic; }
+
+
+hr {
+  margin: @computedLineHeight 0;
+  border: 0;
+  border-top: 1px solid @hrBorder;
+  border-bottom: 1px solid @white;
+}
+
+
+
+h1, h2, h3, h4, h5, h6 {
+  margin: (@computedLineHeight / 2) 0;
+  font-family: @headingsFontFamily;
+  /*	font-weight: @headingsFontWeight;*/
+  line-height: @baseLineHeight;
+  color: @headingsColor;
+  text-rendering: optimizelegibility; // Fix the character spacing for headings
+  small {
+    font-weight: normal;
+    line-height: 1;
+    color: @grayLight;
+  }
+}
+
+h1,
+h2,
+h3 { line-height: (@baseLineHeight * 2); }
+
+h1 { font-size: (@baseFontSize * 2.75); } // ~38px
+h2 { font-size: (@baseFontSize * 2.25); } // ~32px
+h3 { font-size: (@baseFontSize * 1.75); } // ~24px
+h4 { font-size: (@baseFontSize * 1.25); } // ~18px
+h5 { font-size: @baseFontSize; }
+h6 { font-size: (@baseFontSize * 0.85); } // ~12px
+
+h1 small { font-size:  (@baseFontSize * 1.75); } // ~24px
+h2 small { font-size:  (@baseFontSize * 1.25); } // ~18px
+h3 small { font-size: @baseFontSize; }
+h4 small { font-size: @baseFontSize; }
+
+
+
+sub,
+sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+
+
+table {
+  max-width: 100%;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*******************标签 End*******************************/
+/****************页面滚动条 Start*******************/
+&::-webkit-scrollbar {
+  width: .5em;
+  height: .5em;
+  background-color: transparent;
+  border-radius: 0;
+
+}
+
+::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+&::-webkit-scrollbar-thumb {
+  .background-color(@black, 5%);
+  border-radius: 0;
+
+  &:hover {
+    .background-color(@black, 35%);
+  }
+}
+
+/****************页面滚动条 End*******************/
+/*******************通用样式 Start**************************/
+.gutter-top {
+  margin: @gutterTop;
+}
+
+.gutter-bottom {
+  margin: @gutterBottom;
+}
+.gutter-both {
+  margin:@gutterBoth;
+  padding: 1em .5em !important;
+}
+
+.gutter-bottom .btn.disabled{
+  cursor:no-drop;
+}
+
+.close {
+  background: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  line-height: 20px;
+  /*	.opacity(20);*/
+
+  /*	&:hover {
+          .opacity(60);
+      }*/
+}
+
+.muted               { color: @grayLight; }
+.text-warning        { color: @warningText; }
+.text-error          { color: @errorText !important; }
+.text-info           { color: @infoText; }
+.text-success        { color: @successText; }
+.text-emphasize {
+  color: darken(@infoText, 10%);
+  background-color: rgba(192, 210, 219, 0.5);
+}
+
+.text-left           { text-align: left; }
+.text-right          { text-align: right; }
+.text-center         { text-align: center; }
+
+.bg-muted            { background-color: @grayLight; }
+.bg-warning          { background-color: @warningText; }
+.bg-error            { background-color: @errorText !important; }
+.bg-info             { background-color: @infoText; }
+.bg-success          { background-color: @activeColor; }
+
+
+.fade {
+  opacity: 0;
+  .transition(opacity .3s linear);
+  &.in {
+    opacity: 1;
+  }
+}
+
+.collapse {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  .transition(height .3s ease);
+  &.in {
+    height: auto;
+  }
+}
+
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
+.hide {
+  display: none!important;
+}
+.show {
+  display: block;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+
+/*******************通用样式 End**************************/
+/**********栅栏 Start**************/
+
+.container {
+  .container-fixed();
+}
+.container-fluid {
+  padding-right: @gridGutterWidth;
+  padding-left: @gridGutterWidth;
+  .clearfix();
+}
+
+
+// Fixed (940px)
+#grid > .core(@gridColumnWidth, @gridGutterWidth);
+
+// Fluid (940px)
+#grid > .fluid(@fluidGridColumnWidth, @fluidGridGutterWidth);
+
+// Reset utility classes due to specificity
+[class*="span"].hide,
+.row-fluid [class*="span"].hide {
+  display: none;
+}
+
+[class*="span"].pull-right,
+.row-fluid [class*="span"].pull-right {
+  float: right;
+}
+/**********栅栏 End**************/
+
+
+.dropdown {
+  position: relative;
+
+  > a > .fa {
+    position: relative;
+    top: 2px;
+  }
+}
+.dropdown-toggle {
+  // The caret makes the toggle a bit too tall in IE7
+  *margin-bottom: -3px;
+}
+.dropdown-toggle:active,
+.open .dropdown-toggle {
+  outline: 0;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: @zindexDropdown;
+  display: none; // none by default, but block on "open" of the menu
+  float: left;
+  min-width: @dropdownMinWidth;
+  //padding: 5px 0;
+  margin: 2px 0 0; // override default ul
+  list-style: none;
+  background-color: @dropdownBackground;
+  border: 1px solid #ccc; // Fallback for IE7-8
+  border: 1px solid @dropdownBorder;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+  .border-radius(@borderRadiusLarge);
+  .box-shadow(0 5px 10px rgba(0, 0, 0, .2));
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+
+  // Aligns the dropdown menu to right
+  &.pull-right {
+    right: 0;
+    left: auto;
+  }
+
+  // Dividers (basically an hr) within the dropdown
+  .divider {
+    .nav-divider(@dropdownDividerTop, @dropdownDividerBottom);
+  }
+
+  // Links within the dropdown menu
+  > li > a {
+    display: block;
+    padding: @dropdownListPadding;
+    clear: both;
+    font-weight: normal;
+    line-height: @baseLineHeight;
+    color: @dropdownLinkColor;
+    white-space: nowrap;
+
+    &.disabled,
+    &.disabled:hover,
+    &.disabled:focus {
+      color: @grayLight;
+      cursor: no-drop;
+      background: none;
+      background-color: transparent;
+    }
+  }
+
+  & > .active {
+    > a,
+    > a:hover,
+    > a:focus {
+      color: @dropdownLinkColorActive;
+      text-decoration: none;
+      outline: 0;
+      #gradient > .vertical(@dropdownLinkBackgroundActive, darken(@dropdownLinkBackgroundActive, 5%));
+    }
+  }
+
+  > .disabled {
+    > a {
+      color: @grayLight;
+
+      &:hover,
+      &:focus {
+        color: @grayLight;
+
+        text-decoration: none;
+        background-color: transparent;
+        background-image: none; // Remove CSS gradient
+        .reset-filter();
+        cursor: default;
+      }
+    }
+  }
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+  text-decoration: none;
+  color: @dropdownLinkColorHover;
+  #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
+}
+
+.open {
+  *z-index: @zindexDropdown;
+
+  & > .dropdown-menu {
+    display: block;
+  }
+}
+.dropdown-backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: @zindexDropdown - 10;
+}
+
+.pull-right > .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+.navbar-fixed-bottom .dropdown {
+  // Reverse the caret
+  .caret {
+    border-top: 0;
+    border-bottom: 4px solid @black;
+    content: "";
+  }
+  // Different positioning for bottom up menu
+  .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 1px;
+  }
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  .border-radius(0 6px 6px 6px);
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+
+.dropdown-submenu > a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: darken(@dropdownBackground, 20%);
+  margin-top: 5px;
+  margin-right: -10px;
+}
+
+.dropdown-submenu:hover > a:after {
+  border-left-color: @dropdownLinkColorHover;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+
+  > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    .border-radius(6px 0 6px 6px);
+  }
+}
+
+.dropdown .dropdown-menu .nav-header {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+
+
+
+/**********Modal Start****************/
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height:100%;
+  width:100%;
+  z-index: @zindexModalBackdrop;
+  background-color: @white;
+  // Fade for backdrop
+  &.fade {
+    opacity: 0;
+  }
+}
+.modal-backdrop,
+.modal-backdrop.fade.in {
+  .opacity(80);
+}
+.modal {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  z-index: @zindexModal;
+  width: @modalWidth;
+  margin-left: ((@modalWidth / 2) *-1);
+  background-color: @modalBackgroundColor;
+  border: 1px solid #e5e5e5;
+  border-radius: @baseBorderRadius;
+  .box-shadow(0 0 15px rgba(0, 0, 0, 0.3));
+  .background-clip(padding-box);
+  // Remove focus outline from opened modal
+  outline: none;
+
+  &.fade {
+    .transition(e('opacity .3s linear, top .3s ease-out'));
+    top: -25%;
+  }
+  &.fade.in {
+    top: 10%;
+  }
+  &.full{
+    top:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    left:0 !important;
+    width:auto !important;
+    height:auto !important;
+    border-radius:0;
+
+    .modal-body{
+      min-height:auto !important;
+      max-height: none !important;
+      height:100% !important;
+
+    }
+
+
+
+  }
+  &.modal-lg{
+    left:25% ;
+    right:25%;
+    width:auto;
+    >.modal-footer{
+      //bottom:0;
+      .btn {
+        display: inline-block;
+        vertical-align: middle;
+        width: 128px;
+        margin: 0 0.835em;
+        padding: .5em 1em;
+        -webkit-appearance: none;
+        border-radius: 4px;
+        transition: background-color 0.25s ease-out, color 0.25s ease-out;
+        font-size: 14px;
+        line-height: 1.43;
+        text-align: center;
+        cursor: pointer;
+        border: 0;
+        background-image: none;
+        text-shadow: none;
+      }
+    }
+
+  }
+
+}
+.modal-header {
+
+  position: relative;
+  z-index: 1;
+  padding: @modalHeagerPadding;
+  overflow: hidden;
+  background-color: @modalHeagerBackgroundColor;
+  //text-align: center;
+  color: @modalHeagerColor;
+  border-bottom: 1px solid #e5e5e5;
+  font-size:1.333em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  .no-select;
+
+
+  // Close icon
+  .close {
+    position: absolute;
+    right: .6em;
+    //top: 9px;
+    font-weight: 600;
+    font-size: 22px;
+    color: #666666;
+    &:hover{
+      color: #888888;
+    }
+  }
+
+  .full{
+    position:absolute;
+    right:3em;
+    font-size: 18px;
+    background-color: transparent;
+    color: #666666;//跟计算出来的关闭按钮一个颜色
+    &:hover{
+      color: #888888;
+    }
+  }
+
+
+  .modal-close-btn{
+    position: absolute;
+    right: 1em;
+    margin-top: .1em;
+    line-height: @fontSizeLarge;
+    cursor: pointer;
+  }
+  // Heading
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    line-height: 21px;
+    font-size: 16px;
+    color: #4d4d4d;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+.modal-body {
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  max-height: @modalBodyMinHeight;
+  padding: @modalBodyPadding;
+  .aui-ide-modal-content {
+    > .aui-modal-content-title {
+      display: block;
+      font-size: 1.333em;
+      color: #333333;
+      padding-bottom: 10px;
+    }
+    > i {
+      color: #f05050;
+      float: left;
+      font-size: 3.333em;
+      margin-right: 16px;
+    }
+    > p {
+      display: table;
+    }
+  }
+}
+.modal-footer {
+  padding: @modalFooterPadding;
+  margin-bottom: 0;
+  text-align: right;
+  background-color: @modalFooterBackgroundColor;
+  .border-radius(0 0 6px 6px);
+  .clearfix(); // clear it in case folks use .pull-* classes on buttons
+  button.btn {
+    padding: .3em 2em;
+    width:90px;
+    cursor: pointer;
+    border: 0;
+    background-image: none;
+    text-shadow: none;
+
+  }
+  // Properly space out buttons
+  .btn + .btn {
+    margin-left: @gutterBoth;
+  }
+  // but override that for button groups
+  .btn-group .btn + .btn {
+    margin-left: -1px;
+  }
+  // and override it for block buttons as well
+  .btn-block + .btn-block {
+    margin-left: 0;
+  }
+}
+.modal-config-mode {
+  height: 80%;
+  > .modal-body {
+    height: 77%;
+    max-height: 77%;
+    height: ~"calc(100% - 6em)";
+    max-height: ~"calc(100% - 6em)";
+    padding: 0 15px;
+  }
+  > .modal-footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: (@gutterBoth/2) 0;
+    border-top: 1px groove #EEE;
+  }
+}
+/**********Modal End****************/
+
+
+
+/**********Alert Start****************/
+.alert-variant(@background; @border; @textColor){
+  color: @textColor;
+}
+
+
+.alert-list {
+  position: fixed;
+  top: 5%;
+  right: 0;
+  z-index: 8;
+  cursor: default;
+  width: 310px;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+
+
+  > li {
+    position: absolute;
+    right:-400px;
+    z-index: 4;
+    width:300px;
+    background-color: white;
+    margin:0;
+    border:2px solid #D3D3D3;
+    box-shadow: 1px 1px 10px #D3D3D3;
+    border-radius: 4px;
+    opacity: .8;
+    transition: all cubic-bezier(0.18, 0.89, 0.32, 1.28) .5s;
+
+    + li {
+      top: 10px;
+      z-index: 3;
+
+      + li {
+        top: 20px;
+        z-index: 2;
+
+        + li {
+          top: 30px;
+          z-index: 1;
+
+          + li {
+            top: 40px;
+            z-index: 0;
+          }
+        }
+      }
+    }
+
+
+    &.out {
+      right: 10px;
+      opacity: 1;
+    }
+
+    >.alert-btn {
+      position: absolute;
+      right: .2em;
+      top: .1em;
+      font-size: 1.5em;
+      transition: all linear .2s;
+      cursor: pointer;
+
+      + .alert-btn {
+        top: 1.2em;
+        right: .2em;
+        font-size: 2em;
+
+        &.more{
+          transform: rotateZ(180deg);
+        }
+      }
+    }
+
+    >.alert-content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin:2em 2em 2em 5em;
+      min-height: 50px;
+      height: 50px;
+      transition: all linear .2s;
+
+      &.more{
+        height: auto;
+        transition: all linear .2s;
+        overflow-y: scroll;
+      }
+    }
+
+    >.alert-icon{
+      position: absolute;
+      top: .6em;
+      left: .4em;
+      font-size: 3em;
+    }
+
+  }
+}
+
+.alert {
+
+  &-warning {
+    .alert-variant(@warningBackground,@warningBorder,@warningText);
+  }
+
+  &-success {
+    .alert-variant(@successBackground,@successBorder,@successText);
+  }
+
+  &-danger,
+  &-error {
+    .alert-variant(@errorBackground,@errorBorder,@errorText);
+  }
+
+  &-info {
+    .alert-variant(@infoBackground,@infoBorder,@infoText);
+  }
+
+  &-pink {
+    .alert-variant(@pinkBackground,@pinkBorder,@pinkText);
+  }
+}
+.alert-close {
+  position: absolute;
+  top: @alertCloseTop;
+  right: @alertCloseRight;
+  font-size: @alertCloseSize;
+}
+/**********Alter End****************/
+
+
+
+
+
+/**********Nav Start****************/
+.nav {
+  margin-left: 0;
+  margin-bottom: @computedLineHeight;
+  list-style: none;
+
+  > li > a {
+    display: block;
+    text-decoration: none;
+
+    &:hover,
+    &:active {
+      background-color: transparent;
+    }
+
+    > img {
+      max-width: none;
+    }
+  }
+
+  > .disabled > a {
+    color: @grayLight;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+      background-color: transparent;
+      cursor: default;
+    }
+  }
+
+  > .pull-right {
+    float: right;
+  }
+
+  .dropdown-toggle {
+    .caret {
+      border-top-color: @linkColor;
+      border-bottom-color: @linkColor;
+      margin-top: 6px;
+    }
+
+    &:hover .caret,
+    &:focus .caret {
+      border-top-color: @linkColorHover;
+      border-bottom-color: @linkColorHover;
+    }
+  }
+
+  .active .dropdown-toggle .caret {
+    border-top-color: #fff;
+    border-bottom-color: #fff;
+  }
+
+
+  &.dropdown.active {
+    > a{
+      &:hover,
+      &:focus {
+        cursor: pointer;
+      }
+    }
+  }
+}
+.nav-list {
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-bottom: 0;
+
+  > li > a,
+  .nav-header {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  > li > a {
+    padding: @navListPadding;
+    .transition(background-color .3s ease);
+  }
+
+  > .active {
+    > a,
+    > a:hover,
+    > a:active {
+      color: @white;
+      background-color: @navListBackgroundColorHover;
+    }
+  }
+
+
+  .divider {
+    .nav-divider();
+  }
+
+}
+.nav-tabs{
+  .clearfix();
+
+  > li {
+    float: left;
+    margin-bottom: -1px;
+
+    &:hover {
+      /* color: @linkColorHover;*/
+    }
+
+    &.active {
+      background-color: @themeColorBackgroundLight;
+
+      color: @textColor;
+
+      >a{
+        cursor: default;
+      }
+    }
+
+    > a {
+      padding: @navTabsPadding;
+      line-height: @baseLineHeight;
+      .border-radius(0);
+      .user-select(none);
+      cursor: pointer;
+      color: inherit;
+      .transition(background .3s linear);
+      background: transparent;
+    }
+  }
+
+  &.nav-stacked {
+    border-bottom: 0;
+
+    > li {
+      > a {
+        border: 1px solid #ddd;
+        .border-radius(0);
+
+        &:hover,
+        &:focus {
+          border-color: #ddd;
+          z-index: 2;
+        }
+      }
+
+      &:first-child > a {
+        .border-top-radius(4px);
+      }
+
+      &:last-child > a {
+        .border-bottom-radius(4px);
+      }
+    }
+  }
+
+  .dropdown-menu {
+    .border-radius(0 0 6px 6px); // remove the top rounded corners here since there is a hard edge above the menu
+  }
+
+  .dropdown-toggle .caret {
+    margin-top: 8px;
+  }
+
+  .active .dropdown-toggle .caret {
+    border-top-color: @gray;
+    border-bottom-color: @gray;
+  }
+}
+.nav-tabs .open .dropdown-toggle,
+.nav > li.dropdown.open.active > a:hover,
+.nav > li.dropdown.open.active > a:focus {
+  color: @white;
+  background-color: @grayLight;
+  border-color: @grayLight;
+}
+.nav li.dropdown.open .caret,
+.nav li.dropdown.open.active .caret,
+.nav li.dropdown.open a:hover .caret,
+.nav li.dropdown.open a:focus .caret {
+  border-top-color: @white;
+  border-bottom-color: @white;
+  .opacity(100);
+}
+.tabbable {
+  .clearfix();
+  >.nav-tabs{
+    position: relative;
+    margin-bottom: 0;
+    >li{
+      padding: 0 (@gutterBoth/2);
+
+      &:hover{
+        color:@linkColorHover;
+      }
+      &.active {
+        background-color: @themeColorBackgroundLight;
+
+        color: @textColor;
+
+
+        >a {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+}
+.tab-content {
+  padding: .5em 2px 2px;
+  border: none;
+  overflow: auto; // prevent content from running below tabs
+
+
+  &.aui-tab-content {
+    border: none;
+  }
+
+  > .tab-pane {
+    display: none;
+  }
+
+  > .active {
+    display: block;
+  }
+}
+/**********Nav Start****************/
+
+
+/**********Mask Start****************/
+.mask{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 6;
+  background-color: @maskBackground;
+  .opacity(@maskOpacity);
+  transition: opacity linear .2s;
+  .user-select(none);
+
+  &.shelterPolyfill{
+    background-color:@white;
+    .opacity(0);
+    transition: none;
+  }
+
+  &.shelter{
+
+    background-color: transparent;
+    .opacity(100);
+    transition: none;
+    text-align: center;
+
+    .maskCtn{
+      max-width: 60%;
+      background: white;
+      padding: 2em;
+      border: 1px solid #efefef;
+      box-shadow: 2px 2px 3px #efefef;
+    }
+    .maskCtt{
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .maskHelper{
+      display: inline-block;
+      width:0;
+      height: 100%;
+      visibility: hidden;
+      vertical-align: middle;
+    }
+
+
+
+  }
+
+  >.maskPicLeft,
+  >.maskPicCenter,
+  >.maskPicRight{
+    width:0.8em;
+    height:0.8em;
+    background:@maskOptionColor;
+    border-radius:100%;
+    position:absolute;
+    left:50%;
+    top:50%;
+  }
+
+  .maskTitle{
+    //position: absolute;
+    //top: 36%;
+    //width: 100%;
+    display: inline-block;
+    margin-left:.5em;
+    font-size: 2em;
+    color:@maskOptionColor;
+    vertical-align: middle;
+    text-align:left;
+  }
+
+  >.maskPicLeft{
+    left:45%;
+    .animation(gogo1 5s infinite ease-out);
+  }
+
+  >.maskPicCenter{
+    left:50%;
+    .animation(gogo 5s infinite ease-out);
+  }
+
+  >.maskPicRight{
+    left:55%;
+    .animation(gogo2 5s infinite ease-out);
+  }
+}
+.maskPic{
+  //position:absolute;
+  width:5em;
+  height:5em;
+  display: inline-block;
+  //border-radius:100%;
+  //background:@maskOptionColor;
+  //top:50%;
+  //left:50%;
+  //margin-left:-1.5em;
+  //margin-top:-1.5em;
+  //.animation(gogo3 4s infinite ease-out);
+  background:url(../img/loading.gif) no-repeat;
+  vertical-align: middle;
+
+
+  &>.maskPicLeft{
+    left:45%;
+    .animation(gogo1 5s infinite ease-out);
+  }
+}
+.maskMove(@address1,@address2,@address3,@address4,@address5){
+  0%{
+    left:@address1;
+  }
+  35%{
+    left:@address2;
+  }
+  55%{
+    left:@address3;
+  }
+  75%{
+    left:@address4;
+  }
+  100%{
+    left:@address5;
+  }
+}
+@keyframes gogo{
+  .maskMove(55%,60%,55%,40%,55%);
+}
+@-webkit-keyframes gogo{
+  .maskMove(55%,60%,55%,40%,55%);
+}
+@keyframes gogo1{
+  .maskMove(50%,60%,50%,40%,50%);
+}
+@-webkit-keyframes gogo1{
+  .maskMove(50%,60%,50%,40%,50%);
+}
+@keyframes gogo2{
+  .maskMove(45%,60%,45%,40%,45%);
+}
+@-webkit-keyframes gogo2{
+  .maskMove(45%,60%,45%,40%,45%);
+}
+@keyframes gogo3{
+  0%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+  35%{
+    background:@maskCircleDark;
+    .scale(1);
+  }
+  55%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+  75%{
+    background:@maskCircleDark;
+    .scale(1);
+  }
+  100%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+}
+@-webkit-keyframes gogo3{
+  0%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+  35%{
+    background:@maskCircleDark;
+    .scale(1);
+  }
+  55%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+  75%{
+    background:@maskCircleDark;
+    .scale(1);
+  }
+  100%{
+    background:@maskCircleLight;
+    .scale(2);
+  }
+}
+@keyframes gogo4{
+  0%{
+    border:20px solid transparent;
+  }
+  35%{
+    border:2px solid @maskCircleDark;
+  }
+  55%{
+    border:20px solid transparent;
+  }
+  75%{
+    border:2px solid @maskCircleDark;
+  }
+  100%{
+    border:20px solid transparent;
+  }
+}
+@-webkit-keyframes gogo4{
+  0%{
+    border:20px solid transparent;
+  }
+  35%{
+    border:2px solid @maskCircleDark;
+  }
+  55%{
+    border:20px solid transparent;
+  }
+  75%{
+    border:2px solid @maskCircleDark;
+  }
+  100%{
+    border:20px solid transparent;
+  }
+}
+/**********Mask End****************/
+
+/**********SPA module Start****************/
+.default-theme{
+  @keyframes circle-pic {
+    0% {
+      background-position: top left,bottom right,0 0,0 0;
+      background-position: top,bottom,0,0
+    }
+
+    100% {
+      background-position: bottom,top,0,0
+    }
+  }
+
+  @-webkit-keyframes circle-pic {
+    0% {
+      background-position: top,bottom,0,0
+    }
+
+    100% {
+      background-position: bottom,top,0,0
+    }
+  }
+
+  .aweb-tabs-left,
+  .aweb-tabs-right{
+
+    &.btn{
+      position: absolute;
+      top: 0;
+      height: 100%;
+      z-index: 2;
+      background: @tabOptionBackground;
+      transition: background linear .3s;
+      border: 1px solid @tabOptionBackground;
+      border-bottom: none;
+      min-width: 0;
+      width: 36px;
+      margin:0;
+      color: @grayLightC;
+
+      &:hover,
+      &:active,
+      &:focus{
+        color:@tabsActiveFontColor;
+        background: @tabOptionBackground;
+      }
+    }
+  }
+
+  .aweb-tabs-left{
+    left: 0;
+    border-right:@tabsFontColor;
+    .border-top-right-radius(@tabsBorderRadius);
+    .border-bottom-right-radius(@tabsBorderRadius);
+    box-shadow: 0px 1px 6px rgba(0,0,0,0.15);
+  }
+  .aweb-tabs-right {
+    border-left:@tabsFontColor;
+    .border-top-left-radius(@tabsBorderRadius);
+    .border-bottom-left-radius(@tabsBorderRadius);
+    box-shadow: 0px 1px 6px rgba(0,0,0,0.15);
+    right: 0;
+  }
+
+  .aweb-tabs {
+    position: relative;
+    left: 0;
+    width: 20000%;
+    z-index: 1;
+    color: @tabsFontColor;
+    font-size: @navTabsTextSize;
+    margin-bottom: 0;
+    vertical-align: middle;
+
+    > li {
+      position: relative;
+      border-right: 1px solid #f2f2f2;
+      background: @tabOptionBackground;
+      padding:.15em 1em;
+      .transition(background-color .3s linear);
+      text-align: center;
+      >a{
+        color: #a6a6a6;
+        display: inline-block;
+        vertical-align: middle;
+        background: transparent;
+      }
+      &:hover{
+        /*	color:@tabsActiveFontColor;*/
+        background-color:@white;
+      }
+      >.close {
+        display: inline-block;
+        vertical-align: top;
+        font-weight: 200;
+        color:#bbbbbb;
+        margin-right: -10px;
+        padding-top: .1em;
+        font-size:24px;
+        font-size: 2rem;
+        user-select:none;
+        -webkit-user-select:none;
+        background: transparent;
+      }
+    }
+
+    >.active {
+      //text-shadow:none;
+      //	bottom: 0;
+      background-color: @tabOptionActiveBackground;
+      //margin-top: -.3em;
+      //	padding-bottom: .2em;
+      > a {
+        color: @tabsActiveFontColor;
+        font-weight:600;
+      }
+      &:hover,
+      &:active {
+        background-color: @tabOptionActiveBackground;
+        /*	>.close {
+                opacity: .2;
+            }*/
+      }
+    }
+  }
+  .aweb-main {
+    position: absolute;
+    max-width: 100%;
+    padding: 1em;
+    filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorstr=#E5ffffff, endColorstr=#E5ffffff)";
+    border-top: transparent;
+    overflow: auto;
+    top: 56px;
+    /*box-shadow: 0 4px 12px -6px rgba(5,198,151,.5) inset;*/
+    background-color: #fff;
+    background-color: rgba(255,255,255,.9);
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .aweb-tabs-container {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    background-color: @tabOptionBackground;
+    transition: height linear .3s;
+    >ul{
+      -webkit-animation:circle-pic 10s  0.9s infinite linear ;
+    }
+  }
+  .aweb-tab-content-menu {
+    position: fixed;
+    z-index: @zindexTabCtnMenu;
+    margin-left: 0;
+    .background-color(@black, 95%);
+    .box-shadow(3px 4px 10px #000);
+    > li {
+      .list-item();
+
+      white-space: nowrap;
+    }
+  }
+}
+
+.aweb-spa-ctn-full {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: @zindexPreview !important;
+
+  background-color: @white;
+}
+.aweb-spa-ctt-full{
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+/**********SPA module End****************/
+
+
+
+

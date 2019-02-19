@@ -1,0 +1,58 @@
+{
+  "_from": "@aweb-plugins/app.getUID@^6.0.0",
+  "_id": "@aweb-plugins/app.getUID@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-mV6tC2+IAR2Vs3wKKOfelskd/Vk=",
+  "_location": "/@aweb-plugins/app.getUID",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.getUID@^6.0.0",
+    "name": "@aweb-plugins/app.getUID",
+    "escapedName": "@aweb-plugins%2fapp.getUID",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller",
+    "/@aweb-plugins/app.ajax",
+    "/@aweb-plugins/app.modal",
+    "/@aweb-plugins/app.popover",
+    "/@aweb-plugins/app.shelter"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.getUID/download/@aweb-plugins/app.getUID-6.0.0.tgz",
+  "_shasum": "995ead0b6f88011d95b37c0a28e7de96c91dfd59",
+  "_spec": "@aweb-plugins/app.getUID@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取唯一的ID",
+  "docs": {
+    "name": "getUID",
+    "desp": "获取唯一的ID",
+    "hasReturn": true,
+    "appJsCode": "app.getUID",
+    "returnValue": {
+      "name": "uid",
+      "type": "string",
+      "desp": "唯一的ID",
+      "defaultValue": "87C0D1E26342B2A334DB-FC8D"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.getUID",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

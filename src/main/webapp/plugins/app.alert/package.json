@@ -1,0 +1,97 @@
+{
+  "_from": "@aweb-plugins/app.alert@^6.0.0",
+  "_id": "@aweb-plugins/app.alert@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-CstnGaxJ9nQ78QL7Dx+pvhxmzVA=",
+  "_location": "/@aweb-plugins/app.alert",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.alert@^6.0.0",
+    "name": "@aweb-plugins/app.alert",
+    "escapedName": "@aweb-plugins%2fapp.alert",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.tips"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.alert/download/@aweb-plugins/app.alert-6.0.0.tgz",
+  "_shasum": "0acb6719ac49f6743bf102fb0f1fa9be1c66cd50",
+  "_spec": "@aweb-plugins/app.alert@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [
+    {
+      "category": "提示语句",
+      "valueArray": [
+        "app.alert.ERROR",
+        "app.alert.SUCCESS",
+        "app.alert.WARNING",
+        "app.alert.MESSAGE",
+        "app.alert._DEFAULT"
+      ],
+      "despArray": [
+        "提示错误类型",
+        "提示成功类型",
+        "提示警告类型",
+        "日志信息类型",
+        "默认类型"
+      ]
+    }
+  ],
+  "dependencies": {
+    "@aweb-plugins/app.dispatcher": "^6.0.0",
+    "@aweb-plugins/app.modal": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "提示框",
+  "docs": {
+    "name": "alert",
+    "desp": "提示框",
+    "belongTo": "closure",
+    "params": [
+      {
+        "name": "message",
+        "type": "string",
+        "desp": "提示语句",
+        "details": "可以使HTML代码，消息内容，必需",
+        "necessary": true
+      },
+      {
+        "name": "alertType",
+        "type": "string_select",
+        "desp": "提示类型",
+        "details": "有“_DEFAULT\"(默认),\"SUCCESS\"(成功),\"ERROR\"(错误),\"WARNING\"(警告),\"MESSAGE\"(信息)五种类型，使用时许引用app.alert.showType",
+        "necessary": true
+      },
+      {
+        "name": "alertID",
+        "type": "string",
+        "desp": "提示语句ID",
+        "details": "提示语句ID，假如在消息队列中存在相同的ID，则不再重复提示",
+        "necessary": false
+      }
+    ],
+    "appJsCode": "app.alert",
+    "edition": {
+      "mobile": "app.alert_mobile"
+    },
+    "hasReturn": false,
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.alert",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

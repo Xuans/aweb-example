@@ -1,0 +1,19 @@
+{
+    "views": {
+        "example": {
+            "template": "example.html",
+            "js": "example.js"
+        }
+    }, 
+    
+    "models": {
+    }, 
+    
+    "flows": [
+        {
+            "id": "example"
+        }
+    ],
+
+    "stepBar": false
+}

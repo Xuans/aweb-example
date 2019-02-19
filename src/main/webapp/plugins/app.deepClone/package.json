@@ -1,0 +1,60 @@
+{
+  "_from": "@aweb-plugins/app.deepClone@^6.0.0",
+  "_id": "@aweb-plugins/app.deepClone@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-VqOzYGsUwdE3F4y45Tnx9g+4KSU=",
+  "_location": "/@aweb-plugins/app.deepClone",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.deepClone@^6.0.0",
+    "name": "@aweb-plugins/app.deepClone",
+    "escapedName": "@aweb-plugins%2fapp.deepClone",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.deepClone/download/@aweb-plugins/app.deepClone-6.0.0.tgz",
+  "_shasum": "56a3b3606b14c1d137178cb8e539f1f60fb82925",
+  "_spec": "@aweb-plugins/app.deepClone@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "深克隆",
+  "docs": {
+    "name": "deepClone",
+    "desp": "深克隆",
+    "params": [
+      {
+        "name": "object",
+        "desp": "待克隆对象",
+        "type": "object",
+        "necessary": true
+      }
+    ],
+    "hasReturn": true,
+    "appJsCode": "app.deepClone",
+    "returnValue": {
+      "name": "deepClonedObject",
+      "type": "object",
+      "desp": "深克隆对象"
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.deepClone",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

@@ -1,0 +1,94 @@
+{
+  "_from": "@aweb-plugins/app.hsla@^6.0.0",
+  "_id": "@aweb-plugins/app.hsla@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-jNB3217s4msrlru1P5sTfl37Z2M=",
+  "_location": "/@aweb-plugins/app.hsla",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.hsla@^6.0.0",
+    "name": "@aweb-plugins/app.hsla",
+    "escapedName": "@aweb-plugins%2fapp.hsla",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.hsla/download/@aweb-plugins/app.hsla-6.0.0.tgz",
+  "_shasum": "8cd077db5eece26b2b96bbb53f9b137e5dfb6763",
+  "_spec": "@aweb-plugins/app.hsla@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "生成随机颜色（不支持IE8）",
+  "docs": {
+    "require": true,
+    "name": "hsla",
+    "desp": "生成随机颜色（不支持IE8）",
+    "compatibility": "modernBrowser",
+    "belongTo": "closure",
+    "appJsCode": "app.hsla",
+    "params": [
+      {
+        "name": "option",
+        "type": "object",
+        "desp": "选项",
+        "children": [
+          {
+            "name": "h",
+            "type": "number",
+            "desp": "颜色值",
+            "details": "整型，非必需，表示需要生成颜色的值，范围为[0,360),如果isRandom=true,则h不需要填，填了也不会生效"
+          },
+          {
+            "name": "s",
+            "type": "string",
+            "desp": "颜色对比度",
+            "details": "百分比，字符串型，必需，表示需要生成颜色的对比度，范围为[0,100%)"
+          },
+          {
+            "name": "l",
+            "type": "string",
+            "desp": "颜色亮度",
+            "details": "百分比，字符串型，必需，表示需要生成颜色的亮度，范围为[0,100%)"
+          },
+          {
+            "name": "a",
+            "type": "number",
+            "desp": "颜色透明度",
+            "details": "数值型，必需，表示需要生成颜色的透明度，范围为[0,1]"
+          }
+        ]
+      },
+      {
+        "name": "isRandom",
+        "type": "boolean",
+        "desp": "需要随机生成颜色的值",
+        "details": "布尔型，option.h存在则非必需，否则必需。表示需要随机生成颜色的值"
+      }
+    ],
+    "hasReturn": true,
+    "returnValue": {
+      "name": "color",
+      "type": "string",
+      "desp": "返回颜色",
+      "details": "在现代浏览器下，返回rgba(red,green.blur,alpha)格式的颜色；在IE8或以下，则返回rgb(red,green,blue)"
+    }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.hsla",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

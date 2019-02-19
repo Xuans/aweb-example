@@ -1,0 +1,198 @@
+{
+  "_from": "@aweb-plugins/app.popover@^6.0.0",
+  "_id": "@aweb-plugins/app.popover@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-qDZHQ6mwK2a63iy7WL0Yl1MERkM=",
+  "_location": "/@aweb-plugins/app.popover",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.popover@^6.0.0",
+    "name": "@aweb-plugins/app.popover",
+    "escapedName": "@aweb-plugins%2fapp.popover",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.popover/download/@aweb-plugins/app.popover-6.0.0.tgz",
+  "_shasum": "a8364743a9b02b66bade2cbb58bd189753044643",
+  "_spec": "@aweb-plugins/app.popover@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "const": [],
+  "dependencies": {
+    "@aweb-plugins/app.getUID": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "气泡",
+  "docs": {
+    "name": "popover",
+    "desp": "气泡",
+    "belongTo": "closure",
+    "appJsCode": "app.popover",
+    "params": [
+      {
+        "name": "option",
+        "desp": "配置",
+        "type": "object",
+        "children": [
+          {
+            "name": "$elem",
+            "type": "jQuery",
+            "desp": "气泡的触发元素",
+            "defaultValue": "$el",
+            "details": "表示气泡触发元素的jQuery对象",
+            "necessary": true
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "desp": "标题",
+            "defaultValue": "气泡",
+            "details": "气泡标题，非必填",
+            "necessary": false
+          },
+          {
+            "name": "content",
+            "type": "string",
+            "desp": "气泡内容",
+            "defaultValue": "气泡内容",
+            "details": "可以是html字符串；或函数，返回内容的jQuery对象",
+            "necessary": true
+          },
+          {
+            "name": "hasHeader",
+            "type": "boolean",
+            "desp": "是否显示气泡顶部(标题、按钮)",
+            "defaultValue": "true",
+            "details": "配置是否显示气泡顶部",
+            "necessary": false
+          },
+          {
+            "name": "init",
+            "type": "handler",
+            "desp": "初始化函数",
+            "defaultValue": "function(){}",
+            "details": "打开气泡时，加载内容的方法，其中入参为agrs的参数，第一个参数为 Pop 气泡实例对象，this指向气泡的 jQuery 对象",
+            "necessary": false
+          },
+          {
+            "name": "confirmHandler",
+            "type": "handler",
+            "desp": "关闭确认事件",
+            "defaultValue": "function(){}",
+            "details": "确定按钮点击事件，其中入参为agrs的参数，第一个参数为 Pop 气泡实例对象，this 指向 Pop 气泡实例对象，this.$tip 指向气泡的 jQuery 对象",
+            "necessary": false
+          },
+          {
+            "name": "args",
+            "type": "array",
+            "desp": "入参",
+            "defaultValue": [],
+            "necessary": false
+          },
+          {
+            "name": "on",
+            "type": "object",
+            "desp": "新增按钮配置",
+            "details": "为气泡窗口新增按钮组的按钮，并配置相关参数",
+            "children": [
+              {
+                "name": "iconBtn",
+                "type": "object",
+                "desp": "按钮配置",
+                "details": "配置一个新的按钮",
+                "children": [
+                  {
+                    "name": "btnName",
+                    "type": "string",
+                    "desp": "按钮名称",
+                    "defaultValue": "",
+                    "details": "必需，配置按钮功能的英文名称，填入按钮的功能名，如\"preview\"",
+                    "necessary": true
+                  },
+                  {
+                    "name": "icon",
+                    "type": "string",
+                    "desp": "按钮图标",
+                    "defaultValue": "",
+                    "details": "必需，配置按钮的图标，填入icon的CSS类名，如\"aui-guanbi\"",
+                    "necessary": true
+                  },
+                  {
+                    "name": "title",
+                    "type": "string",
+                    "desp": "按钮描述",
+                    "defaultValue": "",
+                    "details": "必需，配置按钮的描述，如\"关闭\"",
+                    "necessary": true
+                  },
+                  {
+                    "name": "callback",
+                    "type": "handler",
+                    "desp": "按钮事件",
+                    "defaultValue": "function(){}",
+                    "details": "必需，新增按钮事件，其中入参为 e 事件对象和 context Pop气泡实例（上下文），this指向气泡的 DOM 对象",
+                    "necessary": true
+                  }
+                ]
+              }
+            ],
+            "necessary": false
+          },
+          {
+            "name": "height",
+            "type": "string",
+            "desp": "高度",
+            "defaultValue": "80%",
+            "details": "可配置气泡高度",
+            "necessary": false
+          },
+          {
+            "name": "width",
+            "type": "string",
+            "desp": "宽度",
+            "defaultValue": "80%",
+            "details": "可配置气泡宽度",
+            "necessary": false
+          },
+          {
+            "name": "placement",
+            "type": "string",
+            "desp": "显示位置",
+            "defaultValue": "right auto",
+            "details": "可配置 (top | bottom | left | right | auto)，如果使用\"auto\"，将会再次调整，比如声明\"right auto\" 弹出框将尽量显示在右边，实在不行才显示在左边 ",
+            "necessary": false
+          },
+          {
+            "name": "focusable",
+            "type": "boolean",
+            "desp": "可否失焦触发气泡消失",
+            "defaultValue": true,
+            "details": "默认可通过失焦触发气泡消失，代码气泡不通过失焦触发气泡消失，需要设置 false",
+            "necessary": false
+          }
+        ],
+        "necessary": true
+      }
+    ],
+    "hasReturn": false,
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.popover",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

@@ -1,0 +1,376 @@
+{
+  "_from": "@aweb-plugins/app.Controller@^6.0.0",
+  "_id": "@aweb-plugins/app.Controller@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-FtazWy2bm9VulsmfcwVGGtRiZuk=",
+  "_location": "/@aweb-plugins/app.Controller",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.Controller@^6.0.0",
+    "name": "@aweb-plugins/app.Controller",
+    "escapedName": "@aweb-plugins%2fapp.Controller",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.Controller/download/@aweb-plugins/app.Controller-6.0.0.tgz",
+  "_shasum": "16d6b35b2d9b9bd56e96c99f7305461ad46266e9",
+  "_spec": "@aweb-plugins/app.Controller@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "AWEB 核心框架",
+  "const": [
+    {
+      "category": "标签页类型",
+      "valueArray": [
+        "app.router.tab.TYPE.BLANK",
+        "app.router.tab.TYPE.SUB",
+        "app.router.tab.TYPE.SELF",
+        "app.router.tab.TYPE.WINDOW",
+        "app.router.tab.TYPE.POPOVER"
+      ],
+      "despArray": [
+        "新标签",
+        "子标签",
+        "自身标签",
+        "窗口标签",
+        "气泡标签"
+      ]
+    },
+    {
+      "category": "标签页状态类型",
+      "valueArray": [
+        "app.router.STATUS.AFTER_LOAD",
+        "app.router.STATUS.BEFORE_PAUSE",
+        "app.router.STATUS.AFTER_PAUSE",
+        "app.router.STATUS.BEFORE_RESUME",
+        "app.router.STATUS.AFTER_RESUME",
+        "app.router.STATUS.BEFORE_UNLOAD",
+        "app.router.STATUS.AFTER_UNLOAD"
+      ],
+      "despArray": [
+        "标签页加载完毕后",
+        "标签页切出前",
+        "标签页切出后",
+        "标签页切入前",
+        "标签页切入后",
+        "标签页销毁前",
+        "标签页销毁后"
+      ]
+    },
+    {
+      "category": "路由",
+      "valueArray": [
+        "app.router.getCurrentHandler()"
+      ],
+      "despArray": [
+        "获取当前标签页实例"
+      ]
+    }
+  ],
+  "dependencies": {
+    "@aweb-plugins/app.dispatcher": "^6.0.0",
+    "@aweb-plugins/app.domain": "^6.0.0",
+    "@aweb-plugins/app.getData": "^6.0.0",
+    "@aweb-plugins/app.getNewQueryStringURL": "^6.0.0",
+    "@aweb-plugins/app.getQueryStringMap": "^6.0.0",
+    "@aweb-plugins/app.getUID": "^6.0.0",
+    "@aweb-plugins/app.modal": "^6.0.0",
+    "@aweb-plugins/app.popover": "^6.0.0",
+    "@aweb-plugins/app.position": "^6.0.0",
+    "@aweb-plugins/app.screen": "^6.0.0",
+    "@aweb-plugins/app.setData": "^6.0.0"
+  },
+  "deprecated": false,
+  "description": "AWEB核心SPA框架",
+  "docs": {
+    "name": "Controller",
+    "desp": "AWEB核心SPA框架",
+    "belongTo": "closure",
+    "params": [
+      {
+        "name": "option",
+        "type": "object",
+        "desp": "参数",
+        "children": [
+          {
+            "name": "View",
+            "type": "object",
+            "desp": "SPA框架视图实现对象",
+            "defaultValue": "app.Controller.View",
+            "details": "非必需，SPA框架视图实现对象，至少需要实现open、close、setCurrentView、getCurrentView、removeView、switchView、resumeView这些方法，可以根据实际情况另外实现该方法",
+            "necessary": false
+          },
+          {
+            "name": "Model",
+            "type": "object",
+            "desp": "SPA框架数据模型实现对象",
+            "defaultValue": "app.Controller.Model",
+            "details": "非必需，SPA框架数据模型实现对象，需要实现load、pause、resume、unload、stepTo、setTimeout、clearTimeout、setInterval、clearInterval、delegateEvents、undelegateEvents，可以根据实际情况另外实现该方法",
+            "necessary": false
+          },
+          {
+            "name": "modulesPath",
+            "type": "string",
+            "desp": "模块路径",
+            "defaultValue": "module",
+            "details": "非必需，模块相对于WebContent的路径",
+            "necessary": false
+          },
+          {
+            "name": "separator",
+            "desp": "分割线",
+            "type": "string",
+            "defaultValue": "/",
+            "details": "非必需，模块地址的分割线，加入后台传过来的是error#404，将会被转移成\"./module/error/404/\"",
+            "necessary": false
+          },
+          {
+            "name": "mvvmConfName",
+            "type": "string",
+            "desp": "配置文件的名词",
+            "defaultValue": "mvvm.json",
+            "details": "非必需，在每个模块下都有此名的配置文件，用于记录该模块下单页页面js、html资源的路径",
+            "necessary": false
+          },
+          {
+            "name": "modulePath404",
+            "type": "string",
+            "desp": "404页面路径",
+            "defaultValue": "module/error/404/",
+            "details": "非必需，找不到页面的提示页面路径",
+            "necessary": false
+          },
+          {
+            "name": "validateCleanCallback",
+            "type": "handler",
+            "desp": "清理错误回调函数",
+            "details": "函数，非必需，说明见app.validate的cleanCallback部分",
+            "necessary": false
+          },
+          {
+            "name": "view",
+            "desp": "SPA框架视图配置",
+            "type": "object",
+            "necessary": true,
+            "children": [
+              {
+                "name": "isGlobal",
+                "type": "boolean",
+                "desp": "是否全局使用",
+                "defaultValue": false,
+                "details": "如果是全局的话，将会使用app.screen.addResizeHandler监听屏幕resize事件，另导航栏可以重置大小",
+                "necessary": false
+              },
+              {
+                "name": "ctn",
+                "type": "string",
+                "desp": "容器的jQuery选择器",
+                "details": "必需，表示多标页的容器，建议传入jQuery对象",
+                "necessary": true
+              },
+              {
+                "name": "tabs",
+                "type": "string",
+                "desp": "多标签导航栏的jQuery选择器",
+                "details": "必需，表示多标签导航栏的容器，建议传入jQuery对象",
+                "necessary": true
+              },
+              {
+                "name": "ctt",
+                "type": "string",
+                "desp": "页面内容的jQuery选择器",
+                "details": "必需，表示页面内容的容器，建议传入jQuery对象",
+                "necessary": true
+              },
+              {
+                "name": "contextMenuOption",
+                "type": "object",
+                "desp": "多标签导航栏的右键配置",
+                "details": "非必需,如果为false，则表示没有右键事件；具体例子，请见：app.router.tab.contextMenuOption",
+                "necessary": false
+              },
+              {
+                "name": "contextMenuCallback",
+                "type": "object",
+                "desp": "多标签导航栏的右键点击回调函数",
+                "details": "如果contextMenuOption不为false，则必需，具体例子，请见：app.router.tab.contextMenuCallback",
+                "necessary": false
+              },
+              {
+                "name": "untitled",
+                "type": "string",
+                "desp": "默认标题",
+                "details": "如果传入的标题没有的时候，默认标题",
+                "necessary": false
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "returnValue": {
+      "name": "router",
+      "type": "object",
+      "desp": "路由",
+      "children": [
+        {
+          "name": "open",
+          "type": "object",
+          "desp": "打开标签页",
+          "details": "该方法挂载到app.open下，底层是调用router.tab.open方法",
+          "children": [
+            {
+              "name": "option",
+              "desp": "配置",
+              "type": "object",
+              "children": [
+                {
+                  "name": "status",
+                  "type": "boolean",
+                  "desp": "状态是否正常",
+                  "defaultValue": false,
+                  "details": "必需"
+                },
+                {
+                  "name": "fixed",
+                  "type": "boolean",
+                  "desp": "标签页是否固定",
+                  "defaultValue": false,
+                  "details": "非必需，表示打开的标签页是否固定，该参数只在打开BLANK(新标签页)、WINDOW(新窗口)类型标签页时生效"
+                },
+                {
+                  "name": "content",
+                  "type": "object",
+                  "desp": "页面数据",
+                  "details": "在单页页面中，可以通过auiCtx.pageParams获取页面数据"
+                },
+                {
+                  "name": "page",
+                  "type": "string",
+                  "desp": "模块路径",
+                  "defaultValue": "error#404",
+                  "details": "使用井号#将文件夹进行分割"
+                },
+                {
+                  "name": "title",
+                  "type": "string",
+                  "desp": "标题",
+                  "details": "可以在初始化Controller时，设置option.view.untitled属性。如果是通过自子页面标题打开，title=undefined，则不会显示标题"
+                },
+                {
+                  "name": "type",
+                  "type": "string",
+                  "desp": "页面类型",
+                  "defaultValue": "BLANK",
+                  "details": "可选值有新标签页BLANK、子标签页SUB、当前标签页SELF、新窗口WINDOW"
+                },
+                {
+                  "name": "id",
+                  "type": "string",
+                  "desp": "页面的ID标识",
+                  "defaultValue": "BLANK",
+                  "details": "此ID与单页页面中的handler.id相同"
+                },
+                {
+                  "name": "hasFooter",
+                  "type": "boolean",
+                  "desp": "是否由底部按钮",
+                  "defaultValue": true,
+                  "details": "如果是通过子页面打开，可以设置子页面是否由底部footer按钮"
+                },
+                {
+                  "name": "height",
+                  "type": "string",
+                  "desp": "子页面高度",
+                  "defaultValue": "80%",
+                  "details": "如果是通过子页面打开，可以设置子页面的高度"
+                },
+                {
+                  "name": "width",
+                  "type": "string",
+                  "desp": "子页面宽度",
+                  "defaultValue": "80%",
+                  "details": "如果是通过子页面打开，可以设置子页面的宽度"
+                },
+                {
+                  "name": "fullscreen",
+                  "type": "boolean",
+                  "desp": "是否全屏",
+                  "defaultValue": "false",
+                  "details": "是否使用全屏打开"
+                },
+                {
+                  "name": "displayNav",
+                  "type": "boolean",
+                  "desp": "显示标签导航栏",
+                  "defaultValue": "true",
+                  "details": "是否显示标签导航栏"
+                },
+                {
+                  "desp": "项目地址",
+                  "defaultValue": "",
+                  "necessary": false,
+                  "details": "如果打开多个项目时，需要配置",
+                  "name": "server",
+                  "type": "string"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "tab",
+          "type": "object",
+          "desp": "视图实例",
+          "children": [
+            {
+              "name": "close",
+              "desp": "关闭标签页",
+              "details": "该方法挂载到app.close下,底层是调用app.router.tab.close方法",
+              "hasReturn": false,
+              "params": [
+                {
+                  "name": "domID",
+                  "type": "string",
+                  "desp": "页面数据模型的唯一ID",
+                  "defaultValue": "app.router.getCurrentHandler().domID",
+                  "details": "非必需，可以在单页页面中通过handler.domID获取，默认值为当前标签页"
+                },
+                {
+                  "name": "_doNotResume",
+                  "type": "boolean",
+                  "desp": "不调用上个页面的恢复动作",
+                  "defaultValue": "false",
+                  "details": "非必需，需要关闭多个页面的时候，可以将这个配置项加了优化性能，但可能会导致页面混乱，慎用"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "hasReturn": true,
+    "compatibility": "ie8",
+    "appJsCode": "app.Controller",
+    "edition": {
+      "aibs": "app.Controller_AIBS"
+    }
+  },
+  "edition": "app.Controller_AIBS",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.Controller",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

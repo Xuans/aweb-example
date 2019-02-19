@@ -1,0 +1,125 @@
+{
+  "_from": "@aweb-plugins/app.alertAction@^6.0.0",
+  "_id": "@aweb-plugins/app.alertAction@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-VEvSZzCvR5bBGQ1zSSCGbQEyVWo=",
+  "_location": "/@aweb-plugins/app.alertAction",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.alertAction@^6.0.0",
+    "name": "@aweb-plugins/app.alertAction",
+    "escapedName": "@aweb-plugins%2fapp.alertAction",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.alertAction/download/@aweb-plugins/app.alertAction-6.0.0.tgz",
+  "_shasum": "544bd26730af4796c1190d734920866d0132556a",
+  "_spec": "@aweb-plugins/app.alertAction@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "提示框操作",
+  "docs": {
+    "name": "alertAction",
+    "desp": "提示框操作",
+    "belongTo": "class",
+    "appJsCode": "app.alertAction",
+    "cInterfaces": [
+      {
+        "name": "close",
+        "desp": "关闭提示框",
+        "params": [
+          {
+            "name": "option",
+            "type": "object",
+            "children": [
+              {
+                "name": "id",
+                "desp": "需要关闭的提示框id",
+                "type": "string",
+                "necessary": true
+              }
+            ]
+          }
+        ],
+        "details": "当调用app.alert有传入id时，输入该id可以关闭",
+        "defaultValue": "app.alertAction.close(\"1\")"
+      },
+      {
+        "name": "closeAll",
+        "desp": "关闭所有提示框",
+        "details": "关闭所有提示框"
+      },
+      {
+        "name": "getAlertList",
+        "desp": "获取所有正在执行的提示框列表",
+        "details": "获取所有正在执行的提示框列表信息，包括在界面上显示的提示框和在队列中的提示框，它将返回一个数组，里面每一个索引对应一个对象，包含每一个提示框的信息，0键对应提示框内容，1键对应提示框类型，2键对应提示框id",
+        "hasReturn": true,
+        "returnValue": {
+          "name": "alertList",
+          "type": "array",
+          "desp": "正在执行的所有提示框列表",
+          "defaultValue": "[{\"0\":\"msgContent1\",\"1\":\"error\",\"2\":\"id1\"},{\"0\":\"msgContent2\",\"1\":\"success\",\"2\":\"id2\"},{\"0\":\"msgContent3\",\"1\":\"warning\",\"2\":\"id3\"}]"
+        }
+      },
+      {
+        "name": "listener",
+        "desp": "监听alert事件",
+        "details": "监听alert事件",
+        "params": [
+          {
+            "name": "callback",
+            "desp": "回调函数",
+            "type": "handler",
+            "details": "回调函数，底层返回提示框参数作为入参",
+            "children": [
+              {
+                "name": "itemMsg",
+                "desp": "提示框参数",
+                "type": "object",
+                "details": "提示框参数，包括当前提示框的信息、类型、id",
+                "children": [
+                  {
+                    "name": "1",
+                    "type": "string",
+                    "desp": "当前提示框信息"
+                  },
+                  {
+                    "name": "2",
+                    "type": "string",
+                    "desp": "当前提示框类型"
+                  },
+                  {
+                    "name": "3",
+                    "type": "string",
+                    "desp": "当前提示框的id"
+                  }
+                ]
+              }
+            ],
+            "necessary": true
+          }
+        ]
+      }
+    ],
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.alertAction",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

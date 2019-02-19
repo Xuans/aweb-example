@@ -1,0 +1,174 @@
+.foundation-select-icon-ctn {
+
+	overflow-y: hidden;
+
+	.foundation-select-icon-icons-wrapper {
+		position: absolute;
+		height: ~"calc(100% - 39px)";
+		overflow-y: auto;
+	}
+}
+
+.foundation-select-icon-header {
+	padding: .5em;
+	border-bottom: 1px solid rgba(242, 242, 242, 0.75);
+	> .aui-aside-search-bar-ctt {
+		float: left;
+		width: ~"calc(100% - 100px)";
+		.aui-search-query {
+			background: transparent;
+		}
+	}
+}
+
+.foundation-select-icon-search {
+	display: block;
+	width: ~"calc( 100% - 140px )";
+	border: 1px solid #eee;
+	border-radius: 1em;
+	line-height: 22px;
+	padding: 0 1em;
+}
+
+.foundation-select-icon-size-toggle {
+
+	position: relative;
+	float: right;
+	height: 22px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: rgb(240, 240, 240);
+	border: 1px solid #999;
+	border-radius: 1em;
+
+	> .toggle-btn {
+
+		width: 30px;
+		height: 100%;
+		border-radius: 1em;
+		background: none;
+		cursor: pointer;
+
+		&.active {
+
+			color: #26a2ff;
+			background-color: #fff;
+			border-left: 1px solid #999;
+			border-right: 1px solid #999;
+		}
+
+		&:first-child {
+			&.active {
+
+				border-left-color: transparent;
+			}
+		}
+
+		&:last-child {
+			&.active {
+
+				border-right-color: transparent;
+			}
+		}
+	}
+}
+
+.foundation-select-icon-icon-list {
+
+	margin: 0;
+	color: #555;
+
+	li {
+
+		float: left;
+		margin: 1em;
+		width: 105px;
+		height: 115px;
+		text-align: center;
+		position: relative;
+		overflow: visible;
+		border: 1px dashed transparent;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		cursor: pointer;
+
+		&:hover,
+		&.active {
+
+			background-color: rgba(201, 222, 245, .75);
+
+		}
+		> i {
+
+			font-size: 44px;
+			vertical-align: middle;
+			overflow: hidden;
+			margin-top: 18px;
+			max-width: 100%;
+
+		}
+
+		.icon-name {
+
+			display: block;
+			width: 100%;
+			height: 20px;
+			line-height: 20px;
+			color: #666;
+			font-size: 12px;
+			text-align: center;
+			margin-top: 15px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+
+		}
+	}
+
+}
+
+.foundation-select-icon-icon-list.sm {
+	margin: .5em;
+
+	li {
+
+		margin: 0;
+		padding-left: .5em;
+		text-align: left;
+		width: 208px;
+		height: 30px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+}
+
+.foundation-select-icon-icon-list.md li {
+	margin: 1em .5em;
+	width: 80px;
+	height: 82px;
+}
+
+.foundation-select-icon-icon-list.sm li > i {
+	width: 36px;
+	margin-top: 0;
+	font-size: 14px;
+	line-height: 30px;
+	text-align: center;
+}
+
+.foundation-select-icon-icon-list.md li > i {
+	font-size: 24px;
+	margin-top: 10px;
+}
+
+.foundation-select-icon-icon-list.sm li .icon-name {
+	display: inline;
+	vertical-align: middle;
+	line-height: 30px;
+}
+
+.foundation-select-icon-icon-list.md li .icon-name {
+	margin-top: 10px;
+}

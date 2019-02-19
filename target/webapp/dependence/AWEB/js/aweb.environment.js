@@ -1,0 +1,1 @@
+define(["jquery"],function($){return{debug:true,log:true,error:true,exception:true,translate:true,fresher:true,requireConfig:{waitSeconds:30,urlArgs:true},preloading:false,singleStyleFile:false}});

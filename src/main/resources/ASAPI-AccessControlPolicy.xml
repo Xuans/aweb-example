@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<AccessControlPolicy 
+    xmlns="http://www.w3school.com.cn" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.w3school.com.cn xsd/ASAPI-AccessControlPolicy.xsd">
+    
+    <AccessControlRules>
+        <AccessControlRule name="AWEB AC URL" description="See delegateClass's code comments" class="cn.com.agree.aweb.asapi.reference.accesscontrol.DelegatingACR">
+            <Parameters>
+                <Parameter name="delegateClass" type="String" value="cn.com.agree.aweb.rbac.DBBasedACRs" />
+                <Parameter name="delegateMethod" type="String" value="isAuthorizedForURL" />
+                <Parameter name="parameterClasses" type="StringArray" value="java.lang.String" />
+            </Parameters>
+        </AccessControlRule>
+        <AccessControlRule name="AWEB INIT URL" description="See delegateClass's code comments" class="cn.com.agree.aweb.asapi.reference.accesscontrol.DelegatingACR">
+            <Parameters>
+                <Parameter name="delegateClass" type="String" value="cn.com.agree.aweb.rbac.DBBasedACRs" />
+               	<!-- 用于用户菜单权限 = url权限 的权限处理方案-->
+                <!-- <Parameter name="delegateMethod" type="String" value="initAccessEqualACRs" /> -->
+                <!-- 用于菜单权限 >= url权限 的权限处理方案--> 
+                <Parameter name="delegateMethod" type="String" value="initACRs" />
+            </Parameters>
+        </AccessControlRule>
+    </AccessControlRules>
+</AccessControlPolicy>

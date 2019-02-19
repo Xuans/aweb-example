@@ -1,0 +1,86 @@
+{
+  "_from": "@aweb-plugins/app.dispatcher@^6.0.0",
+  "_id": "@aweb-plugins/app.dispatcher@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-HjR8Nmvbu+hGG+iJdGJdWsUMln0=",
+  "_location": "/@aweb-plugins/app.dispatcher",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.dispatcher@^6.0.0",
+    "name": "@aweb-plugins/app.dispatcher",
+    "escapedName": "@aweb-plugins%2fapp.dispatcher",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller",
+    "/@aweb-plugins/app.alert"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.dispatcher/download/@aweb-plugins/app.dispatcher-6.0.0.tgz",
+  "_shasum": "1e347c366bdbbbe8461be88974625d5ac50c967d",
+  "_spec": "@aweb-plugins/app.dispatcher@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "事件分发",
+  "docs": {
+    "name": "dispatcher",
+    "desp": "事件分发",
+    "details": "实现自定义事件",
+    "belongTo": "closure",
+    "appJsCode": "app.dispatcher",
+    "params": [
+      {
+        "name": "timeout",
+        "desp": "时间(毫秒)",
+        "details": "分发事件的时间",
+        "type": "number",
+        "necessary": false
+      }
+    ],
+    "returnValue": {
+      "desp": "事件实例",
+      "name": "eventInstance",
+      "details": "",
+      "type": "object",
+      "children": [
+        {
+          "name": "on",
+          "desp": "定义事件",
+          "details": "$AW.on({\"type1.namespace1.namespace2\":callback1,\"type2.namespace1.namespace2\":callback2});$AW.on(\"type1.namespace1.namespace2,type2.namespace1.namespace2\",callback);$AW.on(\"type1\",\"namespace\",callback);",
+          "type": "function"
+        },
+        {
+          "name": "off",
+          "desp": "解绑事件",
+          "type": "function",
+          "details": "$AW.off(\"type1.namespace1.namespace2,type2.namespace1.namespace2,\")"
+        },
+        {
+          "name": "trigger",
+          "desp": "触发事件",
+          "type": "function",
+          "details": "$AW.trigger(\"type1.namespace1.namespace2,type2.namespace1.namespace2,\")"
+        }
+      ]
+    },
+    "hasReturn": true,
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.dispatcher",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}

@@ -1,0 +1,105 @@
+{
+  "_from": "@aweb-plugins/app.position@^6.0.0",
+  "_id": "@aweb-plugins/app.position@6.0.0",
+  "_inBundle": false,
+  "_integrity": "sha1-yPZB2eaNuOaTL2bot+ukfIxD9jI=",
+  "_location": "/@aweb-plugins/app.position",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@aweb-plugins/app.position@^6.0.0",
+    "name": "@aweb-plugins/app.position",
+    "escapedName": "@aweb-plugins%2fapp.position",
+    "scope": "@aweb-plugins",
+    "rawSpec": "^6.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^6.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/@aweb-plugins/app.Controller"
+  ],
+  "_resolved": "https://www.awebide.com:7001/@aweb-plugins/app.position/download/@aweb-plugins/app.position-6.0.0.tgz",
+  "_shasum": "c8f641d9e68db8e6932f66e8b7eba47c8c43f632",
+  "_spec": "@aweb-plugins/app.position@^6.0.0",
+  "_where": "/home/tqtiwvfdn/桌面/Test2",
+  "author": "",
+  "bundleDependencies": false,
+  "category": "便携操作",
+  "dependencies": {},
+  "deprecated": false,
+  "description": "获取鼠标事件的定位",
+  "docs": {
+    "require": true,
+    "name": "position",
+    "desp": "获取鼠标事件的定位",
+    "appJsCode": "app.position",
+    "params": [
+      {
+        "name": "event",
+        "type": "object",
+        "desp": "事件对象",
+        "details": "事件对象，鼠标监听事件的参数，必需",
+        "necessary": true
+      },
+      {
+        "name": "$container",
+        "type": "jQuery",
+        "desp": "鼠标容器的JQuery对象",
+        "details": "鼠标容器的JQuery对象，必需",
+        "necessary": true
+      },
+      {
+        "name": "$content",
+        "type": "jQuery",
+        "desp": "鼠标点击的直接容器的jQuery对象",
+        "details": "鼠标点击的直接容器的jQuery对象，必需",
+        "necessary": true
+      },
+      {
+        "name": "fixTop",
+        "type": "number",
+        "desp": "向上修正的数值",
+        "details": "数值型，向上修正的数值，缺省值0，非必需",
+        "defaultValue": 0,
+        "necessary": false
+      },
+      {
+        "name": "fixLeft",
+        "type": "number",
+        "desp": "向左修正的数值",
+        "details": "数值型，向左修正的数值，缺省值0，非必需",
+        "defaultValue": 0,
+        "necessary": false
+      }
+    ],
+    "hasReturn": true,
+    "returnValue": {
+      "name": "pointer",
+      "type": "object",
+      "desp": "坐标",
+      "children": [
+        {
+          "name": "top",
+          "type": "number",
+          "desp": "$content相对于$container顶部的位置"
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "desp": "$content相对于$container左侧的位置"
+        }
+      ]
+    },
+    "compatibility": "ie8"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@aweb-plugins/app.position",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "6.0.0"
+}
