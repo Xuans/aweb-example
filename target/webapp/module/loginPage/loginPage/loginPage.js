@@ -1,4 +1,4 @@
-define([].concat(window.aweb.transformJsConfig([ "component.btn.normalBtn", "component.foundationForm", "component.foundationForm.foundationPassword", "ctn.foundationRowCtn", "ctn", "ctn.foundationFormCtn", "ctn.divCtn", "component.foundationForm.foundationVerifyInput", "component.foundationForm.foundationInput", "ctn.loginCtn", "layout.rowCtn" ])).concat(window.aweb.transformCssConfig([ "AUI/css/component.btn.css", "foundation/css/foundation.css", "AUI/css/layout.ctn.css", "loginCtn/loginCtn.css" ])), function() {
+define([].concat(window.aweb.transformJsConfig([ "component.btn.normalBtn", "component.foundationForm", "component.foundationForm.foundationVerifyInput", "component.foundationForm.foundationPassword", "component.foundationForm.foundationInput", "ctn.foundationRowCtn", "ctn", "ctn.foundationFormCtn", "ctn.loginCtn", "layout.rowCtn", "ctn.divCtn" ])).concat(window.aweb.transformCssConfig([ "AUI/css/component.btn.css", "foundation/css/foundation.css", "AUI/css/layout.ctn.css", "loginCtn/loginCtn.css" ])), function() {
     return function() {
         return function() {
             return function(auiCtx) {

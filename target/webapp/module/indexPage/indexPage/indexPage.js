@@ -1,4 +1,4 @@
-define([].concat(window.aweb.transformJsConfig([ "jquery", "slimScroll", "component.leftCatalog", "component.topNav", "ctn", "ctn.divCtn" ])).concat(window.aweb.transformCssConfig([ "leftCatalog/leftCatalogBootstrap.css", "leftCatalog/leftCatalog.css", "topNav/topNav.css", "AUI/css/layout.ctn.css" ])), function() {
+define([].concat(window.aweb.transformJsConfig([ "ctn", "ctn.divCtn", "jquery", "slimScroll", "component.leftCatalog", "component.topNav" ])).concat(window.aweb.transformCssConfig([ "AUI/css/layout.ctn.css", "leftCatalog/leftCatalogBootstrap.css", "leftCatalog/leftCatalog.css", "topNav/topNav.css" ])), function() {
     return function() {
         return function() {
             return function(auiCtx) {

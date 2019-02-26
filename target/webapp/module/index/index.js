@@ -6,7 +6,7 @@ define("viewer.blank", [ "jquery", "widget" ], function($, widget) {
     };
 });
 
-define("awebIndex", [ "viewer.blank" ].concat(window.aweb.transformJsConfig([ "viewer.blank", "layout.tabCtn", "viewer.blank", "layout.tabCtn" ])).concat(window.aweb.transformCssConfig([ "AWEB/css/aweb.css", "AWEB/css/font-awesome.min.css", "AWEB/css/icon-font.css", "AWEB/css/aweb.popover.css", "AWEB/css/aweb.page.css", "AWEB/css/aweb.css", "AWEB/css/font-awesome.min.css", "AWEB/css/icon-font.css", "AWEB/css/aweb.popover.css", "AWEB/css/aweb.page.css" ])), function() {
+define("awebIndex", [ "viewer.blank" ].concat(window.aweb.transformJsConfig([ "viewer.blank", "layout.tabCtn", "viewer.blank", "layout.tabCtn" ])).concat(window.aweb.transformCssConfig([ "AWEB/css/aweb.css", "AWEB/css/font-awesome.min.css", "AWEB/css/icon-font.css", "AWEB/css/aweb.popover.css", "AWEB/css/aweb.page.css", "AUI/css/component.btn.css", "foundation/css/foundation.css", "AWEB/css/aweb.css", "AWEB/css/font-awesome.min.css", "AWEB/css/icon-font.css", "AWEB/css/aweb.popover.css", "AWEB/css/aweb.page.css", "AUI/css/component.btn.css", "foundation/css/foundation.css" ])), function() {
     return function() {
         return function() {
             return function(auiCtx) {
@@ -105,6 +105,13 @@ define("awebIndex", [ "viewer.blank" ].concat(window.aweb.transformJsConfig([ "v
                                 window.ctoken = "test";
                                 //response.content.result;
                                 app.setData("ctoken", window.ctoken);
+                                $("#indexLayoutContainer", $el).css({
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0
+                                });
                                 app.globalRouter.open({
                                     id: "indexPage" + app.getUID(),
                                     page: "indexPage#indexPage",

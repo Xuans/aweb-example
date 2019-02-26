@@ -168,7 +168,7 @@
         "@aweb-lib/jquery": "^6.0.0",
         "@aweb-lib/text": "^6.0.0"
     },
-    "port": 46307,
+    "port": 49859,
     "dependencies": {
         "@aweb-template/custom-aweb": "^6.3.1"
     }

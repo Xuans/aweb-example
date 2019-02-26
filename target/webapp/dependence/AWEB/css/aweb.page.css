@@ -1,0 +1,37 @@
+/*PROJECT-THEME-VAR_START*/
+/*PROJECT-THEME-VAR_END*/
+.default-theme {
+  /*AA23ED2272D454C5B38E-D361_START*/
+  /*AA23ED2272D454C5B38E-D361_END*/
+  /*51350FE2BD7AC8FFD0CD-D6D4_START*/
+  /*51350FE2BD7AC8FFD0CD-D6D4_END*/
+  /*12BBDA8B8607365FDF16-6224_START*/
+  /*12BBDA8B8607365FDF16-6224_END*/
+}
+.default-theme .aw-indexPage-indexPage-4 {
+  overflow: auto;
+  position: absolute;
+  background-color: #f2f2f2;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+.default-theme .aw-indexPage-indexPage-29 {
+  top: 70px;
+  left: 0px;
+  width: 200px;
+  bottom: 0px;
+  position: absolute;
+  z-index: 3;
+}
+.default-theme .aw-indexPage-indexPage-39 {
+  position: absolute;
+  top: 85px;
+  left: 215px;
+  right: 15px;
+  bottom: 15px;
+  overflow: hidden;
+}

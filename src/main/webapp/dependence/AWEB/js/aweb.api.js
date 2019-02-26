@@ -1,4 +1,1607 @@
-define(["jquery"],function($){define('app.Controller',['app.dispatcher','app.domain','app.getData','app.getNewQueryStringURL','app.getQueryStringMap','app.getUID','app.modal','app.popover','app.position','app.screen','app.setData'],function () {app.Controller=function () {
+define(["jquery"],function($){define('app.queryString',[],function () {app.queryString=function (key) {
+
+        var
+            hash = window.location.hash || document.location.hash,
+            search = window.location.search || document.location.search || '',
+            decoder = window.decodeURI || window.decodeURIComponent,
+            rKey = new RegExp('\\b' + key + '=([^$&]+)'),
+            value;
+
+        if (hash && !search) {
+            search = hash.split('?')[1]
+        }
+
+
+        value = search.match(rKey);
+        value = value && value[1];
+
+        return value ? decoder(value) : '';
+    }});
+define('app.stringify',[],function () {app.stringify=function (config) {
+        function functionStringify(obj) {
+            if (obj !== undefined && typeof (obj) === "object") {
+                var newObj = (obj instanceof Array) ? [] : {},
+                    i = 0;
+
+                for (var name in obj) {
+                    i++;
+                    if (obj[name] instanceof Function) {
+                        newObj[name] = '_parseFunction_' + obj[name].toString()
+                            .replace(/(\/\/[^\n\r]+)/g, '') //将行注释都抹掉
+                            .replace(/[\n\r\t]/g, '').replace(/(\s)+/g, ' ')
+                            .replace(/\\([ntrs\-\_])/g, '\\\\$1')
+                            .replace(/(?:\/{2,}.*?[\r\n])|(?:\/\*.*?\*\/)/g, '');
+                        //.replace(/\+/g, '##plus##');
+                    } else {
+                        newObj[name] = obj[name] && functionStringify(obj[name]);
+                    }
+                }
+                if (!i) {
+                    newObj = obj;
+                }
+                return newObj;
+            } else {
+                return obj;
+            }
+        }
+
+        return config ? JSON.stringify(functionStringify(config)) : '';
+    }});
+define('app.screen',[],function () {app.screen=function () {
+    var full = {},
+        resizeHandlerList = {},
+        globalResizeHandlerList = {},
+        resizeTimeout;
+
+    function resize() {
+        window.clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(function () {
+            var uid,
+                _app = window.app || app;
+            for (uid in globalResizeHandlerList) {
+                if (globalResizeHandlerList[uid].timeout) {
+                    window.setTimeout(globalResizeHandlerList[uid].callback, globalResizeHandlerList[uid].timeout);
+                } else {
+                    globalResizeHandlerList[uid].callback && globalResizeHandlerList[uid].callback();
+                }
+            }
+
+
+            _app.router && _app.router.getCurrentHandler && (uid = _app.router.getCurrentHandler()) && (uid = uid.uid);
+
+            if (uid && (uid = resizeHandlerList[uid])) {
+                if (uid.timeout) {
+                    window.setTimeout(uid.callback);
+                } else {
+                    uid.callback && uid.callback();
+                }
+            }
+            uid = null;
+        }, 100);
+    }
+
+    full.addResizeHandler = function (options) {
+
+        if (options && options.uid && options.callback) {
+            if (options.isGlobal) {
+                globalResizeHandlerList[options.uid] = {
+                    callback: options.callback,
+                    timeout: options.timeout || 0
+                };
+            } else {
+                resizeHandlerList[options.uid] = {
+                    callback: options.callback,
+                    timeout: options.timeout || 0
+                };
+            }
+        }
+    };
+    full.removeResizeHandler = function (uid, isGlobal) {
+        if (uid) {
+            if (isGlobal) {
+                globalResizeHandlerList[uid] = null;
+                delete globalResizeHandlerList[uid];
+            } else {
+                resizeHandlerList[uid] = null;
+                delete resizeHandlerList[uid];
+            }
+        }
+    };
+    full.triggerResizeHandler = function (uid, isGlobal) {
+        if (uid) {
+            if (isGlobal) {
+                if (uid = globalResizeHandlerList[uid]) {
+                    uid.callback && uid.callback();
+                }
+            } else if (uid = resizeHandlerList[uid]) {
+                uid.callback && uid.callback();
+            }
+        }
+    };
+
+    $(window).resize(resize);
+
+
+    return full;
+}()});
+define('app.popover',['app.getUID'],function () {app.popover=function (){
+                    var popover;
+                    //tooltip
+
+                    +function () {
+
+                        'use strict';
+
+                        // TOOLTIP PUBLIC CLASS DEFINITION
+                        // ===============================
+
+                        var Tooltip = function (element, options) {
+                            this.type = null;
+                            this.options = null;
+                            this.enabled = null;
+                            this.timeout = null;
+                            this.hoverState = null;
+                            this.$element = null;
+                            this.inState = null;
+
+                            this.init('tooltip', element, options)
+                        };
+
+                        var $window = $(window);
+
+                        Tooltip.VERSION = '3.3.7';
+
+                        Tooltip.TRANSITION_DURATION = 150;
+
+                        Tooltip.DEFAULTS = {
+                            animation: true,
+                            placement: 'top',
+                            selector: false,
+                            template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+                            trigger: 'hover focus',
+                            title: '',
+                            delay: 0,
+                            html: false,
+                            container: false,
+                            viewport: {
+                                selector: 'body',
+                                padding: 0
+                            }
+                        };
+
+                        Tooltip.prototype.init = function (type, element, options) {
+                            this.enabled = true;
+                            this.type = type;
+                            this.$element = $(element);
+                            this.options = this.getOptions(options);
+                            this.$viewport = this.options.viewport && $($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport));
+                            this.inState = {click: false, hover: false, focus: false};
+
+                            if (this.$element[0] instanceof document.constructor && !this.options.selector) {
+                                throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
+                            }
+
+                            var triggers = this.options.trigger.split(' ');
+
+                            for (var i = triggers.length; i--;) {
+                                var trigger = triggers[i];
+
+                                if (trigger == 'click') {
+                                    this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
+                                } else if (trigger != 'manual') {
+                                    var eventIn = trigger == 'hover' ? 'mouseenter' : 'focusin';
+                                    var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout';
+
+                                    this.$element.on(eventIn + '.' + this.type, this.options.selector, $.proxy(this.enter, this));
+                                    this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
+                                }
+                            }
+
+                            this.options.selector ?
+                                (this._options = $.extend({}, this.options, {trigger: 'manual', selector: ''})) :
+                                this.fixTitle()
+                        };
+
+                        Tooltip.prototype.getDefaults = function () {
+                            return Tooltip.DEFAULTS
+                        };
+
+                        Tooltip.prototype.getOptions = function (options) {
+                            options = $.extend({}, this.getDefaults(), this.$element.data(), options);
+
+                            if (options.delay && typeof options.delay == 'number') {
+                                options.delay = {
+                                    show: options.delay,
+                                    hide: options.delay
+                                }
+                            }
+
+                            return options
+                        };
+
+                        Tooltip.prototype.getDelegateOptions = function () {
+                            var options = {};
+                            var defaults = this.getDefaults();
+
+                            this._options && $.each(this._options, function (key, value) {
+                                if (defaults[key] != value) options[key] = value
+                            });
+
+                            return options
+                        };
+
+                        Tooltip.prototype.enter = function (obj) {
+                            var self = obj instanceof this.constructor ?
+                                obj : $(obj.currentTarget).data('bs.' + this.type);
+
+                            if (!self) {
+                                self = new this.constructor(obj.currentTarget, this.getDelegateOptions());
+                                $(obj.currentTarget).data('bs.' + this.type, self)
+                            }
+
+                            if (obj instanceof $.Event) {
+                                self.inState[obj.type == 'focusin' ? 'focus' : 'hover'] = true
+                            }
+
+                            if (self.tip().hasClass('in') || self.hoverState == 'in') {
+                                self.hoverState = 'in';
+                                return
+                            }
+
+                            clearTimeout(self.timeout);
+
+                            self.hoverState = 'in';
+
+                            if (!self.options.delay || !self.options.delay.show) return self.show();
+
+                            self.timeout = setTimeout(function () {
+                                if (self.hoverState == 'in') self.show()
+                            }, self.options.delay.show)
+                        };
+
+                        Tooltip.prototype.isInStateTrue = function () {
+                            for (var key in this.inState) {
+                                if (this.inState[key]) return true
+                            }
+
+                            return false
+                        };
+
+                        Tooltip.prototype.leave = function (obj) {
+                            var self = obj instanceof this.constructor ?
+                                obj : $(obj.currentTarget).data('bs.' + this.type);
+
+                            if (!self) {
+                                self = new this.constructor(obj.currentTarget, this.getDelegateOptions());
+                                $(obj.currentTarget).data('bs.' + this.type, self)
+                            }
+
+                            if (obj instanceof $.Event) {
+                                self.inState[obj.type == 'focusout' ? 'focus' : 'hover'] = false
+                            }
+
+                            if (self.isInStateTrue()) return;
+
+                            clearTimeout(self.timeout);
+
+                            self.hoverState = 'out';
+
+                            if (!self.options.delay || !self.options.delay.hide) return self.hide();
+
+                            self.timeout = setTimeout(function () {
+                                if (self.hoverState == 'out') self.hide()
+                            }, self.options.delay.hide)
+                        };
+
+                        Tooltip.prototype.show = function () {
+
+                            //  将遮罩层以及提示栏的z-index提高比弹出框（1051）更高的1052，可以让在使用弹出框（popover)的同时，正常使用遮罩以及提示栏。
+                            app.shelter.upperZIndex();
+
+                            var e = $.Event('show.bs.' + this.type);
+
+                            if (this.hasContent() && this.enabled) {
+                                //add
+                                this.$element.trigger(e);
+
+                                var $tooltip = this.$element,
+                                    tooltipUUID, resizeHandler,
+                                    optionWidth = this.options.width,
+                                    optionHeight = this.options.height;
+
+                                var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0]);
+                                if (e.isDefaultPrevented() || !inDom) return;
+                                var that = this;
+
+                                var $tip = this.tip();
+
+                                var tipId = this.getUID(this.type);
+
+                                this.setContent();
+                                $tip.attr('id', tipId);
+                                this.$element.attr('aria-describedby', tipId);
+
+                                if (this.options.animation) $tip.addClass('fade');
+
+                                var placement = typeof this.options.placement == 'function' ?
+                                    this.options.placement.call(this, $tip[0], this.$element[0]) :
+                                    this.options.placement;
+
+                                var autoToken = /\s?auto?\s?/i;
+                                var autoPlace = autoToken.test(placement);
+                                if (autoPlace) placement = placement.replace(autoToken, '') || 'top';
+
+
+                                $tip
+                                    .detach()
+                                    .css({display: 'block'})
+                                    // .css({ top: 0, left: 0, display: 'block' })
+                                    .addClass(placement)
+                                    .data('bs.' + this.type, this);
+
+                                this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element);
+
+                                // xieyirong@agree.com.cn
+                                // 2018-03-15
+                                // resizeHandler 初始化气泡尺寸以及监听窗口变化重置气泡尺寸
+                                if ((optionWidth || optionHeight)) {
+
+                                    tooltipUUID = app.getUID();
+                                    resizeHandler = function () {
+                                        var tooltipHeight, tooltipWidth, windowHeight, windowWidth,
+                                            tooltipCss = {},
+                                            tooltipBodyCss, tooltipBodyHeight,
+                                            placement, pos, actualWidth, actualHeight, calculatedOffset;
+
+
+                                        if (optionWidth) {
+                                            windowWidth = $window.width();
+
+                                            if (optionWidth.indexOf('%') !== -1) {
+                                                tooltipWidth = (parseInt(optionWidth, 10) / 100 || .8) * windowWidth;
+                                            } else {
+                                                tooltipWidth = parseInt(optionWidth, 10) || windowWidth * .8;
+                                            }
+
+                                            tooltipWidth = Math.min(tooltipWidth, windowWidth);
+                                            tooltipWidth = Math.max(tooltipWidth, 0);
+                                            tooltipCss.width = tooltipWidth;
+                                            tooltipCss.marginLeft = 0;
+                                        }
+
+                                        if (optionHeight) {
+                                            windowHeight = $window.height();
+
+                                            if (optionHeight.indexOf('%') !== -1) {
+                                                tooltipHeight = (parseInt(optionHeight, 10) / 100 || .7) * windowHeight;
+                                            } else {
+                                                tooltipHeight = parseInt(optionHeight, 10) || windowHeight * .7;
+                                            }
+
+                                            tooltipHeight = Math.min(tooltipHeight, windowHeight);
+
+                                            tooltipBodyHeight = tooltipHeight - $tip.children('.aweb-popover-header').height();
+
+                                            tooltipCss.height = tooltipHeight;
+                                            tooltipCss.marginTop = 0;
+
+                                            tooltipBodyCss = {
+                                                maxHeight: tooltipBodyHeight,
+                                                minHeight: tooltipBodyHeight
+                                            };
+                                        }
+
+
+                                        $tip.css(tooltipCss);
+                                        if (tooltipBodyCss) {
+                                            $tip.children('.aweb-popover-body').css(tooltipBodyCss);
+                                        }
+
+                                        // resize 中更新 气泡位置
+
+                                        placement = that.options.placement;
+                                        pos = that.getPosition();
+                                        actualWidth = $tip[0].offsetWidth;
+                                        actualHeight = $tip[0].offsetHeight;
+                                        calculatedOffset = that.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
+                                        that.applyPlacement(calculatedOffset, placement);
+
+                                    };
+
+                                    $window.on('resize.' + tooltipUUID, resizeHandler);
+                                    resizeHandler();
+
+                                    this.uuid = tooltipUUID;
+                                    this.resizeHandler = resizeHandler;
+                                }
+
+                                this.$element.trigger('inserted.bs.' + this.type);
+
+                                var pos = this.getPosition(),
+                                    actualWidth = $tip[0].offsetWidth,
+                                    actualHeight = $tip[0].offsetHeight,
+                                    calculatedOffset, fixWidth, fixHeight, originFixWidth, originFixHeight, popoverHeaderHeight,
+                                    popoverBodyHeight;
+
+                                if (autoPlace) {
+                                    var orgPlacement = placement;
+                                    var viewportDim = this.getPosition(this.$viewport);
+
+                                    placement = placement == 'bottom' && pos.bottom + actualHeight > viewportDim.bottom ? 'top' :
+                                        placement == 'top' && pos.top - actualHeight < viewportDim.top ? 'bottom' :
+                                            placement == 'right' && pos.right + actualWidth > viewportDim.width ? 'left' :
+                                                placement == 'left' && pos.left - actualWidth < viewportDim.left ? 'right' :
+                                                    placement;
+
+                                    calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
+
+                                    //对调整后方位为 left、top情况做处理，将原本的修改尺寸和调整后的修改尺寸作比较
+                                    if (orgPlacement !== placement) {
+                                        switch (placement) {
+                                            case 'left':
+                                                originFixWidth = viewportDim.width - pos.right;
+                                                if (calculatedOffset.left < 0) {
+                                                    fixWidth = actualWidth + calculatedOffset.left;
+                                                    if (fixWidth < originFixWidth) {
+                                                        fixWidth = originFixWidth;
+                                                        placement = orgPlacement;
+                                                        $tip.css({'width': fixWidth + 'px'});
+                                                    }
+                                                }
+                                                break;
+                                            case 'top':
+                                                originFixHeight = viewportDim.height - pos.bottom;
+                                                if (calculatedOffset.top < 0) {
+                                                    fixHeight = actualHeight + calculatedOffset.top;
+                                                    if (fixHeight < originFixHeight) {
+                                                        fixHeight = originFixHeight - 10;
+                                                        placement = orgPlacement;
+                                                        popoverHeaderHeight = $tip.children('.aweb-popover-header').height();
+                                                        popoverBodyHeight = fixHeight - popoverHeaderHeight;
+                                                        $tip.css({'height': fixHeight + 'px'});
+                                                        $tip.find('.aweb-popover-body').css({
+                                                            'min-height': popoverBodyHeight + 'px',
+                                                            'max-height': popoverBodyHeight + 'px'
+                                                        });
+                                                    }
+                                                }
+                                                break;
+                                        }
+
+                                    }
+
+                                    $tip
+                                        .removeClass(orgPlacement)
+                                        .addClass(placement)
+                                }
+
+                                calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
+
+                                //阻止气泡溢出
+                                switch (placement) {
+                                    case 'left':
+                                    case 'right':
+                                        if (calculatedOffset.left < 0) {
+                                            fixWidth = actualWidth + calculatedOffset.left;
+                                            $tip.css({'width': fixWidth + 'px'});
+                                            calculatedOffset.left = 0;
+                                        }
+                                        break;
+                                    case 'top':
+                                    case 'bottm':
+                                        if (calculatedOffset.top < 0) {
+                                            fixHeight = actualHeight + calculatedOffset.top;
+                                            popoverHeaderHeight = $tip.children('.aweb-popover-header').height();
+                                            popoverBodyHeight = fixHeight - popoverHeaderHeight;
+                                            $tip.css({'height': fixHeight + 'px'});
+                                            $tip.find('.aweb-popover-body').css({
+                                                'min-height': popoverBodyHeight + 'px',
+                                                'max-height': popoverBodyHeight + 'px'
+                                            });
+                                            calculatedOffset.top = 0;
+                                        }
+                                        break;
+                                }
+
+                                this.applyPlacement(calculatedOffset, placement);
+
+                                var complete = function () {
+                                    var prevHoverState = that.hoverState;
+                                    that.$element.trigger('shown.bs.' + that.type);
+                                    that.hoverState = null;
+
+                                    if (prevHoverState == 'out') that.leave(that)
+                                };
+
+                                $.support.transition && this.$tip.hasClass('fade') ?
+                                    $tip
+                                        .one('bsTransitionEnd', complete)
+                                        .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
+                                    complete()
+                            }
+                        };
+
+                        Tooltip.prototype.applyPlacement = function (offset, placement) {
+                            var $tip = this.tip();
+                            var width = $tip[0].offsetWidth;
+                            var height = $tip[0].offsetHeight;
+
+                            // manually read margins because getBoundingClientRect includes difference
+                            var marginTop = parseInt($tip.css('margin-top'), 10);
+                            var marginLeft = parseInt($tip.css('margin-left'), 10);
+
+                            // we must check for NaN for ie 8/9
+                            if (isNaN(marginTop)) marginTop = 0;
+                            if (isNaN(marginLeft)) marginLeft = 0;
+
+                            offset.top += marginTop;
+                            offset.left += marginLeft;
+
+                            // $.fn.offset doesn't round pixel values
+                            // so we use setOffset directly with our own function B-0
+                            $.offset.setOffset($tip[0], $.extend({
+                                using: function (props) {
+                                    $tip.css({
+                                        top: Math.round(props.top),
+                                        left: Math.round(props.left)
+                                    })
+                                }
+                            }, offset), 0);
+
+                            $tip.addClass('in');
+
+                            // check to see if placing tip in new offset caused the tip to resize itself
+                            var actualWidth = $tip[0].offsetWidth;
+                            var actualHeight = $tip[0].offsetHeight;
+
+                            if (placement == 'top' && actualHeight != height) {
+                                offset.top = offset.top + height - actualHeight
+                            }
+
+                            var delta = this.getViewportAdjustedDelta(placement, offset, actualWidth, actualHeight);
+
+                            if (delta.left) offset.left += delta.left;
+                            else offset.top += delta.top;
+
+                            var isVertical = /top|bottom/.test(placement);
+                            var arrowDelta = isVertical ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight;
+                            var arrowOffsetPosition = isVertical ? 'offsetWidth' : 'offsetHeight';
+
+                            $tip.offset(offset);
+
+                            this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
+                        };
+
+                        Tooltip.prototype.replaceArrow = function (delta, dimension, isVertical) {
+                            this.arrow()
+                                .css(isVertical ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
+                                .css(isVertical ? 'top' : 'left', '')
+                        };
+
+                        Tooltip.prototype.setContent = function () {
+                            var $tip = this.tip();
+                            var title = this.getTitle();
+
+                            $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title);
+                            $tip.removeClass('fade in top bottom left right')
+                        };
+
+                        Tooltip.prototype.hide = function (callback) {
+                            //  将遮罩层以及提示栏的z-index还原
+                            app.shelter.lowerZIndex();
+
+                            var that = this;
+                            var $tip = $(this.$tip);
+                            var e = $.Event('hide.bs.' + this.type);
+
+                            function complete() {
+                                if (that.hoverState != 'in') $tip.detach();
+                                if (that.$element) { // TODO: Check whether guarding this code with this `if` is really necessary.
+                                    that.$element
+                                        .removeAttr('aria-describedby')
+                                        .trigger('hidden.bs.' + that.type)
+                                }
+                                callback && callback()
+                            }
+
+                            this.$element.trigger(e);
+
+                            // null resizeHandler
+                            if (this.uuid) {
+                                $window.off('resize.' + this.uuid);
+                                this.resizeHandler = null;
+                            }
+
+                            if (e.isDefaultPrevented()) return;
+
+                            $tip.removeClass('in');
+
+                            $.support.transition && $tip.hasClass('fade') ?
+                                $tip
+                                    .one('bsTransitionEnd', complete)
+                                    .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
+                                complete();
+
+                            this.hoverState = null;
+
+                            return this
+                        };
+
+                        Tooltip.prototype.fixTitle = function () {
+                            var $e = this.$element;
+                            if ($e.attr('title') || typeof $e.attr('data-original-title') != 'string') {
+                                $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+                            }
+                        };
+
+                        Tooltip.prototype.hasContent = function () {
+                            return this.getTitle()
+                        };
+
+                        Tooltip.prototype.getPosition = function ($element) {
+                            $element = $element || this.$element;
+
+                            var el = $element[0];
+                            var isBody = el.tagName == 'BODY';
+
+                            var elRect = el.getBoundingClientRect();
+                            if (elRect.width == null) {
+                                // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
+                                elRect = $.extend({}, elRect, {
+                                    width: elRect.right - elRect.left,
+                                    height: elRect.bottom - elRect.top
+                                })
+                            }
+                            var isSvg = window.SVGElement && el instanceof window.SVGElement;
+                            // Avoid using $.offset() on SVGs since it gives incorrect results in jQuery 3.
+                            // See https://github.com/twbs/bootstrap/issues/20280
+                            var elOffset = isBody ? {top: 0, left: 0} : (isSvg ? null : $element.offset());
+                            var scroll = {scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop()};
+                            var outerDims = isBody ? {width: $(window).width(), height: $(window).height()} : null;
+
+                            return $.extend({}, elRect, scroll, outerDims, elOffset)
+                        };
+
+                        Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
+                            return placement == 'bottom' ? {
+                                    top: pos.top + pos.height,
+                                    left: pos.left + pos.width / 2 - actualWidth / 2
+                                } :
+                                placement == 'top' ? {
+                                        top: pos.top - actualHeight,
+                                        left: pos.left + pos.width / 2 - actualWidth / 2
+                                    } :
+                                    placement == 'left' ? {
+                                            top: pos.top + pos.height / 2 - actualHeight / 2,
+                                            left: pos.left - actualWidth
+                                        } :
+                                        /* placement == 'right' */
+                                        {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
+
+                        };
+
+                        Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
+                            var delta = {top: 0, left: 0};
+                            if (!this.$viewport) return delta;
+
+                            var viewportPadding = this.options.viewport && this.options.viewport.padding || 0;
+                            var viewportDimensions = this.getPosition(this.$viewport);
+
+                            if (/right|left/.test(placement)) {
+                                var topEdgeOffset = pos.top - viewportPadding - viewportDimensions.scroll;
+                                var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight;
+                                if (topEdgeOffset < viewportDimensions.top) { // top overflow
+                                    delta.top = viewportDimensions.top - topEdgeOffset
+                                } else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
+                                    delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
+                                }
+                            } else {
+                                var leftEdgeOffset = pos.left - viewportPadding;
+                                var rightEdgeOffset = pos.left + viewportPadding + actualWidth;
+                                if (leftEdgeOffset < viewportDimensions.left) { // left overflow
+                                    delta.left = viewportDimensions.left - leftEdgeOffset
+                                } else if (rightEdgeOffset > viewportDimensions.right) { // right overflow
+                                    delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
+                                }
+                            }
+
+                            return delta
+                        };
+
+                        Tooltip.prototype.getTitle = function () {
+                            var title;
+                            var $e = this.$element;
+                            var o = this.options;
+
+                            title = (typeof o.title == 'function' ? o.title.call($e[0]) : o.title) || $e.attr('data-original-title');
+
+                            return title
+                        };
+
+                        Tooltip.prototype.getUID = function (prefix) {
+                            do prefix += ~~(Math.random() * 1000000);
+                            while (document.getElementById(prefix));
+                            return prefix
+                        };
+
+                        Tooltip.prototype.tip = function () {
+                            if (!this.$tip) {
+                                this.$tip = $(this.options.template);
+                                if (this.$tip.length != 1) {
+                                    throw new Error(this.type + ' `template` option must consist of exactly 1 top-level element!')
+                                }
+                            }
+                            return this.$tip
+                        };
+
+                        Tooltip.prototype.arrow = function () {
+                            return (this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow'))
+                        };
+
+                        Tooltip.prototype.enable = function () {
+                            this.enabled = true
+                        };
+
+                        Tooltip.prototype.disable = function () {
+                            this.enabled = false
+                        };
+
+                        Tooltip.prototype.toggleEnabled = function () {
+                            this.enabled = !this.enabled
+                        };
+
+                        Tooltip.prototype.toggle = function (e) {
+                            var self = this;
+                            if (e) {
+                                self = $(e.currentTarget).data('bs.' + this.type);
+                                if (!self) {
+                                    self = new this.constructor(e.currentTarget, this.getDelegateOptions());
+                                    $(e.currentTarget).data('bs.' + this.type, self)
+                                }
+                            }
+
+                            if (e) {
+                                self.inState.click = !self.inState.click;
+                                if (self.isInStateTrue()) self.enter(self);
+                                else self.leave(self)
+                            } else {
+                                self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
+                            }
+                        };
+
+                        Tooltip.prototype.destroy = function () {
+                            var that = this;
+                            clearTimeout(this.timeout);
+                            this.hide(function () {
+                                that.$element.off('.' + that.type).removeData('bs.' + that.type);
+                                if (that.$tip) {
+                                    that.$tip.detach()
+                                }
+                                that.$tip = null;
+                                that.$arrow = null;
+                                that.$viewport = null;
+                                that.$element = null
+                            })
+                        };
+
+
+                        // TOOLTIP PLUGIN DEFINITION
+                        // =========================
+
+                        function Plugin(option) {
+                            return this.each(function () {
+                                var $this = $(this);
+                                var data = $this.data('bs.tooltip');
+                                var options = typeof option == 'object' && option;
+
+                                if (!data && /destroy|hide/.test(option)) return;
+                                if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)));
+                                if (typeof option == 'string') data[option]()
+                            })
+                        }
+
+                        var old = $.fn.tooltip;
+
+                        $.fn.tooltip = Plugin;
+                        $.fn.tooltip.Constructor = Tooltip;
+
+
+                        // TOOLTIP NO CONFLICT
+                        // ===================
+
+                        $.fn.tooltip.noConflict = function () {
+                            $.fn.tooltip = old;
+                            return this
+                        }
+
+                    }(jQuery);
+
+
+                    //popover
+
+                    +function () {
+                        'use strict';
+
+                        // POPOVER PUBLIC CLASS DEFINITION
+                        // ===============================
+
+                        var Popover = function (element, options) {
+                            this.init('popover', element, options)
+                        };
+
+                        if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js');
+
+                        Popover.VERSION = '3.3.7';
+
+                        Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
+                            placement: 'right',
+                            trigger: 'click',
+                            content: '',
+                            template: '<div class="aweb-popover" role="tooltip"><div class="arrow"></div><h3 class="aweb-popover-title"></h3><div class="aweb-popover-content"></div></div>'
+                        });
+
+
+                        // NOTE: POPOVER EXTENDS tooltip.js
+                        // ================================
+
+                        Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype);
+
+                        Popover.prototype.constructor = Popover;
+
+                        Popover.prototype.getDefaults = function () {
+                            return Popover.DEFAULTS
+                        };
+
+                        Popover.prototype.setContent = function () {
+                            var $tip = this.tip();
+                            var title = this.getTitle();
+                            var content = this.getContent();
+
+                            $tip.find('.aweb-popover-title')[this.options.html ? 'html' : 'text'](title);
+                            $tip.find('.aweb-popover-content').children().detach().end()[ // we use append for html objects to maintain js events
+                                this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
+                                ](content);
+
+                            $tip.removeClass('fade top bottom left right in');
+
+                            // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
+                            // this manually by checking the contents.
+                            if (!$tip.find('.aweb-popover-title').html()) $tip.find('.aweb-popover-title').hide()
+                        };
+
+                        Popover.prototype.hasContent = function () {
+                            return this.getTitle() || this.getContent()
+                        };
+
+                        Popover.prototype.getContent = function () {
+                            var $e = this.$element;
+                            var o = this.options;
+
+                            return $e.attr('data-content') ||
+                                (typeof o.content == 'function' ?
+                                    o.content.call($e[0]) :
+                                    o.content)
+                        };
+
+                        Popover.prototype.arrow = function () {
+                            return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
+                        };
+
+
+                        // POPOVER PLUGIN DEFINITION
+                        // =========================
+
+                        function Plugin(option) {
+                            return this.each(function () {
+                                var $this = $(this);
+                                var data = $this.data('bs.popover');
+                                var options = typeof option == 'object' && option;
+
+                                if (!data && /destroy|hide/.test(option)) return;
+                                if (!data) $this.data('bs.popover', (data = new Popover(this, options)));
+                                if (typeof option == 'string') data[option]()
+                            })
+                        }
+
+                        var old = $.fn.popover;
+
+                        $.fn.popover = Plugin;
+                        $.fn.popover.Constructor = Popover;
+
+
+                        // POPOVER NO CONFLICT
+                        // ===================
+
+                        $.fn.popover.noConflict = function () {
+                            $.fn.popover = old;
+                            return this
+                        }
+
+                    }(jQuery);
+
+                    popover = function () {
+
+
+                        function popover(options) {
+
+                            // var $popover = $(options.$elem).closest('button') !== 0 ? $(options.$elem).closest('button') : $(options.$elem);
+
+                            // if ($popover && $popover.data("bs.popover")) {
+                            //     return false;
+                            // }
+
+                            var CONST = {
+                                    POPOVER_LANG: {
+                                        TITLE: '气泡',
+                                        CONTENT: '气泡内容',
+                                        DEFAULT_BTN: '<button title="全屏切换" type="button" data-role="toggleSize"><i class="aweb-popover-header-icon aui aui-quanping fa fa-expand"></i></button><button title="关闭" type="button" data-role="close"><i class="aweb-popover-header-icon aui aui-guanbi iconfont icon-topbar-close"></i></button>'
+                                    },
+                                    POPOVER_NAMESPACE: '.pop'
+                                },
+                                _default = {
+                                    title: CONST.POPOVER_LANG.TITLE, //弹出框标题，非必填
+                                    content: CONST.POPOVER_LANG.CONTENT, //弹出框内容
+                                    init: null, //初始化函数
+                                    confirmHandler: function () {
+                                    }, //点击确定按钮触发的函数，参数以数组形式写在args那里
+                                    args: [],
+                                    html: true,
+                                    container: 'body',
+                                    height: '50%',
+                                    width: '80%',
+                                    placement: 'auto right',
+                                    hasHeader: true,
+                                    template: '<div class="aweb-popover"  tabindex="0" role="tooltip"><div class="arrow"></div><div class="aweb-popover-header"><h4 class="aweb-popover-title"></h4><div class="btn-group">' +
+                                    CONST.POPOVER_LANG.DEFAULT_BTN +
+                                    '</div></div><div class="aweb-popover-body"><div class="aweb-popover-content"></div></div></div>'
+                                };
+
+                            var Pop = function (options) {
+                                this.options = $.extend({}, _default, options);
+                                this.init();
+                                this.on(this.events);
+                            };
+
+                            Pop.fn = Pop.prototype = {
+                                Constructor: Pop,
+                                events: {
+                                    toggleSize: function (e, context) {
+                                        var popoverBodyHeight, popoverBodyCss;
+
+                                        // 设置窗口大小
+                                        context.$tip.toggleClass('popover-lg');
+
+                                        //调整 popover-body 高度
+                                        popoverBodyHeight = context.$tip.height() - context.$tip.children('.aweb-popover-header').height();
+
+                                        popoverBodyCss = {
+                                            maxHeight: popoverBodyHeight,
+                                            minHeight: popoverBodyHeight
+                                        };
+
+                                        if (popoverBodyCss) {
+                                            context.$tip.children('.aweb-popover-body').css(popoverBodyCss);
+                                        }
+
+                                        context.trigger('screenChange');
+
+                                    },
+
+                                    close: function (e, context) {
+                                        context.$element && context.$element.popover('destroy');
+                                        if (context.isShow) {
+                                            var handler = context.options.confirmHandler;
+                                            $.isFunction(handler) && handler.apply(context, context.options.args);
+                                            context.isShow = false;
+                                            context.popInstance.destroy();
+                                        }
+                                    }
+                                },
+
+                                init: function () {
+
+                                    var listen = {},
+                                        i, k,j, item, $newBtn,temp={},
+                                        that = this,
+                                        onList = this.options.on,
+                                        $buttons, $button, btnClass, iconNamespace;
+
+
+                                    this.isShow = true;
+                                    this.options.args = [this].concat(this.options.args);
+
+                                    if (!this.options.hasHeader) {
+                                        this.options.template = '<div class="aweb-popover"  tabindex="0" role="tooltip"><div class="arrow"></div><div class="aweb-popover-body"><div class="aweb-popover-content"></div></div></div>';
+                                    }
+
+                                    //事件散列处理
+                                    for (i in onList) {
+
+                                        if (onList[i].btnName && onList[i].callback) {
+                                            listen[onList[i].btnName] = onList[i].callback;
+                                        }
+
+                                    }
+
+                                    this.events = $.extend({}, this.events, listen);
+
+
+                                    for (k in this.events) {
+
+                                        //引入temp对象，避免在IE8上的属性无限循环
+                                        temp[k + CONST.POPOVER_NAMESPACE] = this.events[k];
+                                        // this.events[k + CONST.POPOVER_NAMESPACE] = this.events[k];
+                                        delete this.events[k];
+
+                                    }
+
+                                    for(j in temp){
+
+                                        this.events[j] =temp[j];
+
+                                    }
+
+                                    temp = null;
+
+                                    if ($.isFunction(this.options.$elem)) {
+                                        this.options.$elem = this.options.$elem();
+                                    }
+
+                                    this.$element = $(this.options.$elem).closest('button').length !== 0 ? $(this.options.$elem).closest('button') : $(this.options.$elem).closest('span').length !== 0 ? $(this.options.$elem).closest('span') : $(this.options.$elem);
+
+                                    if ($.isFunction(this.options.content)) {
+                                        this.options.content = this.options.content();
+                                    }
+
+                                    this.$element.popover({
+                                        title: this.options.title,
+                                        content: this.options.content,
+                                        html: this.options.html,
+                                        container: this.options.container,
+                                        height: this.options.height,
+                                        width: this.options.width,
+                                        placement: this.options.placement,
+                                        template: this.options.template,
+                                        animation: false
+                                    }).popover('show');
+
+                                    // 初始化模拟鼠标点击
+                                    if (this.options.fixClick) {
+                                        this.$element.data('bs.popover').inState.click = true;
+                                    }
+
+                                    this.popInstance = this.$element.data('bs.popover');
+
+                                    //保存气泡弹出框的索引
+                                    this.$tip = this.$element.data('bs.popover').tip();
+
+                                    this.$btnCtn = this.$tip.find('.aweb-popover-header > .btn-group').html(CONST.POPOVER_LANG.DEFAULT_BTN);
+
+                                    $buttons = this.$btnCtn.find('button i');
+
+                                    // 绑定 options.init 中的 this 为 this.$tip 对象，将 this <Pop实例> 作为第一个参数传入
+
+                                    if ($.isFunction(this.options.init)) {
+                                        this.options.init.apply(this.$tip, this.options.args);
+                                    }
+
+                                    // 处理 aui 与 aweb 图标关系
+
+                                    if (window.auiApp && window.auiApp.mode !== 'virtualizer') {
+                                        $buttons.each(function (index, item) {
+                                            $button = $(item);
+                                            btnClass = item.className.split(' ');
+
+                                            $.each(btnClass, function (index, item) {
+                                                if (item !== 'aweb-popover-header-icon' && item.indexOf('aui') < 0) {
+                                                    $button.removeClass(item);
+                                                }
+                                            });
+                                        });
+                                    } else {
+
+                                        $buttons.each(function (index, item) {
+                                            $(item).removeClass('aui');
+                                        });
+                                    }
+
+                                    //合成按钮组（默认 关闭和全屏，并监听对应按钮的点击事件，并 trigger 对应注册的事件）
+
+                                    for (i in onList) {
+                                        //正则处理图标前缀
+                                        if (onList[i].btnName && onList[i].icon && onList[i].title) {
+                                            iconNamespace = onList[i].icon.match(/([a-z]+)-([a-z]+)/)[1];
+                                            $newBtn = '<button title="' + onList[i].title + '" type="button" data-role="' + onList[i].btnName + '"><i class="aweb-popover-header-icon ' + iconNamespace + " " + onList[i].icon + '"></i></button>';
+                                            this.$btnCtn.prepend($newBtn);
+                                        }
+
+                                    }
+
+                                    this.$tip.on('click' + CONST.POPOVER_NAMESPACE, '.aweb-popover-header button', function (e) {
+                                        that.$tip.trigger($(this).attr('data-role') + CONST.POPOVER_NAMESPACE, that);
+                                    });
+
+                                    this.$tip.focus();
+
+                                    //focusout
+                                    this.$tip.on('focusout' + CONST.POPOVER_NAMESPACE, function (e) {
+
+                                        // relatedTarget 是 aweb-popover 中的元素
+                                        if ($(e.relatedTarget).closest('.aweb-popover').is(that.$tip)) {
+                                            return false;
+                                        }
+
+                                        if (that.isShow) {
+                                            if ((that.$tip.is($(e.target)) || that.$tip.is($(e.target).closest('.aweb-popover'))) && (e.relatedTarget === null || ( e.relatedTarget !== undefined && $(e.relatedTarget).closest('.aweb-popover').length === 0))) {
+
+                                                // 点击 popover 之外的区域造成的失焦
+                                                if (that.options.focusable !== false) {
+                                                    that.close();
+                                                }
+
+                                            } else {
+                                                return false;
+                                            }
+                                        }
+                                        //其他提前触发 close 的失焦行为都调用 Pop 实例的 close() 方法
+
+                                    });
+
+                                    // 监听popover 的 hide 事件，并执行 confirmHandler
+
+                                    this.$element.one('hide.bs.popover', function () {
+                                        that.isShow = false;
+                                        var handler = that.options.confirmHandler;
+                                        $.isFunction(handler) && handler.apply(that, that.options.args);
+                                    });
+
+                                    // 监听popover 的 hidden 事件，并销毁 popover 实例、Pop实例
+                                    this.$element.one('hidden.bs.popover', function () {
+                                        that.destroy();
+                                    });
+
+                                },
+
+                                on: function () {
+                                    this.$tip.on.apply(this.$tip, arguments);
+                                },
+
+                                off: function () {
+                                    this.$tip.off.apply(this.$tip, arguments);
+                                },
+
+                                trigger: function () {
+                                    this.$tip.trigger.apply(this.$tip, arguments);
+                                },
+
+                                destroy: function () {
+                                    this.off();
+                                    this.$element = null;
+                                    this.$btnCtn = null;
+                                    this.$tip = null;
+                                    this.options = null;
+                                },
+
+                                close: function () {
+                                    this.$tip && this.$tip.trigger('close', this);
+                                },
+
+                                toggleSize: function () {
+                                    this.$tip && this.$tip.trigger('toggleSize', this);
+                                },
+
+                                setCache: function (key, value) {
+                                    if (!this.cache) {
+                                        this.cache = {}
+                                    }
+                                    this.cache[key] = value;
+                                },
+
+                                getCache: function (key) {
+                                    if (this.cache) {
+                                        return this.cache[key];
+                                    }
+                                }
+
+                            };
+
+                            return new Pop(options);
+
+                        }
+
+                        return popover;
+                    }();
+
+                    return popover;
+                }()});
+define('app.tips',['app.alert','app.modal'],function () {app.tips=function (){
+    require(['widget','awebFresher'],function(){
+        var colors={
+            SUCCESS:$AW.fresher.variablesCopy['@sSuccessColor']||'#23ad44',
+            ERROR:$AW.fresher.variablesCopy['@sErrorColor']||'#f05050',
+            INFO:$AW.fresher.variablesCopy['@sInfoColor']||'#3db9ff',
+            WARNING:$AW.fresher.variablesCopy['@sWarningColor']||'#ffba00'
+        };
+        colors._DEFAULT=colors.INFO;
+
+        app.tips=function(title,msg,type){
+
+            if(!type || type==='_DEFAULT'){
+                type='INFO';
+            }
+
+            if(colors[type]){
+                app.modal({
+                    title:title,
+                    content: '<div class="aui-ide-modal-content">' +
+                                '<i class="'+ app.alert[type.toLowerCase()] +'" style="color:'+ colors[type] +'"></i>'+
+                                '<p data-role="message">'+ msg +'</p>'+
+                            '</div>',
+                    isDialog:true,
+                    isLargeModal:false,
+                    btnConfirm:false,
+                    btnCancel:false
+                  })
+            }
+        }; 
+        
+        for(var k in colors){
+            if(colors.hasOwnProperty(k)){
+                app.tips[k]=k;
+            }
+        }
+
+    })
+}()});
+define('app.reset',[],function () {app.reset=function ($form, auiCtx) {
+        var $inputs = $("[id]", $form),
+            i, item, domId, ins,
+            variables = auiCtx && auiCtx.variables,
+            $item, $checkedItem, $inputItem;
+
+        if (variables && (i = $inputs.length)) {
+            for (; item = $inputs[--i];) {
+                ins = variables[item.id];
+                if (ins && $.isFunction(ins.resetValue)) {
+                    ins.resetValue();
+                }
+            }
+        } else if ($inputs.length) {
+            for (i = -1; item = $inputs[++i];) {
+                $item = $(':input,img,.text-div,.wangEditor-txt', item).not(':button, :submit, :reset,:disabled');
+                $inputItem = $(':input', item).not(':radio,:checkbox');
+                $checkedItem = $(':checked', item).not(':disabled');
+
+                $inputItem.length && $inputItem.val('').removeAttr('selected');
+                $checkedItem.length && $checkedItem.removeAttr('checked');
+
+            }
+        }
+
+    }});
+define('app.getData',[],function () {app.getData=function (name, fromCookie) {
+    function getCookie(name) {
+        var value = document.cookie.match(new RegExp(name + '=([^;]+)'));
+
+        return value && value.length ? value[1] : '';
+    }
+
+    var value,
+        decoder = window.decodeURI || window.decodeURIComponent || window.unescape;
+
+    if (fromCookie) {
+        value = getCookie(name);
+    } else {
+        try {
+            value = window.localStorage.getItem(name);
+
+            if (!value) value = getCookie(name); //如果是保存在Cookie那里
+        } catch (e) { //如果禁用localStorage将会抛出异常
+            value = getCookie(name);
+        }
+    }
+    return decoder(value);
+}});
+define('app.alert',['app.dispatcher','app.modal'],function () {app.alert=function (){
+                var SHOW_TYPE = {
+                        SUCCESS: 'success',
+                        success: 'fa fa-check-circle alert-success ',
+                        _DEFAULT: 'info',
+                        info: 'fa fa-info-circle alert-info',
+                        ERROR: 'error',
+                        error: 'fa fa-warning alert-pink',
+                        WARNING: 'warning',
+                        warning: 'fa fa-info-circle alert-warning',
+                        PINK: 'pink',
+                        pink: 'alert-pink',
+                        MESSAGE: 'message'
+                    },
+
+                    alertCtnTemp = '<ul id="alertList" data-role="alertList" class="alert-list unstyled" style="z-index: 8;"></ul>',
+                    alertCttTemp = '<li data-alert-id="_id_"><i class="iconfont icon-topbar-close alert-btn" title="关闭" data-role="close"></i><i class="fa fa-angle-down alert-btn" data-role="more" title="更多"></i><i class="alert-icon _showType_"></i><div class="alert-content" title="_title_">_content_</div></li>',
+
+
+                    alertQueueLength = Math.max(Math.ceil($(window).height() / 100), 3),
+                    alertQueue = [],
+                    alertList = [],
+                    type, event,
+                    stopClose = false,
+
+                    $alert = $('#alertList'),
+
+
+                    messageDialog = function () {
+                        var queue = [],
+                            clickHandler = function () {
+                                var msg, result = true;
+                                queue.shift();
+
+                                if (queue.length) {
+                                    msg = queue[0];
+                                    while (queue.length && !msg) {
+                                        queue.shift();
+                                        msg = queue[0];
+                                    }
+                                    if (msg) {
+                                        $(this).find('[data-role=message]').empty().append(msg.toString().replace(/\n/g, '<br/>'));
+                                        result = false;
+                                    }
+                                }
+                                return result;
+                            };
+
+                        return function (msg) {
+                            var modal;
+
+                            queue.push(msg);
+
+                            if (queue.length === 1 && (msg = queue[0])) {
+
+                                modal = app.modal || window.app && window.app.modal || function (option) {
+                                    app.alert(option.content);
+                                    clickHandler();
+                                };
+
+                                modal({
+                                    title: '信息提示',
+                                    btnCancel: '关闭',
+                                    btnConfirm:false,
+                                    confirmHandler: clickHandler,
+                                    cancelHandler: clickHandler,
+                                    content: '<div class="aui-ide-modal-content"><i class="iconfont icon-round_warming"></i><p data-role="message">' + msg.toString().replace(/\n/g, '<br/>') + '</p></div>',
+                                    isDialog: true,
+                                    isLargeModal: false,
+                                    init: function () {
+                                        var $body = $(this);
+                                        setTimeout(function () {
+                                            $body.prev().find('.close').off().remove();
+                                        }, 100);
+                                    }
+                                });
+
+                            }
+                        }
+                    }(),
+
+                    addToQueue = function (args) {
+                        var i, item, id,
+                            result = false;
+
+                        if (id = args[2]) {
+                            for (i = -1; item = alertQueue[++i];) {
+                                if (result = (item[2] === id)) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!result) {
+                            alertQueue.push(args);
+                        }
+                    },
+                    delFormQueue = function () {
+                        return alertQueue.shift();
+                    },
+                    execAlert = function (msg, type, id) {
+                        var $item = null,
+                            args;
+
+                        //校验样式在_showType中
+                        type = type || SHOW_TYPE._DEFAULT;
+
+                        if (type === SHOW_TYPE.MESSAGE) {
+                            messageDialog(msg + '');
+                            console.info(msg);
+                        } else {
+
+
+                            msg += '';
+
+
+                            if ($alert.children().length < alertQueueLength) {
+
+                                if (!id || !$alert.children('[data-alert-id="' + id + '"]').length) {
+
+                                    //使获取提示框列表时,1键的类型不会被替换成样式名
+                                    args = JSON.parse(JSON.stringify(arguments));
+                                    //使获取提示框列表时，即使2键的值为undefined，也不会被忽略
+                                    if (!args[2]) {
+                                        args[2] = 'undefined';
+                                    }
+                                    alertList.push(args);
+
+                                    type = SHOW_TYPE[type] || SHOW_TYPE.info;
+
+                                    $item = $alert
+                                        .prepend(alertCttTemp.replace(/_id_/, id).replace(/_showType_/, type).replace(/_content_/, msg).replace(/_title_/, msg))
+                                        .children(':first');
+
+                                    //IE8下触发重绘
+                                    $alert.css('visibility','inherit').css('visibility','visible');
+
+                                    $item.attr('title', $item.text());
+
+                                    // //出现
+                                    setTimeout(function () {
+                                        $item.addClass('out');
+                                    }, 50 + Math.random() * 50);
+                                    // //隐藏
+
+                                    setTimeout(function () {
+                                        if (!stopClose) {
+                                            $item.removeClass('out');
+                                            execNextAlert($item);
+                                        }
+                                    }, 10000 + Math.random() * 1000);
+                                }
+                            } else {
+                                addToQueue(arguments);
+                            }
+                        }
+                    },
+                    execNextAlert = function ($lastElem) {
+                        setTimeout(function () {
+                            if ($lastElem) {
+                                $lastElem.remove();
+                                $lastElem = null;
+                                alertList.shift();
+                            }
+                            if (alertQueue.length) {
+                                execAlert.apply(this, delFormQueue());
+                            }
+                        }, 500);
+                    },
+                    alertFunc = function (msg, showType, id) {
+                        event && event.trigger('alert', arguments);
+                        if (msg instanceof Array) {
+                            for (var i = -1, alt; alt = msg[++i];) {
+                                if (alt instanceof Array) {
+                                    execAlert(alt[0], alt[1], alt[2]);
+
+                                } else {
+                                    execAlert(alt, showType, id);
+                                }
+                            }
+                        } else {
+                            execAlert(msg, showType, id);
+                        }
+                    };
+
+
+                //初始化数据
+                if (!$alert.length) {
+                    $alert = $(alertCtnTemp);
+                    $alert.appendTo('body');
+                }
+
+                for (type in SHOW_TYPE) {
+                    if (SHOW_TYPE.hasOwnProperty(type)) {
+                        alertFunc[type] = SHOW_TYPE[type];
+                    }
+                }
+
+
+                alertFunc.closeAll = function () {
+                    alertQueue = [];
+                    alertList = [];
+                    $alert.empty();
+                };
+
+                alertFunc.close = function (option) {
+                    var id, item, len;
+                    if (!(option instanceof Object)) {
+                        console.error('入参必须为对象');
+                        return
+                    }
+
+                    id = option.id;
+
+                    if (id) {
+                        for (len = alertQueue.length; item = alertQueue[--len];) {
+                            if ((item.length && ~Array.prototype.indexOf.call(item, id)) || item) {
+                                alertQueue.splice(len, 1);
+                                break;
+                            }
+                        }
+                        if ($alert.children('[data-alert-id=' + id + ']').length) {
+                            $('[data-alert-id=' + id + ']', $alert).remove();
+
+                        }
+                    } else {
+                        console.error("id的值不能为'undefined'");
+                    }
+                };
+
+                alertFunc.getAlertList = function () {
+                    return alertList.concat(alertQueue);
+                };
+
+                alertFunc.listener = function (callback,nameSpace) {
+
+                    !event && (event = app.dispatcher());
+
+                    event.on('alert'+ nameSpace?nameSpace:'', function () {
+
+                        callback && callback(arguments[1])
+
+                    })
+                };
+
+                alertFunc.offListener = function(nameSpace){
+
+                    event.off('alert'+ nameSpace?nameSpace:'')
+
+                };
+
+
+
+
+                //override alert
+                window.alert = messageDialog;
+
+                /*监听绑定*/
+                //关闭按钮
+                $alert.off().on('click', function (e) {
+                    var $e = $(e.target || window.event.srcElement),
+                        $ctt,$alertList,alertTop,
+                        role = $e.attr('data-role'),
+                        winHeight = $(window).height();
+
+                    switch (role) {
+                        case 'close':
+                            $e.parent().removeClass('out');
+
+                            execNextAlert($e.parent());
+
+                            stopClose = false;
+                            break;
+                        case 'more':
+                            $ctt = $e.siblings('.alert-content');
+                            $alertList = $ctt.parent().parent();
+                            alertTop = $alertList.css('top');
+
+                            if ($e.hasClass('more')) {
+                                stopClose = false;
+                                $ctt.removeClass('more');
+                                $ctt.css({'height': ''});
+                            } else {
+                                stopClose = true;
+                                $ctt.addClass('more');
+                                if($ctt.height() > winHeight) {
+                                    $ctt.css({'height': winHeight - 52 - ( 2 * Number.parseFloat(alertTop))});
+                                }
+
+                            }
+                            $e.toggleClass('more');
+
+                            break;
+                    }
+                });
+
+                /*详情请见api部分*/
+                return alertFunc;
+            }()});
+define('app.Controller',['app.dispatcher','app.domain','app.getData','app.getNewQueryStringURL','app.getQueryStringMap','app.getUID','app.modal','app.popover','app.position','app.screen','app.setData'],function () {app.Controller=function () {
     'use strict';
 
     var View = function (options, controller) {
@@ -1436,6 +3039,135 @@ define(["jquery"],function($){define('app.Controller',['app.dispatcher','app.dom
 
     return Controller;
 }()});
+define('app.title',[],function () {app.title=function (title) {
+        var doc = window.top && window.top.document || document;
+
+        if (typeof title === 'string') {
+            doc.title = title;
+        }
+
+        return doc.title;
+    }});
+define('app.domain',[],function () {app.domain=function () {
+    var domain = {
+        /**
+         * [session 初始化session存储字段]
+         * @type {Object}
+         */
+        session: {},
+
+        /**
+         * [scope 页面间数据交互存储域]
+         * @type {Object}
+         */
+        scope: {},
+
+        /**
+         * [exports 导出数据到全局共享域]
+         * @param  {[type]} namespace        [命名空间]
+         * @param  {[type]} data        [字段json]
+         */
+        exports: function (namespace, data) {
+            var cache;
+
+            if (aweb.debug) {
+                var handler = app.router && app.router.getCurrentHandler();
+
+                if (data && handler) {
+                    console.log(['页面模型：', handler.path, ' 设置跨页缓存，命名空间为:', namespace, '，数据为'].join(''));
+                    console.log(data);
+                }
+            }
+
+            domain.clearScope(namespace);
+
+            if (!domain.scope[namespace]) {
+                domain.scope[namespace] = {};
+            }
+            cache = domain.scope[namespace];
+
+            if (data) {
+                for (var name in data) {
+                    //清除缓存数据时，可能清除原先数据的bug
+                    if (typeof data[name] === 'string') {
+                        //字符串
+                        cache[name] = '' + data[name];
+                    } else if ($.isArray(data[name])) {
+                        //数组
+                        cache[name] = [].concat(data[name]);
+                    } else if (typeof data[name] === 'object') {
+                        //对象
+                        if (data[name] === null) {
+                            cache[name] = null;
+                        } else {
+                            cache[name] = $.extend(true, {}, data[name]);
+                        }
+                    } else {
+                        //函数
+                        cache[name] = data[name];
+                    }
+                }
+            }
+        },
+
+        /**
+         * [clearScope 根据id清除全局共享域中的数据]
+         * @param  {[type]} namespace [命名空间]
+         */
+        clearScope: function (namespace) {
+            if (domain.scope[namespace]) {
+
+                if (aweb.debug) {
+                    var handler = app.router && app.router.getCurrentHandler();
+
+                    if (handler) {
+                        console.log(['页面模型：', handler.path, ' 清除跨页缓存，命名空间为:', namespace].join(''));
+                    }
+                }
+
+                delete domain.scope[namespace];
+            }
+        },
+
+        /**
+         * [get 获取共享域中数据]
+         * @param  {[type]} namespace  [命名空间]
+         * @param  {[type]} name       [字段名]
+         */
+        get: function (namespace, name) {
+            var cache;
+
+            if (domain.scope[namespace]) {
+                cache = (name === undefined ? domain.scope[namespace] : domain.scope[namespace][name]);
+
+                if (aweb.debug) {
+                    var handler = app.router && app.router.getCurrentHandler();
+
+                    if (handler) {
+                        console.log(['页面模型：', handler.path, ' 获取跨页缓存，命名空间为:', namespace, '，数据为'].join(''));
+                        console.log(cache);
+                    }
+                }
+
+                return cache;
+            }
+        }
+    };
+
+    return domain;
+}()});
+define('app.alertAction',[],function () {app.alertAction=function (){
+
+    var alertAction = {
+            close: app.alert.close,
+            closeAll: app.alert.closeAll,
+            getAlertList: app.alert.getAlertList,
+            listener: app.alert.listener
+        };
+
+    return alertAction;
+
+}()});
 define('app.ajax',['app.getData','app.getUID','app.modal','app.validate'],function () {app.ajax=function () {
         var _ajax = $.ajax;
 
@@ -1804,374 +3536,896 @@ define('app.ajax',['app.getData','app.getUID','app.modal','app.validate'],functi
 
         return $.ajax;
     }()});
-define('app.alert',['app.dispatcher','app.modal'],function () {app.alert=function(){
-                var SHOW_TYPE = {
-                        SUCCESS: 'success',
-                        success: 'fa fa-check-circle alert-success ',
-                        _DEFAULT: 'info',
-                        info: 'fa fa-info-circle alert-info',
-                        ERROR: 'error',
-                        error: 'fa fa-warning alert-pink',
-                        WARNING: 'warning',
-                        warning: 'fa fa-info-circle alert-warning',
-                        PINK: 'pink',
-                        pink: 'alert-pink',
-                        MESSAGE: 'message'
-                    },
+define('app.shelter',['app.getUID'],function () {app.shelter=function (){
+        var Shelter = function () {
+            var context = this,
+                $body = $('body');
 
-                    alertCtnTemp = '<ul id="alertList" data-role="alertList" class="alert-list unstyled" style="z-index: 8;"></ul>',
-                    alertCttTemp = '<li data-alert-id="_id_"><i class="iconfont icon-topbar-close alert-btn" title="关闭" data-role="close"></i><i class="fa fa-angle-down alert-btn" data-role="more" title="更多"></i><i class="alert-icon _showType_"></i><div class="alert-content" title="_title_">_content_</div></li>',
+            context.maskList = [];
+            context.zIndexList = [];
+            context._zIndexList = [];
 
 
-                    alertQueueLength = Math.max(Math.ceil($(window).height() / 100), 3),
-                    alertQueue = [],
-                    alertList = [],
-                    type, event,
-                    stopClose = false,
-
-                    $alert = $('#alertList'),
+            context.$mask = $(context.MASK_TEMP);
+            context.$shelter = $(context.SHELTER_TEMP);
+            context.$title = context.$shelter.find('.maskTitle');
+            context.$alert = $('#alertList');
 
 
-                    messageDialog = function () {
-                        var queue = [],
-                            clickHandler = function () {
-                                var msg, result = true;
-                                queue.shift();
+            $body.append(context.$mask);
 
-                                if (queue.length) {
-                                    msg = queue[0];
-                                    while (queue.length && !msg) {
-                                        queue.shift();
-                                        msg = queue[0];
-                                    }
-                                    if (msg) {
-                                        $(this).find('[data-role=message]').empty().append(msg.toString().replace(/\n/g, '<br/>'));
-                                        result = false;
-                                    }
-                                }
-                                return result;
-                            };
 
-                        return function (msg) {
-                            var modal;
+            context.timeoutHandler = null;
 
-                            queue.push(msg);
+            //兼容IE8~IE10背景为透明时遮罩不生效
+            if (/MSIE|Trident/.test(navigator.userAgent)) {
+                context.isIE = true;
+                context.$shelterPolyfill = $(context.SHELTER_POLYFILL_TEMP);
+                $body.append(context.$shelterPolyfill)
+            }
 
-                            if (queue.length === 1 && (msg = queue[0])) {
+            $body.append(context.$shelter);
 
-                                modal = app.modal || window.app && window.app.modal || function (option) {
-                                    app.alert(option.content);
-                                    clickHandler();
-                                };
-
-                                modal({
-                                    title: '信息提示',
-                                    btnCancel: '关闭',
-                                    btnConfirm:false,
-                                    confirmHandler: clickHandler,
-                                    cancelHandler: clickHandler,
-                                    content: '<div class="aui-ide-modal-content"><i class="iconfont icon-round_warming"></i><p data-role="message">' + msg.toString().replace(/\n/g, '<br/>') + '</p></div>',
-                                    isDialog: true,
-                                    isLargeModal: false,
-                                    init: function () {
-                                        var $body = $(this);
-                                        setTimeout(function () {
-                                            $body.prev().find('.close').off().remove();
-                                        }, 100);
-                                    }
-                                });
-
-                            }
-                        }
-                    }(),
-
-                    addToQueue = function (args) {
-                        var i, item, id,
-                            result = false;
-
-                        if (id = args[2]) {
-                            for (i = -1; item = alertQueue[++i];) {
-                                if (result = (item[2] === id)) {
-                                    break;
-                                }
-                            }
+            //绑定监听，为了兼容IE8，用document不用window
+            $(document).on({
+                'keydown.shelter': function (e) {
+                    var key = e.which || window.event.keyCode,
+                        url, bgStyle;
+                    //如果key为27 遮罩消失
+                    if (key === 27) {
+                        //IE环境按esc键会使所有gif动画暂停，需重新请求gif
+                        if (context.isIE) {
+                            //使路径包含项目名
+                            url = window.location.href.split('#')[0];
+                            bgStyle = 'url(' + url + 'dependence/AWEB/img/loading.gif?timestamp=' + app.getUID() + ') no-repeat';
+                            $('#maskPic').css('background', bgStyle);
                         }
 
-                        if (!result) {
-                            alertQueue.push(args);
-                        }
-                    },
-                    delFormQueue = function () {
-                        return alertQueue.shift();
-                    },
-                    execAlert = function (msg, type, id) {
-                        var $item = null,
-                            args;
+                        context.hideAll();
 
-                        //校验样式在_showType中
-                        type = type || SHOW_TYPE._DEFAULT;
-
-                        if (type === SHOW_TYPE.MESSAGE) {
-                            messageDialog(msg + '');
-                            console.info(msg);
-                        } else {
-
-
-                            msg += '';
-
-
-                            if ($alert.children().length < alertQueueLength) {
-
-                                if (!id || !$alert.children('[data-alert-id="' + id + '"]').length) {
-
-                                    //使获取提示框列表时,1键的类型不会被替换成样式名
-                                    args = JSON.parse(JSON.stringify(arguments));
-                                    //使获取提示框列表时，即使2键的值为undefined，也不会被忽略
-                                    if (!args[2]) {
-                                        args[2] = 'undefined';
-                                    }
-                                    alertList.push(args);
-
-                                    type = SHOW_TYPE[type] || SHOW_TYPE.info;
-
-                                    $item = $alert
-                                        .prepend(alertCttTemp.replace(/_id_/, id).replace(/_showType_/, type).replace(/_content_/, msg).replace(/_title_/, msg))
-                                        .children(':first');
-
-                                    //IE8下触发重绘
-                                    $alert.css('visibility','inherit').css('visibility','visible');
-
-                                    $item.attr('title', $item.text());
-
-                                    // //出现
-                                    setTimeout(function () {
-                                        $item.addClass('out');
-                                    }, 50 + Math.random() * 50);
-                                    // //隐藏
-
-                                    setTimeout(function () {
-                                        if (!stopClose) {
-                                            $item.removeClass('out');
-                                            execNextAlert($item);
-                                        }
-                                    }, 10000 + Math.random() * 1000);
-                                }
-                            } else {
-                                addToQueue(arguments);
-                            }
-                        }
-                    },
-                    execNextAlert = function ($lastElem) {
-                        setTimeout(function () {
-                            if ($lastElem) {
-                                $lastElem.remove();
-                                $lastElem = null;
-                                alertList.shift();
-                            }
-                            if (alertQueue.length) {
-                                execAlert.apply(this, delFormQueue());
-                            }
-                        }, 500);
-                    },
-                    alertFunc = function (msg, showType, id) {
-                        event && event.trigger('alert', arguments);
-                        if (msg instanceof Array) {
-                            for (var i = -1, alt; alt = msg[++i];) {
-                                if (alt instanceof Array) {
-                                    execAlert(alt[0], alt[1], alt[2]);
-
-                                } else {
-                                    execAlert(alt, showType, id);
-                                }
-                            }
-                        } else {
-                            execAlert(msg, showType, id);
-                        }
-                    };
-
-
-                //初始化数据
-                if (!$alert.length) {
-                    $alert = $(alertCtnTemp);
-                    $alert.appendTo('body');
+                        //兼容IE8gif重新请求后不显示问题，阻止冒泡
+                        return false;
+                    }
+                },
+                'error.shelter': function (e) {
+                    context.hideAll();
                 }
-
-                for (type in SHOW_TYPE) {
-                    if (SHOW_TYPE.hasOwnProperty(type)) {
-                        alertFunc[type] = SHOW_TYPE[type];
-                    }
-                }
-
-
-                alertFunc.closeAll = function () {
-                    alertQueue = [];
-                    alertList = [];
-                    $alert.empty();
-                };
-
-                alertFunc.close = function (option) {
-                    var id, item, len;
-                    if (!(option instanceof Object)) {
-                        console.error('入参必须为对象');
-                        return
-                    }
-
-                    id = option.id;
-
-                    if (id) {
-                        for (len = alertQueue.length; item = alertQueue[--len];) {
-                            if ((item.length && ~Array.prototype.indexOf.call(item, id)) || item) {
-                                alertQueue.splice(len, 1);
-                                break;
-                            }
-                        }
-                        if ($alert.children('[data-alert-id=' + id + ']').length) {
-                            $('[data-alert-id=' + id + ']', $alert).remove();
-
-                        }
-                    } else {
-                        console.error("id的值不能为'undefined'");
-                    }
-                };
-
-                alertFunc.getAlertList = function () {
-                    return alertList.concat(alertQueue);
-                };
-
-                alertFunc.listener = function (callback,nameSpace) {
-
-                    !event && (event = app.dispatcher());
-
-                    event.on('alert'+ nameSpace?nameSpace:'', function () {
-
-                        callback && callback(arguments[1])
-
-                    })
-                };
-
-                alertFunc.offListener = function(nameSpace){
-
-                    event.off('alert'+ nameSpace?nameSpace:'')
-
-                };
-
-
-
-
-                //override alert
-                window.alert = messageDialog;
-
-                /*监听绑定*/
-                //关闭按钮
-                $alert.off().on('click', function (e) {
-                    var $e = $(e.target || window.event.srcElement),
-                        $ctt,$alertList,alertTop,
-                        role = $e.attr('data-role'),
-                        winHeight = $(window).height();
-
-                    switch (role) {
-                        case 'close':
-                            $e.parent().removeClass('out');
-
-                            execNextAlert($e.parent());
-
-                            stopClose = false;
-                            break;
-                        case 'more':
-                            $ctt = $e.siblings('.alert-content');
-                            $alertList = $ctt.parent().parent();
-                            alertTop = $alertList.css('top');
-
-                            if ($e.hasClass('more')) {
-                                stopClose = false;
-                                $ctt.removeClass('more');
-                                $ctt.css({'height': ''});
-                            } else {
-                                stopClose = true;
-                                $ctt.addClass('more');
-                                if($ctt.height() > winHeight) {
-                                    $ctt.css({'height': winHeight - 52 - ( 2 * Number.parseFloat(alertTop))});
-                                }
-
-                            }
-                            $e.toggleClass('more');
-
-                            break;
-                    }
-                });
-
-                /*详情请见api部分*/
-                return alertFunc;
-            }()});
-define('app.alertAction',[],function () {app.alertAction=function(){
-
-    var alertAction = {
-            close: app.alert.close,
-            closeAll: app.alert.closeAll,
-            getAlertList: app.alert.getAlertList,
-            listener: app.alert.listener
+            });
         };
 
-    return alertAction;
 
-}()});
-define('app.behavior',[],function () {app.behavior=function () {
-    var _b = function (input1, input2, condition, callback) {
-        var _input2, result;
+        Shelter.prototype = {
 
-        input2 = decodeURIComponent(input2);
-        _input2 = input2;
-        try {
-            input2 = JSON.parse(input2);
-        } catch (e) {
-            input2 = _input2;
-        }
 
-        switch (condition) {
-            case 'lt':
-                result = (input1 < input2);
-                break;
-            case 'eq':
-                result = (input1 === input2);
-                break;
-            case 'gt':
-                result = (input1 > input2);
-                break;
-            case 'not':
-                result = (input1 !== input2);
-                break;
-            case 'includes':
-            case 'notIncludes':
-                if (input2 instanceof Array) {
-                    result = ($.inArray(input1, input2) !== -1);
-                } else if (input2 instanceof Object) {
-                    result = (input1 in input2);
+            SHELTER_POLYFILL_TEMP: '<div id="shelterPolyfill" class="mask shelterPolyfill hide"></div>',
+            SHELTER_TEMP: '<div id="shelter" class="mask shelter hide"><div class="maskCtn maskCtt"><div class="maskCtt"><div id="maskPic" class="maskPic"></div><div class="maskTitle"></div></div><div class="maskHelper"></div></div><div class="maskHelper"></div></div>',
+            MASK_TEMP: '<div id="mask" class="hide"/>',
+
+            ALERT_INDEX: 15000,
+            ALERT_TOP: 5,
+
+            MASK_INDEX: 1052,
+
+            DEFAULT_TITLE: '请稍候…',
+            DEFAULT_TIMEOUT: 60000,
+
+
+            show: function (title, timeout, immediate, $context) {
+                var modal, $el;
+                this.maskList.push(arguments);
+                this._upper(true, this.ALERT_INDEX + 1, undefined, false);
+
+                if ($context) {
+                    this._setShelter($context);
                 } else {
-                    result = input2 && (input2.toString().indexOf(input1) !== -1);
+                    app.router && app.router.getCurrentHandler && (modal = app.router.getCurrentHandler());
+                    modal && ($el = modal.$renderTo);
+                    $el && this._setShelter($el.parent());
                 }
 
-                if (condition === 'notIncludes') {
-                    result = !result;
+                this._showShelter(title, timeout);
+            },
+            hide: function () {
+                this._hide();
+            },
+            hideAll: function () {
+                this.maskList = [];
+                this._zIndexList = [];
+                this._lower(true);
+                this._resetShelter();
+                this._display(false);
+            },
+
+
+            upperZIndex: function (alertZIndex, maskZIndex, alertTop) {
+                this._upper(false, alertZIndex, maskZIndex, alertTop);
+            },
+            lowerZIndex: function () {
+                this._lower();
+            },
+
+            //使遮罩相对于$context垂直水平居中
+            _setShelter: function ($context) {
+                var el = $context.get(0),
+                    position = el.getBoundingClientRect(),
+                    $body = $('body'),
+                    top = position.top,
+                    right = $body.width() - position.right,
+                    bottom = $body.height() - position.bottom,
+                    left = position.left;
+
+
+                this.$shelterPolyfill && this.$shelterPolyfill.css({
+                    top: top + 'px',
+                    right: right + 'px',
+                    bottom: bottom + 'px',
+                    left: left + 'px'
+                });
+
+
+                this.$shelter.css({
+                    top: top + 'px',
+                    right: right + 'px',
+                    bottom: bottom + 'px',
+                    left: left + 'px'
+                })
+
+            },
+            _resetShelter: function () {
+
+                this.$shelterPolyfill && this.$shelterPolyfill.css({
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                });
+
+                this.$shelter.css({
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                })
+            },
+
+            _showShelter: function (title, timeout) {
+                var context = this;
+
+                this._setTitle(title);
+                this._display(true);
+
+                try {
+                    timeout = parseInt(timeout, 10) || this.DEFAULT_TIMEOUT;
+                } catch (e) {
+                    timeout = this.DEFAULT_TIMEOUT;
+                } finally {
+
+                    clearTimeout(this.timeoutHandler);
+
+                    this.timeoutHandler = setTimeout(function () {
+                        context._hide();
+                    }, timeout);
                 }
-                break;
-            case 'startsWith':
-                result = input2 && (input2.toString().indexOf(input1) === 0);
-                break;
+            },
+            _hide: function () {
+                var maskList = this.maskList,
+                    args;
+
+                maskList.pop();
+                this._lower(true);
+                this._resetShelter();
+
+                if (maskList.length) {
+                    args = maskList[maskList.length - 1];
+
+                    this._showShelter.apply(this, args);
+                } else {
+                    this._display(false);
+                }
+            },
+            _setTitle: function (title) {
+                this.$title
+                    .empty()
+                    .append(title || this.DEFAULT_TITLE);
+            },
+            _display: function (display) {
+
+
+                if (!!display) {
+                    this.$shelterPolyfill && this.$shelterPolyfill.removeClass('hide');
+                    this.$shelter.removeClass('hide');
+
+
+                } else {
+                    this.$shelterPolyfill && this.$shelterPolyfill.addClass('hide');
+                    this.$shelter.addClass('hide');
+                }
+
+            },
+            _upper: function (inner, alertZIndex, maskZIndex, alertTop) {
+                var $mask = inner ? this.$shelter : this.$mask,
+                    $alert = this.$alert,
+                    zIndexList = inner ? this._zIndexList : this.zIndexList;
+
+                alertZIndex = alertZIndex === false ? '' : (alertZIndex && parseInt(alertZIndex, 10) || this.ALERT_INDEX);
+                maskZIndex = maskZIndex && parseInt(maskZIndex, 10) || this.MASK_INDEX;
+
+                //备份上次的zIndex
+                zIndexList.push({
+                    alertZIndex: this.ALERT_INDEX,
+                    maskZIndex: $mask.css('zIndex')
+                });
+
+                if (maskZIndex !== -1) {
+                    $mask
+                        .addClass('mask')
+                        .css({
+                            'z-index': maskZIndex
+                        });
+                }
+                $alert.css({
+                    'z-index': alertZIndex,
+                    'top': alertTop === false ? '' : (alertTop || this.ALERT_TOP)
+                });
+            },
+            _lower: function (inner) {
+                //恢复上次的zIndex
+                var $mask = inner ? this.$shelter : this.$mask,
+                    $alert = this.$alert,
+                    zIndexList = inner ? this._zIndexList : this.zIndexList,
+                    lastZIndex = zIndexList.length ? zIndexList.pop() : {
+                        maskZIndex: this.MASK_INDEX,
+                        alertZIndex: this.ALERT_INDEX
+                    };
+
+                if (!parseInt(lastZIndex.maskZIndex, 10)) { //如果上一次没有遮罩的话，则将mask移除
+                    $mask.removeClass('mask');
+                    $alert.css('top', '');
+                }
+                $mask.css('z-index', lastZIndex.maskZIndex || '');
+                $alert.css('z-index', lastZIndex.alertZIndex || '');
+            }
+
+        };
+
+        return new Shelter();
+    }()});
+define('app.parseJSObject',[],function () {app.parseJSObject=function (JSONString) {
+        function parseFunc(obj) {
+            for (var name in obj) {
+                if (typeof (obj[name]) === 'string') {
+                    if (obj[name].indexOf('_parseObject_') === 0) {
+                        obj[name] = JSON.parse(obj[name].replace(/_parseObject_/, ''));
+                    } else if (obj[name].indexOf('_parseFunction_') === 0) {
+                        obj[name] = eval('(' + obj[name].replace(/_parseFunction_/, '') /*.replace(/##plus##/g, '+')*/ + ')');
+                    }
+                } else if (typeof (obj[name]) === 'object') {
+                    obj[name] = parseFunc(obj[name]);
+                }
+            }
+            return obj;
         }
 
-        callback && callback(result, input1, input2, condition);
+        return JSONString ? parseFunc(JSON.parse(JSONString)) : null;
+    }});
+define('app.getFormatData',[],function () {app.getFormatData=function () {
+    var TYPE = {
+            MONEY: "money",
+            BANDCARD: "bandcard"
+        },
+        transFun = function (num, type) {
+            var arr = [], str = "";
+            switch (type) {
+                case "money":
+                    num = num.toFixed(2);
+                    num = parseFloat(num);
+                    num = num.toLocaleString();
+                    if (num.indexOf(".") === -1) {
+                        num = num + ".00"
+                    }
+                    return num;
+                    break;
+                case "bandcard":
+                    num = num.toString();
+                    if (num.length !== 16) {
+                        return
+                    }
+                    arr = num.split("");
+                    arr.splice(4, 0, " ");
+                    arr.splice(9, 0, " ");
+                    arr.splice(14, 0, " ");
+                    str = arr.join("");
+                    return str;
+                    break;
+
+                default:
+                    break;
+            }
+        };
+
+    transFun.TYPE = TYPE;
+    return transFun;
+}()});
+define('app.select',[],function () {app.select=function (options, undefined) {
+                    var _default = $.extend(true, {
+                            context: undefined,
+                            button: undefined,
+                            container: undefined,
+                            checkbox: 'checkbox',
+                            isDataTable: false,
+                            isSelectChildren: false, //true,//要配置data-prefix  例如父级的data-prefix=12,那么data-prefix需要等于12[^$]{1,}
+                            operationButtons: null
+                            /*{
+                     list: '#insStartBtn,#insRestartBtn,#insStopBtn,#insDelBtn',
+                     status: {
+                     'Running': ['#insRestartBtn,#insStopBtn', '#insDelBtn'],//前面单选，后面多选
+                     'Stopped': ['#insStartBtn', '#insDelBtn'],
+                     '_default': ['', '#insDelBtn']
+                     }
+                     }*/
+                            ,
+                            setNodeMethod: function (list, elem) {
+                                list[elem.id] = {
+                                    node: elem,
+                                    status: $(elem).attr('data-status')
+                                };
+                                return list;
+                            },
+                            getIdMethod: function (elem) {
+                                return elem.id;
+                            },
+                            getStatusMethod: null
+
+                        }, options),
+                        //私有变量
+                        __list = {},
+                        __checkboxSelector = _default.checkbox,
+                        __isDataTable = _default.isDataTable,
+                        __isBCheckState = _default.bCheckState,
+                        __isSelectChildren = _default.isSelectChildren,
+                        __operationButtons = _default.operationButtons,
+
+                        __allCheck = '',
+                        __allData = _default.allData,
+                        //私有jQuery变量
+                        __$context = $(_default.context),
+                        __$ctn = $(_default.container, __$context),
+                        __$btn = $(_default.button, __$context),
+
+
+                        //私有方法
+                        _setNode = _default.setNodeMethod,
+                        _getId = _default.getIdMethod,
+                        _getStatus = _default.getStatusMethod,
+
+                        _removeNode = function (list, elem) {
+                            var id = _getId(elem);
+
+                            list[id] = null;
+                            delete list[id];
+                        },
+
+                        _selectChangeFunc = function () {
+                            // var checked = __$btn[0].checked;
+
+                            if (__allCheck === 'allcheck') {
+
+                                $.each(__list, function (index, item) {
+                                    // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                    $('#' + index, __$ctn).prop('checked', true);
+                                })
+                            } else if (__allCheck === 'unAllcheck') {
+                                _clear();
+                            } else {
+                                $.each(__list, function (index, item) {
+                                    // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                    $('#' + index, __$ctn).prop('checked', true);
+                                })
+                            }
+
+
+                        },
+                        _searchChangeFunc = function () {
+                            var i;
+                            if (__allCheck === 'allcheck') {
+                                if (__allData[0]) {
+                                    for (i = 0; i < __allData.length; i++) {
+                                        _setNode(__list, $(__allData[i][0]).children(0)[0])
+                                    }
+                                }
+                            }
+                            $.each(__list, function (index, item) {
+                                // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                $('#' + index, __$ctn).prop('checked', true);
+                            });
+                        },
+                        _updateStyle = function () {
+                            var $checkbox = $(__checkboxSelector, __$ctn),
+                                checkedLength = $checkbox.filter(':checked').length,
+                                enableButton, checkLen = 0;
+
+                            //更新全选按钮的样式
+                            switch (checkedLength) {
+                                case 0:
+                                    __$btn.prop('indeterminate', false).removeAttr('checked').removeClass('tables-indeterminate');
+                                    break;
+                                case $checkbox.length:
+                                    __$btn.prop('indeterminate', false).attr('checked', 'checked').removeClass('tables-indeterminate');
+                                    break;
+                                default:
+                                    __$btn.prop('indeterminate', true).removeAttr('checked').addClass('tables-indeterminate');
+                            }
+
+
+                            //更新操作按钮的样式
+                            if (__operationButtons && __operationButtons.list && __operationButtons.status) {
+                                $(__operationButtons.list, __$context).attr('disabled', 'disabled');
+
+                                if (checkedLength) {
+                                    if (enableButton = __operationButtons.status[_getStatus(__list, _default)]) {
+                                        enableButton = enableButton[checkedLength === 1 ? 0 : 1];
+                                        if (enableButton) {
+                                            $(enableButton, __$context).removeAttr('disabled');
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        _children = function (elem, checked) {
+                            var $elem = $(elem),
+                                execMethod = checked ? 'attr' : 'removeAttr';
+
+                            if (!checked) $elem.removeAttr('checked');
+
+                            $('[data-prefix^="' + $elem.attr('data-prefix') + '"]', __$ctn).not($elem)[execMethod]('disabled', 'disabled')[execMethod]('checked', 'checked');
+                        },
+                        _clear = function () {
+                            __$btn.removeAttr('checked');
+                            $(__checkboxSelector, __$context).removeAttr('checked');
+
+                            for (var p in __list) {
+                                __list[p] = null;
+                                delete __list[p];
+                            }
+                            __allCheck = 'unAllcheck';
+                            __list = {};
+                            _updateStyle();
+                        };
+
+
+                    //默认禁用所有按钮
+                    if (__operationButtons && __operationButtons.list) {
+                        $(__operationButtons.list, __$context).attr('disabled', 'disabled');
+                    }
+
+                    //监听绑定
+                    //多选按钮的更改事件
+                    __$btn.off('.appSelect').on('click.appSelect', function () {
+                        var checked = this.checked,
+                            checkedMethod = !checked ? 'removeAttr' : 'attr',
+                            execMethod = checked ? _setNode : _removeNode,
+                            i;
+
+                        if (__$btn.is(':checkbox') || (__$btn.is(':radio') && !checked)) {
+                            //需要选择子集的
+                            if (__isSelectChildren) {
+                                $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
+                                    execMethod(__list, this);
+                                    _children(this, checked);
+                                });
+
+                            } else { //不需要选择子集的
+
+                                if (__isBCheckState) {
+                                    if (__allCheck === 'allcheck') {
+                                        __allCheck = 'unAllcheck';
+
+                                        $.each(__list, function (index, item) {
+                                            // $("#"+$(item.node).attr('id'),__$ctn).removeAttr('checked');
+                                            $('#' + index, __$ctn).prop('checked', true);
+                                        });
+                                        _clear();
+
+
+                                    } else {
+                                        __allCheck = 'allcheck';
+
+                                        //数据加载
+
+                                        if (__allData[0]) {
+                                            for (i = 0; i < __allData.length; i++) {
+                                                _setNode(__list, $(__allData[i][0]).children(0)[0])
+                                            }
+                                        }
+                                        $.each(__list, function (index, item) {
+                                            // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                            $('#' + index, __$ctn).prop('checked', true);
+                                        });
+
+                                    }
+                                } else {
+                                    $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
+                                        execMethod(__list, this);
+                                    });
+                                }
+
+
+                            }
+                        }
+
+                        _updateStyle();
+                    });
+
+                    //表格更改事件
+                    __$ctn.off('.appSelect').on('click.appSelect', function (ev) {
+                        var e = ev.target || window.event.srcElement,
+                            $e = $(e), checkLen = 0, timer = null;
+
+                        if (($e.is(_default.checkbox) && !ev.isTrigger)) {
+
+                            if ($e.is(':radio')) {
+                                _clear();
+                                $e.attr('checked', true);
+                                _setNode(__list, e);
+                            } else {
+
+
+                                e.checked ? _setNode(__list, e) : _removeNode(__list, e);
+
+
+                                if (__isBCheckState) {
+
+                                    $.each(__list, function (index, item) {
+                                        checkLen++;
+                                        // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                        $('#' + index, __$ctn).prop('checked', true);
+                                    });
+                                    if ($.isEmptyObject(__list)) {
+                                        __allCheck = 'unAllcheck'
+                                    } else if (checkLen === __allData.length) {
+                                        __allCheck = 'allcheck';
+                                    } else {
+                                        __allCheck = 'indeterminate';
+                                    }
+                                }
+                            }
+
+                            if (__isSelectChildren) {
+                                _children(e, e.checked);
+                            }
+
+                            _updateStyle();
+                        }
+                    });
+
+                    //如果是dataTable
+                    if (__isDataTable) {
+                        //翻页事件重新统计选中实例按钮的样式
+                        $('.dataTables_paginate', __$context).off('.appSelect').on('click.appSelect',function (e) {
+
+                            var $e = $(e.target || window.event.srcElement), checked, checkedMethod, item;
+                            if (__$btn[0]) {
+                                checked = __$btn[0].checked;
+                            }
+                            checkedMethod = !checked ? 'removeAttr' : 'attr';
+
+
+                            $(".paginate_button.current").attr("data-dt-idx");
+                            if ($e.hasClass('paginate_button') || $e.parent().hasClass('paginate_button')) {
+                                if (!__isBCheckState) {
+                                    _clear();
+                                }
+
+                                if (__allCheck === "allcheck") {
+
+                                    $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
+                                        _setNode(__list, this);
+                                    });
+                                    $.each(__list, function (index, item) {
+                                        // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
+                                        $('#' + index, __$ctn).prop('checked', true);
+                                    });
+
+                                } else if (__allCheck === "unAllcheck") {
+                                    for (item in __list) {
+
+                                        $("#" + item, __$ctn).removeAttr('checked');
+                                    }
+                                    _clear();
+                                } else {
+                                    for (item in __list) {
+                                        // id = $(item.node).attr('id');
+
+                                        $("#" + item, __$ctn).attr('checked', 'checked').prop('checked', true);
+                                    }
+                                    // $.each(__list,function (index,item) {
+                                    //     id = $(item.node).attr('id');
+                                    //
+                                    //     if($("#"+id,__$context).length) {
+                                    //         $("#" + id, __$context).prop('checked', 'checked');
+                                    //     }
+                                    // });
+
+
+                                }
+                                _updateStyle();
+
+                            }
+                        });
+
+                        if (!__isBCheckState) {
+                            $('.dataTables_filter', __$context).find(':input').keyup(_clear);
+                            $('.dataTables_length', __$context).find('select').change(_clear);
+                        } else {
+                            $('.dataTables_filter', __$context).find(':input').keyup(_searchChangeFunc);
+                            $('.dataTables_length', __$context).find('select').change(_selectChangeFunc);
+                        }
+
+                    }
+
+
+                    //返回组件方法
+                    return {
+                        //返回节列表的副本
+                        nodes: function () {
+                            return $.extend(true, {}, __list);
+                        },
+                        //选中一些checkbox,传入id组成的list
+                        check: function (list) {
+                            var $e, e, $input, firstPage = 0;
+
+                            _clear();
+                            __allCheck = '';
+                            $.each(list, function (index, value) {
+
+                                $e = $('#' + value, __$ctn);
+
+                                firstPage++;
+
+                                if ($e.length && $e.is(_default.checkbox)) {
+                                    e = $e[0];
+
+                                    e.checked = true;
+
+                                    //必需找到指定的元素或者保存分页的情况下找
+                                    if (!$('.dataTables_length', __$context).length || firstPage <= parseInt($('.dataTables_length', __$context).find('select').val(),10)||__isBCheckState) {
+                                        _setNode(__list, e);
+
+                                        if (__isSelectChildren) {
+                                            _children(e, e.checked);
+                                        }
+                                    }
+
+                                } else {
+                                    $input=$('<input id="'+ value+'"/>');
+                                    _setNode(__list, $input[0]);
+                                    if (__isSelectChildren) {
+                                        _children(e, e.checked);
+                                    }
+                                }
+                            });
+
+                            _updateStyle();
+                        },
+                        //返回节点ID数组
+                        list: function (empty) {
+
+                            var list = [],
+                                p;
+
+                            for (p in __list) {
+                                list.push(p);
+                            }
+
+                            if(empty!==false) {
+                                _clear();
+                            }
+
+                            return list;
+                        },
+                        //清除select的状态
+                        clear: _clear,
+                        size: function () {
+                            var size = 0,
+                                p;
+
+                            for (p in __list) size++;
+
+                            return size;
+                        },
+                        dispose: function () {
+                            this.list(true);
+                            for (var p in _default) {
+                                _default[p] = null;
+                                delete _default[p];
+                            }
+
+                            if (__isDataTable) {
+                                $('.dataTables_paginate', __$context).off();
+                                $('.dataTables_filter', __$context).find(':input').off();
+                                $('.dataTables_length', __$context).find('select').off();
+                            }
+
+                            __$btn.off(), __$btn = null;
+                            __$ctn.off(), __$ctn = null;
+                            __$context = null;
+                        }
+                    };
+                }});
+define('app.getUID',[],function () {app.getUID=function () {
+    var sId = "",
+        i = 24;
+    for (; i--;) {
+        sId += Math.floor(Math.random() * 16.0).toString(16).toUpperCase();
+        if (i == 4) {
+            sId += "-";
+        }
+    }
+    return sId;
+}});
+define('app.eval',[],function () {app.eval=function (str) {
+
+                    var func;
+
+                    eval('func=' + str.replace('_parseFunction_', ''));
+
+                    return func;
+                }});
+define('app.performance',[],function () {app.performance=function () {
+    var Performance = function () {
+        },
+        vendors = ['webkit', 'moz'],
+        requestAnimationFrame = window.requestAnimationFrame,
+        cancelAnimationFrame = cancelAnimationFrame,
+        setTimeout = window.setTimeout,
+        clearTimeout = window.clearTimeout;
+
+    for (var x = 0; x < vendors.length && !requestAnimationFrame; ++x) {
+        requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+        cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+
+    if (!requestAnimationFrame) {
+        requestAnimationFrame = setTimeout;
+    }
+    if (!cancelAnimationFrame) {
+        cancelAnimationFrame = clearTimeout;
+    }
+
+    Performance.prototype = {
+        constructor: Performance,
+
+        id: 'performanceDelayId',
+
+        timeout: 220,
+        frequency: 16.7,
+
+        longDelay: function (callback) {
+            var id;
+
+            if ($.isFunction(callback)) {
+                if (id = callback[this.id]) {
+                    clearTimeout(id);
+                    cancelAnimationFrame(id);
+                }
+
+                id = callback[this.id] = setTimeout(function () {
+                    clearTimeout(id);
+                    callback();
+                }, this.timeout);
+            }
+
+
+        },
+        shortDelay: function (callback) {
+            var id;
+
+            if ($.isFunction(callback)) {
+                if (id = callback[this.id]) {
+                    clearTimeout(id);
+                    cancelAnimationFrame(id);
+                }
+
+                id = callback[this.id] = requestAnimationFrame(function () {
+                    cancelAnimationFrame(id);
+
+                    callback();
+
+                }, this.frequency);
+            }
+        },
+        setTimeout: function (timeout) {
+            this.timeout = timeout;
+        },
+        getTimeout: function () {
+            return this.timeout;
+        },
+        setFrequency: function (frequency) {
+            this.frequency = frequency;
+        },
+        getFrequency: function () {
+            return this.frequency;
+        }
     };
 
-    _b.LESS_THAN = 'lt';
-    _b.EQUAL = 'eq';
-    _b.GREAT_THAN = 'gt';
-    _b.NOT = 'not';
-    _b.INCLUDES = 'inclues';
-    _b.NOT_INCLUDES = 'notInclues';
-    _b.STARTS_WITH = 'startsWith';
-
-    return _b;
+    return new Performance();
 }()});
+define('app.scrollTop',[],function () {app.scrollTop=function ($container, $content, speed, marginTop) {
+        var cttOffset = $content.offset(),
+            ctnOffset = $container.offset();
+        if (ctnOffset && cttOffset) {
+            marginTop = marginTop ? parseInt(marginTop) : 0;
+            $container.animate({
+                scrollTop: cttOffset.top + $container.scrollTop() - ctnOffset.top - marginTop
+            }, speed || 200);
+        }
+    }});
+define('app.deepClone',[],function () {app.deepClone=function (obj) {
+        function _clone(obj) {
+            var newObj;
+            if (typeof obj === 'string') {
+                //字符串
+                newObj = '' + obj;
+            } else if ($.isArray(obj)) {
+                //数组
+                newObj = $.map(obj, function (elem) {
+                    return _clone(elem);
+                });
+            } else if (typeof obj === 'object') {
+                //对象
+                newObj = {};
+                for (var name in obj) {
+                    if (obj[name] instanceof Function) {
+                        newObj[name] = obj[name];
+                    } else {
+                        newObj[name] = _clone(obj[name]);
+                    }
+                }
+            } else {
+                newObj = obj;
+            }
+
+            return newObj;
+        }
+
+        return _clone(obj);
+    }});
+define('app.setData',['app.stringify'],function () {app.setData=function (name, value, toCookie, expireDays) {
+        function setCookie(name, value, expireDays) {
+            var temp = '_name_=_value_;path=' + document.location.hostname + ';expires=_expireDays_;max-age=_maxAge_',
+                expireDate = new Date();
+
+            expireDays = expireDays ? expireDays : 100;
+            expireDate.setDate(expireDate.getDate() + expireDays);
+            document.cookie = temp.replace(/_name_/, name).replace(/_value_/, value).replace(/_expireDays_/, expireDate.toUTCString()).replace(/_maxAge__/, 3600 * 24 * expireDays);
+
+            return document.cookie; //判断是否禁用cookie
+        }
+
+        var encoder = window.encodeURI || window.encodeURIComponent || window.escape,
+            result = true;
+
+        if (value || !~expireDays) {
+            if (typeof value !== 'string') {
+                value = app.stringify(value);
+            }
+            value = encoder(value);
+
+            if (toCookie) {
+                result = !!setCookie(name, value, expireDays);
+            } else {
+                try {
+                    window.localStorage.setItem(name, value);
+                } catch (e) { //如果禁用localStorage将会抛出异常
+                    result = !!setCookie(name, value, expireDays);
+                }
+            }
+        } else {
+            result = false;
+        }
+
+        return result;
+    }});
 define('app.collapse',[],function () {app.collapse=function () {
     if (!($ && $.fn && $.fn.collapse)) {
         !function ($) {
@@ -2351,600 +4605,20 @@ define('app.collapse',[],function () {app.collapse=function () {
         }(window.jQuery);
     }
 }()});
-define('app.deepClone',[],function () {app.deepClone=function (obj) {
-        function _clone(obj) {
-            var newObj;
-            if (typeof obj === 'string') {
-                //字符串
-                newObj = '' + obj;
-            } else if ($.isArray(obj)) {
-                //数组
-                newObj = $.map(obj, function (elem) {
-                    return _clone(elem);
-                });
-            } else if (typeof obj === 'object') {
-                //对象
-                newObj = {};
-                for (var name in obj) {
-                    if (obj[name] instanceof Function) {
-                        newObj[name] = obj[name];
-                    } else {
-                        newObj[name] = _clone(obj[name]);
-                    }
-                }
-            } else {
-                newObj = obj;
-            }
-
-            return newObj;
-        }
-
-        return _clone(obj);
-    }});
-define('app.dispatcher',[],function () {app.dispatcher=function () {
-    var Event = function (timeout) {
-
-        this.timeout = timeout;
-        this.cache = {};
-        this.delayHandler = {};
-    };
-
-    Event.prototype = {
-        constructor: Event,
-        //事件监听
-        // cache: {},
-        // delayHandler: {},
-        //timeout:100,
-        // $AW.on({
-        //  'type1.namespace1.namespace2':callback1,
-        //  'type2.namespace1.namespace2':callback2,
-        // });
-        // $AW.on('type1.namespace1.namespace2,type2.namespace1.namespace2',callback);
-        // $AW.on('type1','namespace',callback);
-        on: (function () {
-
-            var context,
-                method = {
-                    '1': function (obj) {
-                        var k, v, p;
-
-                        for (k in obj) {
-                            if (obj.hasOwnProperty(k)) {
-                                v = obj[k];
-                                p = k.split('.');
-
-                                method['3'](p[0], p.slice(1, p.length).join('.'), v);
-                            }
-                        }
-                    },
-                    '2': function (type, callback) {
-                        var types = type.split(','),
-                            i, p;
-
-                        for (i = types.length; type = types[--i];) {
-
-                            p = type.split('.');
-
-                            method['3'](p[0], p.slice(1, p.length).join('.'), callback);
-                        }
-                    },
-                    '3': function (type, namespace, callback) {
-                        var event;
-
-                        event = (context.cache[type] || (context.cache[type] = []));
-                        namespace = namespace || '';
-
-                        if ($.isFunction(callback)) {
-                            event.push({
-                                callback: callback,
-                                namespace: namespace || ''
-                            });
-                        }
-                    }
-                };
-
-            return function () {
-                context = this;
-
-                method[arguments.length].apply(this, arguments);
-            };
-        }()),
-        //$AW.off('type1.namespace1.namespace2,type2.namespace1.namespace2,');
-        off: (function () {
-            var removeCallbackByNamespace = function (events, namespace) {
-                var j, event;
-
-                for (j = events.length; event = events[--j];) {
-                    if (event.namespace.indexOf(namespace) !== -1) {
-                        events.splice(j, 1);
-                        break;
-                    }
-                }
-            };
-
-            return function (type) {
-                var types, key,
-                    p, i, namespace;
-
-                if (type) {
-                    types = type.split(',');
-
-                    for (i = types.length; type = types[--i];) {
-                        p = type.split('.');
-
-                        namespace = p.slice(1, p.length).join('.') || '';
-                        type = p[0];
-
-                        if (!type) {
-                            for (key in this.cache) {
-                                if (this.cache.hasOwnProperty(key)) {
-                                    if (namespace) {
-                                        removeCallbackByNamespace(this.cache[key] || [], namespace);
-                                    } else {
-                                        delete this.cache[key];
-                                    }
-                                }
-                            }
-                        } else {
-                            if (namespace) {
-                                removeCallbackByNamespace(this.cache[type] || [], namespace);
-                            } else {
-                                delete this.cache[type];
-                            }
-                        }
-                    }
-                } else {
-                    this.cache = {};
-                }
-            }
-        }()),
-        dispatchEvent: function (type) {
-            var types, i,
-                props,
-                namespaces, namespace, k, matchNamespace,
-                events, event, j,
-                args = arguments;
-
-            if (type) {
-                types = type.split(',');
-
-                for (i = types.length; type = types[--i];) {
-                    props = type.split('.');
-
-                    namespaces = props.slice(1, props.length) || [];
-                    type = props[0];
-                    events = this.cache[type] || [];
-
-                    if (namespaces.length) {
-
-                        for (j = events.length; event = events[--j];) {
-                            matchNamespace = true;
-
-                            for (k = namespaces.length; namespace = namespaces[--k];) {
-                                if (event.namespace.indexOf(namespace) === -1) {
-                                    matchNamespace = false;
-                                    break;
-                                }
-                            }
-
-                            if (matchNamespace) {
-                                event.callback.apply(event, args);
-                            }
-                        }
-                    } else {
-                        for (j = events.length; event = events[--j];) {
-                            event.callback.apply(event, args);
-                        }
-                    }
-                }
-            }
-        },
-        //$AW.trigger('type1.namespace1.namespace2,type2.namespace1.namespace2,');
-        trigger: function (type) {
-            var context = this,
-                args = arguments;
-
-            if (this.timeout) {
-                window.clearTimeout(this.delayHandler[type]);
-                this.delayHandler[type] = window.setTimeout(function () {
-                    context.dispatchEvent.apply(context, args);
-                }, this.timeout);
-            } else {
-                context.dispatchEvent.apply(context, args);
-            }
-        }
-    };
-
-    return function (timeout) {
-        return new Event(timeout);
-    };
-}()});
-define('app.domain',[],function () {app.domain=function () {
-    var domain = {
-        /**
-         * [session 初始化session存储字段]
-         * @type {Object}
-         */
-        session: {},
-
-        /**
-         * [scope 页面间数据交互存储域]
-         * @type {Object}
-         */
-        scope: {},
-
-        /**
-         * [exports 导出数据到全局共享域]
-         * @param  {[type]} namespace        [命名空间]
-         * @param  {[type]} data        [字段json]
-         */
-        exports: function (namespace, data) {
-            var cache;
-
-            if (aweb.debug) {
-                var handler = app.router && app.router.getCurrentHandler();
-
-                if (data && handler) {
-                    console.log(['页面模型：', handler.path, ' 设置跨页缓存，命名空间为:', namespace, '，数据为'].join(''));
-                    console.log(data);
-                }
-            }
-
-            domain.clearScope(namespace);
-
-            if (!domain.scope[namespace]) {
-                domain.scope[namespace] = {};
-            }
-            cache = domain.scope[namespace];
-
-            if (data) {
-                for (var name in data) {
-                    //清除缓存数据时，可能清除原先数据的bug
-                    if (typeof data[name] === 'string') {
-                        //字符串
-                        cache[name] = '' + data[name];
-                    } else if ($.isArray(data[name])) {
-                        //数组
-                        cache[name] = [].concat(data[name]);
-                    } else if (typeof data[name] === 'object') {
-                        //对象
-                        if (data[name] === null) {
-                            cache[name] = null;
-                        } else {
-                            cache[name] = $.extend(true, {}, data[name]);
-                        }
-                    } else {
-                        //函数
-                        cache[name] = data[name];
-                    }
-                }
-            }
-        },
-
-        /**
-         * [clearScope 根据id清除全局共享域中的数据]
-         * @param  {[type]} namespace [命名空间]
-         */
-        clearScope: function (namespace) {
-            if (domain.scope[namespace]) {
-
-                if (aweb.debug) {
-                    var handler = app.router && app.router.getCurrentHandler();
-
-                    if (handler) {
-                        console.log(['页面模型：', handler.path, ' 清除跨页缓存，命名空间为:', namespace].join(''));
-                    }
-                }
-
-                delete domain.scope[namespace];
-            }
-        },
-
-        /**
-         * [get 获取共享域中数据]
-         * @param  {[type]} namespace  [命名空间]
-         * @param  {[type]} name       [字段名]
-         */
-        get: function (namespace, name) {
-            var cache;
-
-            if (domain.scope[namespace]) {
-                cache = (name === undefined ? domain.scope[namespace] : domain.scope[namespace][name]);
-
-                if (aweb.debug) {
-                    var handler = app.router && app.router.getCurrentHandler();
-
-                    if (handler) {
-                        console.log(['页面模型：', handler.path, ' 获取跨页缓存，命名空间为:', namespace, '，数据为'].join(''));
-                        console.log(cache);
-                    }
-                }
-
-                return cache;
-            }
-        }
-    };
-
-    return domain;
-}()});
-define('app.eval',[],function () {app.eval=function (str) {
-
-                    var func;
-
-                    eval('func=' + str.replace('_parseFunction_', ''));
-
-                    return func;
-                }});
-define('app.getData',[],function () {app.getData=function (name, fromCookie) {
-    function getCookie(name) {
-        var value = document.cookie.match(new RegExp(name + '=([^;]+)'));
-
-        return value && value.length ? value[1] : '';
-    }
-
-    var value,
-        decoder = window.decodeURI || window.decodeURIComponent || window.unescape;
+define('app.removeData',['app.setData'],function () {app.removeData=function (name, fromCookie) {
+    var result = true;
 
     if (fromCookie) {
-        value = getCookie(name);
+        result = app.setData(name, '', true, -1);
     } else {
         try {
-            value = window.localStorage.getItem(name);
-
-            if (!value) value = getCookie(name); //如果是保存在Cookie那里
-        } catch (e) { //如果禁用localStorage将会抛出异常
-            value = getCookie(name);
+            window.localStorage.removeItem(name);
+        } catch (e) {
+            result = app.setData(name, '', true, -1);
         }
     }
-    return decoder(value);
-}});
-define('app.getFormatData',[],function () {app.getFormatData=function () {
-    var TYPE = {
-            MONEY: "money",
-            BANDCARD: "bandcard"
-        },
-        transFun = function (num, type) {
-            var arr = [], str = "";
-            switch (type) {
-                case "money":
-                    num = num.toFixed(2);
-                    num = parseFloat(num);
-                    num = num.toLocaleString();
-                    if (num.indexOf(".") === -1) {
-                        num = num + ".00"
-                    }
-                    return num;
-                    break;
-                case "bandcard":
-                    num = num.toString();
-                    if (num.length !== 16) {
-                        return
-                    }
-                    arr = num.split("");
-                    arr.splice(4, 0, " ");
-                    arr.splice(9, 0, " ");
-                    arr.splice(14, 0, " ");
-                    str = arr.join("");
-                    return str;
-                    break;
-
-                default:
-                    break;
-            }
-        };
-
-    transFun.TYPE = TYPE;
-    return transFun;
-}()});
-define('app.getNewQueryStringURL',[],function () {app.getNewQueryStringURL=function (params) {
-        var map = $.extend(this.getQueryStringMap(), params),
-            encoder = window.encodeURI || window.encodeURIComponent,
-            prop,
-            ret = [];
-
-        for (prop in map) {
-            if (map.hasOwnProperty(prop)) {
-                ret.push(prop + '=' + encoder(map[prop]));
-            }
-        }
-
-        return ret.join('&');
-    }});
-define('app.getQueryStringMap',[],function () {app.getQueryStringMap=function () {
-    var hash = window.location.hash || document.location.hash,
-        search = window.location.search || document.location.search || '',
-        decoder = window.decodeURI || window.decodeURIComponent,
-        matcher,
-        i, length, params,
-        result = {};
-
-    if (hash && !search) {
-
-        search = '?' + hash.split('?')[1];
-
-    }
-    matcher = search.match(/[\?\&][^\?\&]+=[^\?\&]+/g);
-    if (matcher) {
-        for (i = 0, length = matcher.length; i < length; i++) {
-            params = (matcher[i] || '').substring(1).split('=');
-            result[params[0]] = decoder(params[1]);
-        }
-    }
-
     return result;
 }});
-define('app.getUA',[],function () {app.getUA=function () {
-    var TYPE = {
-            WEIXIN_IPAD: 'weixin iPad',
-            WEIXIN_IPHONE: 'weixin iPhone',
-            WEIXIN_ANDROID_PHONE: 'weixin androidPhone',
-            WEIXIN_ANDROID_PAD: 'weixin androidPad',
-
-            ALIPAY_IPAD: 'Alipay iPad',
-            ALIPAY_IPHONE: 'Alipay iPhone',
-            ALIPAY_ANDROID_PHONE: 'Alipay androidPhone',
-            ALIPAY_ANDROID_PAD: 'Alipay androidPad',
-
-            //手机网页
-            IPHONE: 'iPhone',
-            IPAD: 'iPad',
-            ANDROID_PHONE: 'androidPhone',
-            ANDROID_PAD: 'androidPad',
-
-            //PC浏览器
-            MSIE: 'IE6~10' || 'Ionic IE6~10',//考虑在本地IE浏览器运行时的情况
-            IE11: 'IE11' || 'Ionic IE11', //考虑在本地IE11浏览器运行时的情况
-            MICROSOFT_EDGE: 'Edge' || 'Ionic Edge',//考虑在本地Edge浏览器运行时的情况
-            PC_NOT_IE: 'PC' || 'Ionic',//考虑在本地浏览器运行时的情况
-
-
-            //类似于Ionic在本地搭建服务器的APP
-            IONIC_IPAD: 'Ionic iPad',
-            IONIC_IPHONE: 'Ionic iPhone',
-            IONIC_ANDROID_PHONE: 'Ionic androidPhone',
-            IONIC_ANDROID_PAD: 'Ionic androidPad',
-
-            //类似于cordova的本地APP
-            CORDOVA_IPAD: 'Cordova iPad',
-            CORDOVA_IPHONE: 'Cordova iPhone',
-            CORDOVA_ANDROID_PHONE: 'Cordova androidPhone',
-            CORDOVA_ANDROID_PAD: 'Cordova androidPad'
-
-        },
-        config = [
-            /* {  name: 'android',
-             reg: /android/i
-             },
-             {
-             name: 'ios',
-             reg: /\(i[^;]+;( U;)? CPU.+Mac OS X/i
-             },*/
-            //环境
-            {
-                name: 'Cordova',
-                reg: /^file/i
-            },
-            {
-                name: 'Ionic',
-                reg: /^http:\/\/localhost:8080/i
-            },
-            {
-                name: 'weixin',
-                reg: /MicroMessenger/i
-            },
-            {
-                name: 'Alipay',
-                reg: /Alipay/i
-            },
-            /*{
-             name:'MQQBrower',
-             reg:/MQQBROWSER/i
-             },
-             {
-             name:'UC Browser',
-             reg:/UCWEB/i
-             },*/
-
-            //设备
-            {
-                name: 'androidPhone',
-                reg: /^(?=.*(Android))(?=.*(Mobile)).+$/i
-            },
-            {
-                name: 'androidPad',
-                reg: /^(?=.*(Android))(?!.*(Mobile)).+$/i
-            },
-            {
-                name: 'iPad',
-                reg: /iPad/i
-            },
-            {
-                name: 'iPhone',
-                reg: /iPhone/i
-            },
-            //浏览器
-            {
-                name: 'IE6~10',
-                reg: /MSIE/i
-            },
-            {
-                name: 'IE11',
-                reg: /Trident\/7\.0/i
-            },
-            {
-                name: 'Edge',
-                reg: /Edge/i
-            }
-
-        ],
-
-        len = config.length,
-
-
-        getUAFunc = function () {
-            var
-                UA = navigator.userAgent,
-                url = document.URL,
-                result = [],
-                item, reg, k;
-
-            if (UA && url) {
-
-                for (k = 0; k < len; k++) {
-                    if ((item = config[k]) && (reg = item.reg) && reg.test(UA)) {
-                        result.push(item.name);
-                    }
-                }
-            }
-            result = (result.length ? result.join(' ') : TYPE.PC_NOT_IE);
-            return result
-        };
-    getUAFunc.TYPE = TYPE;
-
-
-    return getUAFunc
-}()});
-define('app.getUID',[],function () {app.getUID=function () {
-    var sId = "",
-        i = 24;
-    for (; i--;) {
-        sId += Math.floor(Math.random() * 16.0).toString(16).toUpperCase();
-        if (i == 4) {
-            sId += "-";
-        }
-    }
-    return sId;
-}});
-define('app.hsla',[],function () {app.hsla=function () {
-    var css = function (opt, random) {
-        var $elem = $('<div>'),
-            targetCSS = 'background-color',
-            css;
-
-        opt = $.extend(opt, this.defaltOptions);
-
-        $elem.css(targetCSS, 'hsl(' + [(random ? Math.floor(Math.random() * 361) : opt.h), opt.s, opt.l].join(',') + ')');
-
-        try {
-            css = $elem.css(targetCSS).toString();
-        } catch (e) {
-            //IE8不支持hsla,让它不报错
-        }
-
-        if (jQuery.support.opacity) {
-            return css.replace('rgb', 'rgba').replace(')', ',' + opt.a + ')');
-        }
-        return css;
-    };
-    css._default = {
-        h: Math.floor(Math.random() * 361),
-        s: '50%',
-        l: '50%',
-        a: 1
-    };
-
-    return css;
-}()});
 define('app.modal',['app.getUID','app.reset','app.screen'],function () {app.modal=function () {
     var setModalLgSize, modal;
     !function () {
@@ -3596,7 +5270,36 @@ define('app.modal',['app.getUID','app.reset','app.screen'],function () {app.moda
 
     return modal;
 }()});
-define('app.page',[],function () {app.page=function(){
+define('app.getQueryStringMap',[],function () {app.getQueryStringMap=function () {
+    var hash = window.location.hash || document.location.hash,
+        search = window.location.search || document.location.search || '',
+        decoder = window.decodeURI || window.decodeURIComponent,
+        matcher,
+        i, length, params,
+        result = {};
+
+    if (hash && !search) {
+
+        search = '?' + hash.split('?')[1];
+
+    }
+    matcher = search.match(/[\?\&][^\?\&]+=[^\?\&]+/g);
+    if (matcher) {
+        for (i = 0, length = matcher.length; i < length; i++) {
+            params = (matcher[i] || '').substring(1).split('=');
+            result[params[0]] = decoder(params[1]);
+        }
+    }
+
+    return result;
+}});
+define('app.position',[],function () {app.position=function (event, $container, $content, fixTop, fixLeft) {
+    return {
+        top: Math.max((($container.height() > $content.height() + event.clientY) ? event.clientY : (event.clientY - $content.height())) - (fixTop || 0), 0),
+        left: Math.max((($container.width() > $content.width() + event.clientX) ? event.clientX : (event.clientX - $content.width())) - (fixLeft || 0), 0)
+    };
+}});
+define('app.page',[],function () {app.page=function (){
 
                     var actions = {
                         refresh: function () {
@@ -3695,2119 +5398,416 @@ define('app.page',[],function () {app.page=function(){
                     return actions;
 
                 }()});
-define('app.parseJSObject',[],function () {app.parseJSObject=function (JSONString) {
-        function parseFunc(obj) {
-            for (var name in obj) {
-                if (typeof (obj[name]) === 'string') {
-                    if (obj[name].indexOf('_parseObject_') === 0) {
-                        obj[name] = JSON.parse(obj[name].replace(/_parseObject_/, ''));
-                    } else if (obj[name].indexOf('_parseFunction_') === 0) {
-                        obj[name] = eval('(' + obj[name].replace(/_parseFunction_/, '') /*.replace(/##plus##/g, '+')*/ + ')');
+define('app.getUA',[],function () {app.getUA=function () {
+    var TYPE = {
+            WEIXIN_IPAD: 'weixin iPad',
+            WEIXIN_IPHONE: 'weixin iPhone',
+            WEIXIN_ANDROID_PHONE: 'weixin androidPhone',
+            WEIXIN_ANDROID_PAD: 'weixin androidPad',
+
+            ALIPAY_IPAD: 'Alipay iPad',
+            ALIPAY_IPHONE: 'Alipay iPhone',
+            ALIPAY_ANDROID_PHONE: 'Alipay androidPhone',
+            ALIPAY_ANDROID_PAD: 'Alipay androidPad',
+
+            //手机网页
+            IPHONE: 'iPhone',
+            IPAD: 'iPad',
+            ANDROID_PHONE: 'androidPhone',
+            ANDROID_PAD: 'androidPad',
+
+            //PC浏览器
+            MSIE: 'IE6~10' || 'Ionic IE6~10',//考虑在本地IE浏览器运行时的情况
+            IE11: 'IE11' || 'Ionic IE11', //考虑在本地IE11浏览器运行时的情况
+            MICROSOFT_EDGE: 'Edge' || 'Ionic Edge',//考虑在本地Edge浏览器运行时的情况
+            PC_NOT_IE: 'PC' || 'Ionic',//考虑在本地浏览器运行时的情况
+
+
+            //类似于Ionic在本地搭建服务器的APP
+            IONIC_IPAD: 'Ionic iPad',
+            IONIC_IPHONE: 'Ionic iPhone',
+            IONIC_ANDROID_PHONE: 'Ionic androidPhone',
+            IONIC_ANDROID_PAD: 'Ionic androidPad',
+
+            //类似于cordova的本地APP
+            CORDOVA_IPAD: 'Cordova iPad',
+            CORDOVA_IPHONE: 'Cordova iPhone',
+            CORDOVA_ANDROID_PHONE: 'Cordova androidPhone',
+            CORDOVA_ANDROID_PAD: 'Cordova androidPad'
+
+        },
+        config = [
+            /* {  name: 'android',
+             reg: /android/i
+             },
+             {
+             name: 'ios',
+             reg: /\(i[^;]+;( U;)? CPU.+Mac OS X/i
+             },*/
+            //环境
+            {
+                name: 'Cordova',
+                reg: /^file/i
+            },
+            {
+                name: 'Ionic',
+                reg: /^http:\/\/localhost:8080/i
+            },
+            {
+                name: 'weixin',
+                reg: /MicroMessenger/i
+            },
+            {
+                name: 'Alipay',
+                reg: /Alipay/i
+            },
+            /*{
+             name:'MQQBrower',
+             reg:/MQQBROWSER/i
+             },
+             {
+             name:'UC Browser',
+             reg:/UCWEB/i
+             },*/
+
+            //设备
+            {
+                name: 'androidPhone',
+                reg: /^(?=.*(Android))(?=.*(Mobile)).+$/i
+            },
+            {
+                name: 'androidPad',
+                reg: /^(?=.*(Android))(?!.*(Mobile)).+$/i
+            },
+            {
+                name: 'iPad',
+                reg: /iPad/i
+            },
+            {
+                name: 'iPhone',
+                reg: /iPhone/i
+            },
+            //浏览器
+            {
+                name: 'IE6~10',
+                reg: /MSIE/i
+            },
+            {
+                name: 'IE11',
+                reg: /Trident\/7\.0/i
+            },
+            {
+                name: 'Edge',
+                reg: /Edge/i
+            }
+
+        ],
+
+        len = config.length,
+
+
+        getUAFunc = function () {
+            var
+                UA = navigator.userAgent,
+                url = document.URL,
+                result = [],
+                item, reg, k;
+
+            if (UA && url) {
+
+                for (k = 0; k < len; k++) {
+                    if ((item = config[k]) && (reg = item.reg) && reg.test(UA)) {
+                        result.push(item.name);
                     }
-                } else if (typeof (obj[name]) === 'object') {
-                    obj[name] = parseFunc(obj[name]);
                 }
             }
-            return obj;
-        }
-
-        return JSONString ? parseFunc(JSON.parse(JSONString)) : null;
-    }});
-define('app.performance',[],function () {app.performance=function () {
-    var Performance = function () {
-        },
-        vendors = ['webkit', 'moz'],
-        requestAnimationFrame = window.requestAnimationFrame,
-        cancelAnimationFrame = cancelAnimationFrame,
-        setTimeout = window.setTimeout,
-        clearTimeout = window.clearTimeout;
-
-    for (var x = 0; x < vendors.length && !requestAnimationFrame; ++x) {
-        requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-        cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-    }
-
-    if (!requestAnimationFrame) {
-        requestAnimationFrame = setTimeout;
-    }
-    if (!cancelAnimationFrame) {
-        cancelAnimationFrame = clearTimeout;
-    }
-
-    Performance.prototype = {
-        constructor: Performance,
-
-        id: 'performanceDelayId',
-
-        timeout: 220,
-        frequency: 16.7,
-
-        longDelay: function (callback) {
-            var id;
-
-            if ($.isFunction(callback)) {
-                if (id = callback[this.id]) {
-                    clearTimeout(id);
-                    cancelAnimationFrame(id);
-                }
-
-                id = callback[this.id] = setTimeout(function () {
-                    clearTimeout(id);
-                    callback();
-                }, this.timeout);
-            }
+            result = (result.length ? result.join(' ') : TYPE.PC_NOT_IE);
+            return result
+        };
+    getUAFunc.TYPE = TYPE;
 
 
-        },
-        shortDelay: function (callback) {
-            var id;
-
-            if ($.isFunction(callback)) {
-                if (id = callback[this.id]) {
-                    clearTimeout(id);
-                    cancelAnimationFrame(id);
-                }
-
-                id = callback[this.id] = requestAnimationFrame(function () {
-                    cancelAnimationFrame(id);
-
-                    callback();
-
-                }, this.frequency);
-            }
-        },
-        setTimeout: function (timeout) {
-            this.timeout = timeout;
-        },
-        getTimeout: function () {
-            return this.timeout;
-        },
-        setFrequency: function (frequency) {
-            this.frequency = frequency;
-        },
-        getFrequency: function () {
-            return this.frequency;
-        }
-    };
-
-    return new Performance();
+    return getUAFunc
 }()});
-define('app.popover',['app.getUID'],function () {app.popover=function(){
-                    var popover;
-                    //tooltip
-
-                    +function () {
-
-                        'use strict';
-
-                        // TOOLTIP PUBLIC CLASS DEFINITION
-                        // ===============================
-
-                        var Tooltip = function (element, options) {
-                            this.type = null;
-                            this.options = null;
-                            this.enabled = null;
-                            this.timeout = null;
-                            this.hoverState = null;
-                            this.$element = null;
-                            this.inState = null;
-
-                            this.init('tooltip', element, options)
-                        };
-
-                        var $window = $(window);
-
-                        Tooltip.VERSION = '3.3.7';
-
-                        Tooltip.TRANSITION_DURATION = 150;
-
-                        Tooltip.DEFAULTS = {
-                            animation: true,
-                            placement: 'top',
-                            selector: false,
-                            template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-                            trigger: 'hover focus',
-                            title: '',
-                            delay: 0,
-                            html: false,
-                            container: false,
-                            viewport: {
-                                selector: 'body',
-                                padding: 0
-                            }
-                        };
-
-                        Tooltip.prototype.init = function (type, element, options) {
-                            this.enabled = true;
-                            this.type = type;
-                            this.$element = $(element);
-                            this.options = this.getOptions(options);
-                            this.$viewport = this.options.viewport && $($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport));
-                            this.inState = {click: false, hover: false, focus: false};
-
-                            if (this.$element[0] instanceof document.constructor && !this.options.selector) {
-                                throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
-                            }
-
-                            var triggers = this.options.trigger.split(' ');
-
-                            for (var i = triggers.length; i--;) {
-                                var trigger = triggers[i];
-
-                                if (trigger == 'click') {
-                                    this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
-                                } else if (trigger != 'manual') {
-                                    var eventIn = trigger == 'hover' ? 'mouseenter' : 'focusin';
-                                    var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout';
-
-                                    this.$element.on(eventIn + '.' + this.type, this.options.selector, $.proxy(this.enter, this));
-                                    this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
-                                }
-                            }
-
-                            this.options.selector ?
-                                (this._options = $.extend({}, this.options, {trigger: 'manual', selector: ''})) :
-                                this.fixTitle()
-                        };
-
-                        Tooltip.prototype.getDefaults = function () {
-                            return Tooltip.DEFAULTS
-                        };
-
-                        Tooltip.prototype.getOptions = function (options) {
-                            options = $.extend({}, this.getDefaults(), this.$element.data(), options);
-
-                            if (options.delay && typeof options.delay == 'number') {
-                                options.delay = {
-                                    show: options.delay,
-                                    hide: options.delay
-                                }
-                            }
-
-                            return options
-                        };
-
-                        Tooltip.prototype.getDelegateOptions = function () {
-                            var options = {};
-                            var defaults = this.getDefaults();
-
-                            this._options && $.each(this._options, function (key, value) {
-                                if (defaults[key] != value) options[key] = value
-                            });
-
-                            return options
-                        };
-
-                        Tooltip.prototype.enter = function (obj) {
-                            var self = obj instanceof this.constructor ?
-                                obj : $(obj.currentTarget).data('bs.' + this.type);
-
-                            if (!self) {
-                                self = new this.constructor(obj.currentTarget, this.getDelegateOptions());
-                                $(obj.currentTarget).data('bs.' + this.type, self)
-                            }
-
-                            if (obj instanceof $.Event) {
-                                self.inState[obj.type == 'focusin' ? 'focus' : 'hover'] = true
-                            }
-
-                            if (self.tip().hasClass('in') || self.hoverState == 'in') {
-                                self.hoverState = 'in';
-                                return
-                            }
-
-                            clearTimeout(self.timeout);
-
-                            self.hoverState = 'in';
-
-                            if (!self.options.delay || !self.options.delay.show) return self.show();
-
-                            self.timeout = setTimeout(function () {
-                                if (self.hoverState == 'in') self.show()
-                            }, self.options.delay.show)
-                        };
-
-                        Tooltip.prototype.isInStateTrue = function () {
-                            for (var key in this.inState) {
-                                if (this.inState[key]) return true
-                            }
-
-                            return false
-                        };
-
-                        Tooltip.prototype.leave = function (obj) {
-                            var self = obj instanceof this.constructor ?
-                                obj : $(obj.currentTarget).data('bs.' + this.type);
-
-                            if (!self) {
-                                self = new this.constructor(obj.currentTarget, this.getDelegateOptions());
-                                $(obj.currentTarget).data('bs.' + this.type, self)
-                            }
-
-                            if (obj instanceof $.Event) {
-                                self.inState[obj.type == 'focusout' ? 'focus' : 'hover'] = false
-                            }
-
-                            if (self.isInStateTrue()) return;
-
-                            clearTimeout(self.timeout);
-
-                            self.hoverState = 'out';
-
-                            if (!self.options.delay || !self.options.delay.hide) return self.hide();
-
-                            self.timeout = setTimeout(function () {
-                                if (self.hoverState == 'out') self.hide()
-                            }, self.options.delay.hide)
-                        };
-
-                        Tooltip.prototype.show = function () {
-
-                            //  将遮罩层以及提示栏的z-index提高比弹出框（1051）更高的1052，可以让在使用弹出框（popover)的同时，正常使用遮罩以及提示栏。
-                            app.shelter.upperZIndex();
-
-                            var e = $.Event('show.bs.' + this.type);
-
-                            if (this.hasContent() && this.enabled) {
-                                //add
-                                this.$element.trigger(e);
-
-                                var $tooltip = this.$element,
-                                    tooltipUUID, resizeHandler,
-                                    optionWidth = this.options.width,
-                                    optionHeight = this.options.height;
-
-                                var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0]);
-                                if (e.isDefaultPrevented() || !inDom) return;
-                                var that = this;
-
-                                var $tip = this.tip();
-
-                                var tipId = this.getUID(this.type);
-
-                                this.setContent();
-                                $tip.attr('id', tipId);
-                                this.$element.attr('aria-describedby', tipId);
-
-                                if (this.options.animation) $tip.addClass('fade');
-
-                                var placement = typeof this.options.placement == 'function' ?
-                                    this.options.placement.call(this, $tip[0], this.$element[0]) :
-                                    this.options.placement;
-
-                                var autoToken = /\s?auto?\s?/i;
-                                var autoPlace = autoToken.test(placement);
-                                if (autoPlace) placement = placement.replace(autoToken, '') || 'top';
-
-
-                                $tip
-                                    .detach()
-                                    .css({display: 'block'})
-                                    // .css({ top: 0, left: 0, display: 'block' })
-                                    .addClass(placement)
-                                    .data('bs.' + this.type, this);
-
-                                this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element);
-
-                                // xieyirong@agree.com.cn
-                                // 2018-03-15
-                                // resizeHandler 初始化气泡尺寸以及监听窗口变化重置气泡尺寸
-                                if ((optionWidth || optionHeight)) {
-
-                                    tooltipUUID = app.getUID();
-                                    resizeHandler = function () {
-                                        var tooltipHeight, tooltipWidth, windowHeight, windowWidth,
-                                            tooltipCss = {},
-                                            tooltipBodyCss, tooltipBodyHeight,
-                                            placement, pos, actualWidth, actualHeight, calculatedOffset;
-
-
-                                        if (optionWidth) {
-                                            windowWidth = $window.width();
-
-                                            if (optionWidth.indexOf('%') !== -1) {
-                                                tooltipWidth = (parseInt(optionWidth, 10) / 100 || .8) * windowWidth;
-                                            } else {
-                                                tooltipWidth = parseInt(optionWidth, 10) || windowWidth * .8;
-                                            }
-
-                                            tooltipWidth = Math.min(tooltipWidth, windowWidth);
-                                            tooltipWidth = Math.max(tooltipWidth, 0);
-                                            tooltipCss.width = tooltipWidth;
-                                            tooltipCss.marginLeft = 0;
-                                        }
-
-                                        if (optionHeight) {
-                                            windowHeight = $window.height();
-
-                                            if (optionHeight.indexOf('%') !== -1) {
-                                                tooltipHeight = (parseInt(optionHeight, 10) / 100 || .7) * windowHeight;
-                                            } else {
-                                                tooltipHeight = parseInt(optionHeight, 10) || windowHeight * .7;
-                                            }
-
-                                            tooltipHeight = Math.min(tooltipHeight, windowHeight);
-
-                                            tooltipBodyHeight = tooltipHeight - $tip.children('.aweb-popover-header').height();
-
-                                            tooltipCss.height = tooltipHeight;
-                                            tooltipCss.marginTop = 0;
-
-                                            tooltipBodyCss = {
-                                                maxHeight: tooltipBodyHeight,
-                                                minHeight: tooltipBodyHeight
-                                            };
-                                        }
-
-
-                                        $tip.css(tooltipCss);
-                                        if (tooltipBodyCss) {
-                                            $tip.children('.aweb-popover-body').css(tooltipBodyCss);
-                                        }
-
-                                        // resize 中更新 气泡位置
-
-                                        placement = that.options.placement;
-                                        pos = that.getPosition();
-                                        actualWidth = $tip[0].offsetWidth;
-                                        actualHeight = $tip[0].offsetHeight;
-                                        calculatedOffset = that.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
-                                        that.applyPlacement(calculatedOffset, placement);
-
-                                    };
-
-                                    $window.on('resize.' + tooltipUUID, resizeHandler);
-                                    resizeHandler();
-
-                                    this.uuid = tooltipUUID;
-                                    this.resizeHandler = resizeHandler;
-                                }
-
-                                this.$element.trigger('inserted.bs.' + this.type);
-
-                                var pos = this.getPosition(),
-                                    actualWidth = $tip[0].offsetWidth,
-                                    actualHeight = $tip[0].offsetHeight,
-                                    calculatedOffset, fixWidth, fixHeight, originFixWidth, originFixHeight, popoverHeaderHeight,
-                                    popoverBodyHeight;
-
-                                if (autoPlace) {
-                                    var orgPlacement = placement;
-                                    var viewportDim = this.getPosition(this.$viewport);
-
-                                    placement = placement == 'bottom' && pos.bottom + actualHeight > viewportDim.bottom ? 'top' :
-                                        placement == 'top' && pos.top - actualHeight < viewportDim.top ? 'bottom' :
-                                            placement == 'right' && pos.right + actualWidth > viewportDim.width ? 'left' :
-                                                placement == 'left' && pos.left - actualWidth < viewportDim.left ? 'right' :
-                                                    placement;
-
-                                    calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
-
-                                    //对调整后方位为 left、top情况做处理，将原本的修改尺寸和调整后的修改尺寸作比较
-                                    if (orgPlacement !== placement) {
-                                        switch (placement) {
-                                            case 'left':
-                                                originFixWidth = viewportDim.width - pos.right;
-                                                if (calculatedOffset.left < 0) {
-                                                    fixWidth = actualWidth + calculatedOffset.left;
-                                                    if (fixWidth < originFixWidth) {
-                                                        fixWidth = originFixWidth;
-                                                        placement = orgPlacement;
-                                                        $tip.css({'width': fixWidth + 'px'});
-                                                    }
-                                                }
-                                                break;
-                                            case 'top':
-                                                originFixHeight = viewportDim.height - pos.bottom;
-                                                if (calculatedOffset.top < 0) {
-                                                    fixHeight = actualHeight + calculatedOffset.top;
-                                                    if (fixHeight < originFixHeight) {
-                                                        fixHeight = originFixHeight - 10;
-                                                        placement = orgPlacement;
-                                                        popoverHeaderHeight = $tip.children('.aweb-popover-header').height();
-                                                        popoverBodyHeight = fixHeight - popoverHeaderHeight;
-                                                        $tip.css({'height': fixHeight + 'px'});
-                                                        $tip.find('.aweb-popover-body').css({
-                                                            'min-height': popoverBodyHeight + 'px',
-                                                            'max-height': popoverBodyHeight + 'px'
-                                                        });
-                                                    }
-                                                }
-                                                break;
-                                        }
-
-                                    }
-
-                                    $tip
-                                        .removeClass(orgPlacement)
-                                        .addClass(placement)
-                                }
-
-                                calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight);
-
-                                //阻止气泡溢出
-                                switch (placement) {
-                                    case 'left':
-                                    case 'right':
-                                        if (calculatedOffset.left < 0) {
-                                            fixWidth = actualWidth + calculatedOffset.left;
-                                            $tip.css({'width': fixWidth + 'px'});
-                                            calculatedOffset.left = 0;
-                                        }
-                                        break;
-                                    case 'top':
-                                    case 'bottm':
-                                        if (calculatedOffset.top < 0) {
-                                            fixHeight = actualHeight + calculatedOffset.top;
-                                            popoverHeaderHeight = $tip.children('.aweb-popover-header').height();
-                                            popoverBodyHeight = fixHeight - popoverHeaderHeight;
-                                            $tip.css({'height': fixHeight + 'px'});
-                                            $tip.find('.aweb-popover-body').css({
-                                                'min-height': popoverBodyHeight + 'px',
-                                                'max-height': popoverBodyHeight + 'px'
-                                            });
-                                            calculatedOffset.top = 0;
-                                        }
-                                        break;
-                                }
-
-                                this.applyPlacement(calculatedOffset, placement);
-
-                                var complete = function () {
-                                    var prevHoverState = that.hoverState;
-                                    that.$element.trigger('shown.bs.' + that.type);
-                                    that.hoverState = null;
-
-                                    if (prevHoverState == 'out') that.leave(that)
-                                };
-
-                                $.support.transition && this.$tip.hasClass('fade') ?
-                                    $tip
-                                        .one('bsTransitionEnd', complete)
-                                        .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
-                                    complete()
-                            }
-                        };
-
-                        Tooltip.prototype.applyPlacement = function (offset, placement) {
-                            var $tip = this.tip();
-                            var width = $tip[0].offsetWidth;
-                            var height = $tip[0].offsetHeight;
-
-                            // manually read margins because getBoundingClientRect includes difference
-                            var marginTop = parseInt($tip.css('margin-top'), 10);
-                            var marginLeft = parseInt($tip.css('margin-left'), 10);
-
-                            // we must check for NaN for ie 8/9
-                            if (isNaN(marginTop)) marginTop = 0;
-                            if (isNaN(marginLeft)) marginLeft = 0;
-
-                            offset.top += marginTop;
-                            offset.left += marginLeft;
-
-                            // $.fn.offset doesn't round pixel values
-                            // so we use setOffset directly with our own function B-0
-                            $.offset.setOffset($tip[0], $.extend({
-                                using: function (props) {
-                                    $tip.css({
-                                        top: Math.round(props.top),
-                                        left: Math.round(props.left)
-                                    })
-                                }
-                            }, offset), 0);
-
-                            $tip.addClass('in');
-
-                            // check to see if placing tip in new offset caused the tip to resize itself
-                            var actualWidth = $tip[0].offsetWidth;
-                            var actualHeight = $tip[0].offsetHeight;
-
-                            if (placement == 'top' && actualHeight != height) {
-                                offset.top = offset.top + height - actualHeight
-                            }
-
-                            var delta = this.getViewportAdjustedDelta(placement, offset, actualWidth, actualHeight);
-
-                            if (delta.left) offset.left += delta.left;
-                            else offset.top += delta.top;
-
-                            var isVertical = /top|bottom/.test(placement);
-                            var arrowDelta = isVertical ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight;
-                            var arrowOffsetPosition = isVertical ? 'offsetWidth' : 'offsetHeight';
-
-                            $tip.offset(offset);
-
-                            this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
-                        };
-
-                        Tooltip.prototype.replaceArrow = function (delta, dimension, isVertical) {
-                            this.arrow()
-                                .css(isVertical ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
-                                .css(isVertical ? 'top' : 'left', '')
-                        };
-
-                        Tooltip.prototype.setContent = function () {
-                            var $tip = this.tip();
-                            var title = this.getTitle();
-
-                            $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title);
-                            $tip.removeClass('fade in top bottom left right')
-                        };
-
-                        Tooltip.prototype.hide = function (callback) {
-                            //  将遮罩层以及提示栏的z-index还原
-                            app.shelter.lowerZIndex();
-
-                            var that = this;
-                            var $tip = $(this.$tip);
-                            var e = $.Event('hide.bs.' + this.type);
-
-                            function complete() {
-                                if (that.hoverState != 'in') $tip.detach();
-                                if (that.$element) { // TODO: Check whether guarding this code with this `if` is really necessary.
-                                    that.$element
-                                        .removeAttr('aria-describedby')
-                                        .trigger('hidden.bs.' + that.type)
-                                }
-                                callback && callback()
-                            }
-
-                            this.$element.trigger(e);
-
-                            // null resizeHandler
-                            if (this.uuid) {
-                                $window.off('resize.' + this.uuid);
-                                this.resizeHandler = null;
-                            }
-
-                            if (e.isDefaultPrevented()) return;
-
-                            $tip.removeClass('in');
-
-                            $.support.transition && $tip.hasClass('fade') ?
-                                $tip
-                                    .one('bsTransitionEnd', complete)
-                                    .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
-                                complete();
-
-                            this.hoverState = null;
-
-                            return this
-                        };
-
-                        Tooltip.prototype.fixTitle = function () {
-                            var $e = this.$element;
-                            if ($e.attr('title') || typeof $e.attr('data-original-title') != 'string') {
-                                $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-                            }
-                        };
-
-                        Tooltip.prototype.hasContent = function () {
-                            return this.getTitle()
-                        };
-
-                        Tooltip.prototype.getPosition = function ($element) {
-                            $element = $element || this.$element;
-
-                            var el = $element[0];
-                            var isBody = el.tagName == 'BODY';
-
-                            var elRect = el.getBoundingClientRect();
-                            if (elRect.width == null) {
-                                // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
-                                elRect = $.extend({}, elRect, {
-                                    width: elRect.right - elRect.left,
-                                    height: elRect.bottom - elRect.top
-                                })
-                            }
-                            var isSvg = window.SVGElement && el instanceof window.SVGElement;
-                            // Avoid using $.offset() on SVGs since it gives incorrect results in jQuery 3.
-                            // See https://github.com/twbs/bootstrap/issues/20280
-                            var elOffset = isBody ? {top: 0, left: 0} : (isSvg ? null : $element.offset());
-                            var scroll = {scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop()};
-                            var outerDims = isBody ? {width: $(window).width(), height: $(window).height()} : null;
-
-                            return $.extend({}, elRect, scroll, outerDims, elOffset)
-                        };
-
-                        Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
-                            return placement == 'bottom' ? {
-                                    top: pos.top + pos.height,
-                                    left: pos.left + pos.width / 2 - actualWidth / 2
-                                } :
-                                placement == 'top' ? {
-                                        top: pos.top - actualHeight,
-                                        left: pos.left + pos.width / 2 - actualWidth / 2
-                                    } :
-                                    placement == 'left' ? {
-                                            top: pos.top + pos.height / 2 - actualHeight / 2,
-                                            left: pos.left - actualWidth
-                                        } :
-                                        /* placement == 'right' */
-                                        {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
-
-                        };
-
-                        Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
-                            var delta = {top: 0, left: 0};
-                            if (!this.$viewport) return delta;
-
-                            var viewportPadding = this.options.viewport && this.options.viewport.padding || 0;
-                            var viewportDimensions = this.getPosition(this.$viewport);
-
-                            if (/right|left/.test(placement)) {
-                                var topEdgeOffset = pos.top - viewportPadding - viewportDimensions.scroll;
-                                var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight;
-                                if (topEdgeOffset < viewportDimensions.top) { // top overflow
-                                    delta.top = viewportDimensions.top - topEdgeOffset
-                                } else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
-                                    delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
-                                }
-                            } else {
-                                var leftEdgeOffset = pos.left - viewportPadding;
-                                var rightEdgeOffset = pos.left + viewportPadding + actualWidth;
-                                if (leftEdgeOffset < viewportDimensions.left) { // left overflow
-                                    delta.left = viewportDimensions.left - leftEdgeOffset
-                                } else if (rightEdgeOffset > viewportDimensions.right) { // right overflow
-                                    delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
-                                }
-                            }
-
-                            return delta
-                        };
-
-                        Tooltip.prototype.getTitle = function () {
-                            var title;
-                            var $e = this.$element;
-                            var o = this.options;
-
-                            title = (typeof o.title == 'function' ? o.title.call($e[0]) : o.title) || $e.attr('data-original-title');
-
-                            return title
-                        };
-
-                        Tooltip.prototype.getUID = function (prefix) {
-                            do prefix += ~~(Math.random() * 1000000);
-                            while (document.getElementById(prefix));
-                            return prefix
-                        };
-
-                        Tooltip.prototype.tip = function () {
-                            if (!this.$tip) {
-                                this.$tip = $(this.options.template);
-                                if (this.$tip.length != 1) {
-                                    throw new Error(this.type + ' `template` option must consist of exactly 1 top-level element!')
-                                }
-                            }
-                            return this.$tip
-                        };
-
-                        Tooltip.prototype.arrow = function () {
-                            return (this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow'))
-                        };
-
-                        Tooltip.prototype.enable = function () {
-                            this.enabled = true
-                        };
-
-                        Tooltip.prototype.disable = function () {
-                            this.enabled = false
-                        };
-
-                        Tooltip.prototype.toggleEnabled = function () {
-                            this.enabled = !this.enabled
-                        };
-
-                        Tooltip.prototype.toggle = function (e) {
-                            var self = this;
-                            if (e) {
-                                self = $(e.currentTarget).data('bs.' + this.type);
-                                if (!self) {
-                                    self = new this.constructor(e.currentTarget, this.getDelegateOptions());
-                                    $(e.currentTarget).data('bs.' + this.type, self)
-                                }
-                            }
-
-                            if (e) {
-                                self.inState.click = !self.inState.click;
-                                if (self.isInStateTrue()) self.enter(self);
-                                else self.leave(self)
-                            } else {
-                                self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
-                            }
-                        };
-
-                        Tooltip.prototype.destroy = function () {
-                            var that = this;
-                            clearTimeout(this.timeout);
-                            this.hide(function () {
-                                that.$element.off('.' + that.type).removeData('bs.' + that.type);
-                                if (that.$tip) {
-                                    that.$tip.detach()
-                                }
-                                that.$tip = null;
-                                that.$arrow = null;
-                                that.$viewport = null;
-                                that.$element = null
-                            })
-                        };
-
-
-                        // TOOLTIP PLUGIN DEFINITION
-                        // =========================
-
-                        function Plugin(option) {
-                            return this.each(function () {
-                                var $this = $(this);
-                                var data = $this.data('bs.tooltip');
-                                var options = typeof option == 'object' && option;
-
-                                if (!data && /destroy|hide/.test(option)) return;
-                                if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)));
-                                if (typeof option == 'string') data[option]()
-                            })
-                        }
-
-                        var old = $.fn.tooltip;
-
-                        $.fn.tooltip = Plugin;
-                        $.fn.tooltip.Constructor = Tooltip;
-
-
-                        // TOOLTIP NO CONFLICT
-                        // ===================
-
-                        $.fn.tooltip.noConflict = function () {
-                            $.fn.tooltip = old;
-                            return this
-                        }
-
-                    }(jQuery);
-
-
-                    //popover
-
-                    +function () {
-                        'use strict';
-
-                        // POPOVER PUBLIC CLASS DEFINITION
-                        // ===============================
-
-                        var Popover = function (element, options) {
-                            this.init('popover', element, options)
-                        };
-
-                        if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js');
-
-                        Popover.VERSION = '3.3.7';
-
-                        Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
-                            placement: 'right',
-                            trigger: 'click',
-                            content: '',
-                            template: '<div class="aweb-popover" role="tooltip"><div class="arrow"></div><h3 class="aweb-popover-title"></h3><div class="aweb-popover-content"></div></div>'
-                        });
-
-
-                        // NOTE: POPOVER EXTENDS tooltip.js
-                        // ================================
-
-                        Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype);
-
-                        Popover.prototype.constructor = Popover;
-
-                        Popover.prototype.getDefaults = function () {
-                            return Popover.DEFAULTS
-                        };
-
-                        Popover.prototype.setContent = function () {
-                            var $tip = this.tip();
-                            var title = this.getTitle();
-                            var content = this.getContent();
-
-                            $tip.find('.aweb-popover-title')[this.options.html ? 'html' : 'text'](title);
-                            $tip.find('.aweb-popover-content').children().detach().end()[ // we use append for html objects to maintain js events
-                                this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
-                                ](content);
-
-                            $tip.removeClass('fade top bottom left right in');
-
-                            // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
-                            // this manually by checking the contents.
-                            if (!$tip.find('.aweb-popover-title').html()) $tip.find('.aweb-popover-title').hide()
-                        };
-
-                        Popover.prototype.hasContent = function () {
-                            return this.getTitle() || this.getContent()
-                        };
-
-                        Popover.prototype.getContent = function () {
-                            var $e = this.$element;
-                            var o = this.options;
-
-                            return $e.attr('data-content') ||
-                                (typeof o.content == 'function' ?
-                                    o.content.call($e[0]) :
-                                    o.content)
-                        };
-
-                        Popover.prototype.arrow = function () {
-                            return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
-                        };
-
-
-                        // POPOVER PLUGIN DEFINITION
-                        // =========================
-
-                        function Plugin(option) {
-                            return this.each(function () {
-                                var $this = $(this);
-                                var data = $this.data('bs.popover');
-                                var options = typeof option == 'object' && option;
-
-                                if (!data && /destroy|hide/.test(option)) return;
-                                if (!data) $this.data('bs.popover', (data = new Popover(this, options)));
-                                if (typeof option == 'string') data[option]()
-                            })
-                        }
-
-                        var old = $.fn.popover;
-
-                        $.fn.popover = Plugin;
-                        $.fn.popover.Constructor = Popover;
-
-
-                        // POPOVER NO CONFLICT
-                        // ===================
-
-                        $.fn.popover.noConflict = function () {
-                            $.fn.popover = old;
-                            return this
-                        }
-
-                    }(jQuery);
-
-                    popover = function () {
-
-
-                        function popover(options) {
-
-                            // var $popover = $(options.$elem).closest('button') !== 0 ? $(options.$elem).closest('button') : $(options.$elem);
-
-                            // if ($popover && $popover.data("bs.popover")) {
-                            //     return false;
-                            // }
-
-                            var CONST = {
-                                    POPOVER_LANG: {
-                                        TITLE: '气泡',
-                                        CONTENT: '气泡内容',
-                                        DEFAULT_BTN: '<button title="全屏切换" type="button" data-role="toggleSize"><i class="aweb-popover-header-icon aui aui-quanping fa fa-expand"></i></button><button title="关闭" type="button" data-role="close"><i class="aweb-popover-header-icon aui aui-guanbi iconfont icon-topbar-close"></i></button>'
-                                    },
-                                    POPOVER_NAMESPACE: '.pop'
-                                },
-                                _default = {
-                                    title: CONST.POPOVER_LANG.TITLE, //弹出框标题，非必填
-                                    content: CONST.POPOVER_LANG.CONTENT, //弹出框内容
-                                    init: null, //初始化函数
-                                    confirmHandler: function () {
-                                    }, //点击确定按钮触发的函数，参数以数组形式写在args那里
-                                    args: [],
-                                    html: true,
-                                    container: 'body',
-                                    height: '50%',
-                                    width: '80%',
-                                    placement: 'auto right',
-                                    hasHeader: true,
-                                    template: '<div class="aweb-popover"  tabindex="0" role="tooltip"><div class="arrow"></div><div class="aweb-popover-header"><h4 class="aweb-popover-title"></h4><div class="btn-group">' +
-                                    CONST.POPOVER_LANG.DEFAULT_BTN +
-                                    '</div></div><div class="aweb-popover-body"><div class="aweb-popover-content"></div></div></div>'
-                                };
-
-                            var Pop = function (options) {
-                                this.options = $.extend({}, _default, options);
-                                this.init();
-                                this.on(this.events);
-                            };
-
-                            Pop.fn = Pop.prototype = {
-                                Constructor: Pop,
-                                events: {
-                                    toggleSize: function (e, context) {
-                                        var popoverBodyHeight, popoverBodyCss;
-
-                                        // 设置窗口大小
-                                        context.$tip.toggleClass('popover-lg');
-
-                                        //调整 popover-body 高度
-                                        popoverBodyHeight = context.$tip.height() - context.$tip.children('.aweb-popover-header').height();
-
-                                        popoverBodyCss = {
-                                            maxHeight: popoverBodyHeight,
-                                            minHeight: popoverBodyHeight
-                                        };
-
-                                        if (popoverBodyCss) {
-                                            context.$tip.children('.aweb-popover-body').css(popoverBodyCss);
-                                        }
-
-                                        context.trigger('screenChange');
-
-                                    },
-
-                                    close: function (e, context) {
-                                        context.$element && context.$element.popover('destroy');
-                                        if (context.isShow) {
-                                            var handler = context.options.confirmHandler;
-                                            $.isFunction(handler) && handler.apply(context, context.options.args);
-                                            context.isShow = false;
-                                            context.popInstance.destroy();
-                                        }
-                                    }
-                                },
-
-                                init: function () {
-
-                                    var listen = {},
-                                        i, k,j, item, $newBtn,temp={},
-                                        that = this,
-                                        onList = this.options.on,
-                                        $buttons, $button, btnClass, iconNamespace;
-
-
-                                    this.isShow = true;
-                                    this.options.args = [this].concat(this.options.args);
-
-                                    if (!this.options.hasHeader) {
-                                        this.options.template = '<div class="aweb-popover"  tabindex="0" role="tooltip"><div class="arrow"></div><div class="aweb-popover-body"><div class="aweb-popover-content"></div></div></div>';
-                                    }
-
-                                    //事件散列处理
-                                    for (i in onList) {
-
-                                        if (onList[i].btnName && onList[i].callback) {
-                                            listen[onList[i].btnName] = onList[i].callback;
-                                        }
-
-                                    }
-
-                                    this.events = $.extend({}, this.events, listen);
-
-
-                                    for (k in this.events) {
-
-                                        //引入temp对象，避免在IE8上的属性无限循环
-                                        temp[k + CONST.POPOVER_NAMESPACE] = this.events[k];
-                                        // this.events[k + CONST.POPOVER_NAMESPACE] = this.events[k];
-                                        delete this.events[k];
-
-                                    }
-
-                                    for(j in temp){
-
-                                        this.events[j] =temp[j];
-
-                                    }
-
-                                    temp = null;
-
-                                    if ($.isFunction(this.options.$elem)) {
-                                        this.options.$elem = this.options.$elem();
-                                    }
-
-                                    this.$element = $(this.options.$elem).closest('button').length !== 0 ? $(this.options.$elem).closest('button') : $(this.options.$elem).closest('span').length !== 0 ? $(this.options.$elem).closest('span') : $(this.options.$elem);
-
-                                    if ($.isFunction(this.options.content)) {
-                                        this.options.content = this.options.content();
-                                    }
-
-                                    this.$element.popover({
-                                        title: this.options.title,
-                                        content: this.options.content,
-                                        html: this.options.html,
-                                        container: this.options.container,
-                                        height: this.options.height,
-                                        width: this.options.width,
-                                        placement: this.options.placement,
-                                        template: this.options.template,
-                                        animation: false
-                                    }).popover('show');
-
-                                    // 初始化模拟鼠标点击
-                                    if (this.options.fixClick) {
-                                        this.$element.data('bs.popover').inState.click = true;
-                                    }
-
-                                    this.popInstance = this.$element.data('bs.popover');
-
-                                    //保存气泡弹出框的索引
-                                    this.$tip = this.$element.data('bs.popover').tip();
-
-                                    this.$btnCtn = this.$tip.find('.aweb-popover-header > .btn-group').html(CONST.POPOVER_LANG.DEFAULT_BTN);
-
-                                    $buttons = this.$btnCtn.find('button i');
-
-                                    // 绑定 options.init 中的 this 为 this.$tip 对象，将 this <Pop实例> 作为第一个参数传入
-
-                                    if ($.isFunction(this.options.init)) {
-                                        this.options.init.apply(this.$tip, this.options.args);
-                                    }
-
-                                    // 处理 aui 与 aweb 图标关系
-
-                                    if (window.auiApp && window.auiApp.mode !== 'virtualizer') {
-                                        $buttons.each(function (index, item) {
-                                            $button = $(item);
-                                            btnClass = item.className.split(' ');
-
-                                            $.each(btnClass, function (index, item) {
-                                                if (item !== 'aweb-popover-header-icon' && item.indexOf('aui') < 0) {
-                                                    $button.removeClass(item);
-                                                }
-                                            });
-                                        });
-                                    } else {
-
-                                        $buttons.each(function (index, item) {
-                                            $(item).removeClass('aui');
-                                        });
-                                    }
-
-                                    //合成按钮组（默认 关闭和全屏，并监听对应按钮的点击事件，并 trigger 对应注册的事件）
-
-                                    for (i in onList) {
-                                        //正则处理图标前缀
-                                        if (onList[i].btnName && onList[i].icon && onList[i].title) {
-                                            iconNamespace = onList[i].icon.match(/([a-z]+)-([a-z]+)/)[1];
-                                            $newBtn = '<button title="' + onList[i].title + '" type="button" data-role="' + onList[i].btnName + '"><i class="aweb-popover-header-icon ' + iconNamespace + " " + onList[i].icon + '"></i></button>';
-                                            this.$btnCtn.prepend($newBtn);
-                                        }
-
-                                    }
-
-                                    this.$tip.on('click' + CONST.POPOVER_NAMESPACE, '.aweb-popover-header button', function (e) {
-                                        that.$tip.trigger($(this).attr('data-role') + CONST.POPOVER_NAMESPACE, that);
-                                    });
-
-                                    this.$tip.focus();
-
-                                    //focusout
-                                    this.$tip.on('focusout' + CONST.POPOVER_NAMESPACE, function (e) {
-
-                                        // relatedTarget 是 aweb-popover 中的元素
-                                        if ($(e.relatedTarget).closest('.aweb-popover').is(that.$tip)) {
-                                            return false;
-                                        }
-
-                                        if (that.isShow) {
-                                            if ((that.$tip.is($(e.target)) || that.$tip.is($(e.target).closest('.aweb-popover'))) && (e.relatedTarget === null || ( e.relatedTarget !== undefined && $(e.relatedTarget).closest('.aweb-popover').length === 0))) {
-
-                                                // 点击 popover 之外的区域造成的失焦
-                                                if (that.options.focusable !== false) {
-                                                    that.close();
-                                                }
-
-                                            } else {
-                                                return false;
-                                            }
-                                        }
-                                        //其他提前触发 close 的失焦行为都调用 Pop 实例的 close() 方法
-
-                                    });
-
-                                    // 监听popover 的 hide 事件，并执行 confirmHandler
-
-                                    this.$element.one('hide.bs.popover', function () {
-                                        that.isShow = false;
-                                        var handler = that.options.confirmHandler;
-                                        $.isFunction(handler) && handler.apply(that, that.options.args);
-                                    });
-
-                                    // 监听popover 的 hidden 事件，并销毁 popover 实例、Pop实例
-                                    this.$element.one('hidden.bs.popover', function () {
-                                        that.destroy();
-                                    });
-
-                                },
-
-                                on: function () {
-                                    this.$tip.on.apply(this.$tip, arguments);
-                                },
-
-                                off: function () {
-                                    this.$tip.off.apply(this.$tip, arguments);
-                                },
-
-                                trigger: function () {
-                                    this.$tip.trigger.apply(this.$tip, arguments);
-                                },
-
-                                destroy: function () {
-                                    this.off();
-                                    this.$element = null;
-                                    this.$btnCtn = null;
-                                    this.$tip = null;
-                                    this.options = null;
-                                },
-
-                                close: function () {
-                                    this.$tip && this.$tip.trigger('close', this);
-                                },
-
-                                toggleSize: function () {
-                                    this.$tip && this.$tip.trigger('toggleSize', this);
-                                },
-
-                                setCache: function (key, value) {
-                                    if (!this.cache) {
-                                        this.cache = {}
-                                    }
-                                    this.cache[key] = value;
-                                },
-
-                                getCache: function (key) {
-                                    if (this.cache) {
-                                        return this.cache[key];
-                                    }
-                                }
-
-                            };
-
-                            return new Pop(options);
-
-                        }
-
-                        return popover;
-                    }();
-
-                    return popover;
-                }()});
-define('app.position',[],function () {app.position=function (event, $container, $content, fixTop, fixLeft) {
-    return {
-        top: Math.max((($container.height() > $content.height() + event.clientY) ? event.clientY : (event.clientY - $content.height())) - (fixTop || 0), 0),
-        left: Math.max((($container.width() > $content.width() + event.clientX) ? event.clientX : (event.clientX - $content.width())) - (fixLeft || 0), 0)
-    };
-}});
-define('app.queryString',[],function () {app.queryString=function (key) {
-
-        var
-            hash = window.location.hash || document.location.hash,
-            search = window.location.search || document.location.search || '',
-            decoder = window.decodeURI || window.decodeURIComponent,
-            rKey = new RegExp('\\b' + key + '=([^$&]+)'),
-            value;
-
-        if (hash && !search) {
-            search = hash.split('?')[1]
+define('app.getNewQueryStringURL',[],function () {app.getNewQueryStringURL=function (params) {
+        var map = $.extend(this.getQueryStringMap(), params),
+            encoder = window.encodeURI || window.encodeURIComponent,
+            prop,
+            ret = [];
+
+        for (prop in map) {
+            if (map.hasOwnProperty(prop)) {
+                ret.push(prop + '=' + encoder(map[prop]));
+            }
         }
 
-
-        value = search.match(rKey);
-        value = value && value[1];
-
-        return value ? decoder(value) : '';
+        return ret.join('&');
     }});
-define('app.removeData',['app.setData'],function () {app.removeData=function (name, fromCookie) {
-    var result = true;
+define('app.behavior',[],function () {app.behavior=function () {
+    var _b = function (input1, input2, condition, callback) {
+        var _input2, result;
 
-    if (fromCookie) {
-        result = app.setData(name, '', true, -1);
-    } else {
+        input2 = decodeURIComponent(input2);
+        _input2 = input2;
         try {
-            window.localStorage.removeItem(name);
+            input2 = JSON.parse(input2);
         } catch (e) {
-            result = app.setData(name, '', true, -1);
-        }
-    }
-    return result;
-}});
-define('app.reset',[],function () {app.reset=function ($form, auiCtx) {
-        var $inputs = $("[id]", $form),
-            i, item, domId, ins,
-            variables = auiCtx && auiCtx.variables,
-            $item, $checkedItem, $inputItem;
-
-        if (variables && (i = $inputs.length)) {
-            for (; item = $inputs[--i];) {
-                ins = variables[item.id];
-                if (ins && $.isFunction(ins.resetValue)) {
-                    ins.resetValue();
-                }
-            }
-        } else if ($inputs.length) {
-            for (i = -1; item = $inputs[++i];) {
-                $item = $(':input,img,.text-div,.wangEditor-txt', item).not(':button, :submit, :reset,:disabled');
-                $inputItem = $(':input', item).not(':radio,:checkbox');
-                $checkedItem = $(':checked', item).not(':disabled');
-
-                $inputItem.length && $inputItem.val('').removeAttr('selected');
-                $checkedItem.length && $checkedItem.removeAttr('checked');
-
-            }
+            input2 = _input2;
         }
 
-    }});
-define('app.screen',[],function () {app.screen=function () {
-    var full = {},
-        resizeHandlerList = {},
-        globalResizeHandlerList = {},
-        resizeTimeout;
-
-    function resize() {
-        window.clearTimeout(resizeTimeout);
-        resizeTimeout = window.setTimeout(function () {
-            var uid,
-                _app = window.app || app;
-            for (uid in globalResizeHandlerList) {
-                if (globalResizeHandlerList[uid].timeout) {
-                    window.setTimeout(globalResizeHandlerList[uid].callback, globalResizeHandlerList[uid].timeout);
+        switch (condition) {
+            case 'lt':
+                result = (input1 < input2);
+                break;
+            case 'eq':
+                result = (input1 === input2);
+                break;
+            case 'gt':
+                result = (input1 > input2);
+                break;
+            case 'not':
+                result = (input1 !== input2);
+                break;
+            case 'includes':
+            case 'notIncludes':
+                if (input2 instanceof Array) {
+                    result = ($.inArray(input1, input2) !== -1);
+                } else if (input2 instanceof Object) {
+                    result = (input1 in input2);
                 } else {
-                    globalResizeHandlerList[uid].callback && globalResizeHandlerList[uid].callback();
+                    result = input2 && (input2.toString().indexOf(input1) !== -1);
                 }
-            }
 
-
-            _app.router && _app.router.getCurrentHandler && (uid = _app.router.getCurrentHandler()) && (uid = uid.uid);
-
-            if (uid && (uid = resizeHandlerList[uid])) {
-                if (uid.timeout) {
-                    window.setTimeout(uid.callback);
-                } else {
-                    uid.callback && uid.callback();
+                if (condition === 'notIncludes') {
+                    result = !result;
                 }
-            }
-            uid = null;
-        }, 100);
-    }
+                break;
+            case 'startsWith':
+                result = input2 && (input2.toString().indexOf(input1) === 0);
+                break;
+        }
 
-    full.addResizeHandler = function (options) {
-
-        if (options && options.uid && options.callback) {
-            if (options.isGlobal) {
-                globalResizeHandlerList[options.uid] = {
-                    callback: options.callback,
-                    timeout: options.timeout || 0
-                };
-            } else {
-                resizeHandlerList[options.uid] = {
-                    callback: options.callback,
-                    timeout: options.timeout || 0
-                };
-            }
-        }
-    };
-    full.removeResizeHandler = function (uid, isGlobal) {
-        if (uid) {
-            if (isGlobal) {
-                globalResizeHandlerList[uid] = null;
-                delete globalResizeHandlerList[uid];
-            } else {
-                resizeHandlerList[uid] = null;
-                delete resizeHandlerList[uid];
-            }
-        }
-    };
-    full.triggerResizeHandler = function (uid, isGlobal) {
-        if (uid) {
-            if (isGlobal) {
-                if (uid = globalResizeHandlerList[uid]) {
-                    uid.callback && uid.callback();
-                }
-            } else if (uid = resizeHandlerList[uid]) {
-                uid.callback && uid.callback();
-            }
-        }
+        callback && callback(result, input1, input2, condition);
     };
 
-    $(window).resize(resize);
+    _b.LESS_THAN = 'lt';
+    _b.EQUAL = 'eq';
+    _b.GREAT_THAN = 'gt';
+    _b.NOT = 'not';
+    _b.INCLUDES = 'inclues';
+    _b.NOT_INCLUDES = 'notInclues';
+    _b.STARTS_WITH = 'startsWith';
 
-
-    return full;
+    return _b;
 }()});
-define('app.scrollTop',[],function () {app.scrollTop=function ($container, $content, speed, marginTop) {
-        var cttOffset = $content.offset(),
-            ctnOffset = $container.offset();
-        if (ctnOffset && cttOffset) {
-            marginTop = marginTop ? parseInt(marginTop) : 0;
-            $container.animate({
-                scrollTop: cttOffset.top + $container.scrollTop() - ctnOffset.top - marginTop
-            }, speed || 200);
+define('app.hsla',[],function () {app.hsla=function () {
+    var css = function (opt, random) {
+        var $elem = $('<div>'),
+            targetCSS = 'background-color',
+            css;
+
+        opt = $.extend(opt, this.defaltOptions);
+
+        $elem.css(targetCSS, 'hsl(' + [(random ? Math.floor(Math.random() * 361) : opt.h), opt.s, opt.l].join(',') + ')');
+
+        try {
+            css = $elem.css(targetCSS).toString();
+        } catch (e) {
+            //IE8不支持hsla,让它不报错
         }
-    }});
-define('app.select',[],function () {app.select=function (options, undefined) {
-                    var _default = $.extend(true, {
-                            context: undefined,
-                            button: undefined,
-                            container: undefined,
-                            checkbox: 'checkbox',
-                            isDataTable: false,
-                            isSelectChildren: false, //true,//要配置data-prefix  例如父级的data-prefix=12,那么data-prefix需要等于12[^$]{1,}
-                            operationButtons: null
-                            /*{
-                     list: '#insStartBtn,#insRestartBtn,#insStopBtn,#insDelBtn',
-                     status: {
-                     'Running': ['#insRestartBtn,#insStopBtn', '#insDelBtn'],//前面单选，后面多选
-                     'Stopped': ['#insStartBtn', '#insDelBtn'],
-                     '_default': ['', '#insDelBtn']
-                     }
-                     }*/
-                            ,
-                            setNodeMethod: function (list, elem) {
-                                list[elem.id] = {
-                                    node: elem,
-                                    status: $(elem).attr('data-status')
-                                };
-                                return list;
-                            },
-                            getIdMethod: function (elem) {
-                                return elem.id;
-                            },
-                            getStatusMethod: null
 
-                        }, options),
-                        //私有变量
-                        __list = {},
-                        __checkboxSelector = _default.checkbox,
-                        __isDataTable = _default.isDataTable,
-                        __isBCheckState = _default.bCheckState,
-                        __isSelectChildren = _default.isSelectChildren,
-                        __operationButtons = _default.operationButtons,
+        if (jQuery.support.opacity) {
+            return css.replace('rgb', 'rgba').replace(')', ',' + opt.a + ')');
+        }
+        return css;
+    };
+    css._default = {
+        h: Math.floor(Math.random() * 361),
+        s: '50%',
+        l: '50%',
+        a: 1
+    };
 
-                        __allCheck = '',
-                        __allData = _default.allData,
-                        //私有jQuery变量
-                        __$context = $(_default.context),
-                        __$ctn = $(_default.container, __$context),
-                        __$btn = $(_default.button, __$context),
+    return css;
+}()});
+define('app.dispatcher',[],function () {app.dispatcher=function () {
+    var Event = function (timeout) {
 
+        this.timeout = timeout;
+        this.cache = {};
+        this.delayHandler = {};
+    };
 
-                        //私有方法
-                        _setNode = _default.setNodeMethod,
-                        _getId = _default.getIdMethod,
-                        _getStatus = _default.getStatusMethod,
+    Event.prototype = {
+        constructor: Event,
+        //事件监听
+        // cache: {},
+        // delayHandler: {},
+        //timeout:100,
+        // $AW.on({
+        //  'type1.namespace1.namespace2':callback1,
+        //  'type2.namespace1.namespace2':callback2,
+        // });
+        // $AW.on('type1.namespace1.namespace2,type2.namespace1.namespace2',callback);
+        // $AW.on('type1','namespace',callback);
+        on: (function () {
 
-                        _removeNode = function (list, elem) {
-                            var id = _getId(elem);
+            var context,
+                method = {
+                    '1': function (obj) {
+                        var k, v, p;
 
-                            list[id] = null;
-                            delete list[id];
-                        },
+                        for (k in obj) {
+                            if (obj.hasOwnProperty(k)) {
+                                v = obj[k];
+                                p = k.split('.');
 
-                        _selectChangeFunc = function () {
-                            // var checked = __$btn[0].checked;
-
-                            if (__allCheck === 'allcheck') {
-
-                                $.each(__list, function (index, item) {
-                                    // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                    $('#' + index, __$ctn).prop('checked', true);
-                                })
-                            } else if (__allCheck === 'unAllcheck') {
-                                _clear();
-                            } else {
-                                $.each(__list, function (index, item) {
-                                    // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                    $('#' + index, __$ctn).prop('checked', true);
-                                })
+                                method['3'](p[0], p.slice(1, p.length).join('.'), v);
                             }
+                        }
+                    },
+                    '2': function (type, callback) {
+                        var types = type.split(','),
+                            i, p;
 
+                        for (i = types.length; type = types[--i];) {
 
-                        },
-                        _searchChangeFunc = function () {
-                            var i;
-                            if (__allCheck === 'allcheck') {
-                                if (__allData[0]) {
-                                    for (i = 0; i < __allData.length; i++) {
-                                        _setNode(__list, $(__allData[i][0]).children(0)[0])
-                                    }
-                                }
-                            }
-                            $.each(__list, function (index, item) {
-                                // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                $('#' + index, __$ctn).prop('checked', true);
+                            p = type.split('.');
+
+                            method['3'](p[0], p.slice(1, p.length).join('.'), callback);
+                        }
+                    },
+                    '3': function (type, namespace, callback) {
+                        var event;
+
+                        event = (context.cache[type] || (context.cache[type] = []));
+                        namespace = namespace || '';
+
+                        if ($.isFunction(callback)) {
+                            event.push({
+                                callback: callback,
+                                namespace: namespace || ''
                             });
-                        },
-                        _updateStyle = function () {
-                            var $checkbox = $(__checkboxSelector, __$ctn),
-                                checkedLength = $checkbox.filter(':checked').length,
-                                enableButton, checkLen = 0;
-
-                            //更新全选按钮的样式
-                            switch (checkedLength) {
-                                case 0:
-                                    __$btn.prop('indeterminate', false).removeAttr('checked').removeClass('tables-indeterminate');
-                                    break;
-                                case $checkbox.length:
-                                    __$btn.prop('indeterminate', false).attr('checked', 'checked').removeClass('tables-indeterminate');
-                                    break;
-                                default:
-                                    __$btn.prop('indeterminate', true).removeAttr('checked').addClass('tables-indeterminate');
-                            }
-
-
-                            //更新操作按钮的样式
-                            if (__operationButtons && __operationButtons.list && __operationButtons.status) {
-                                $(__operationButtons.list, __$context).attr('disabled', 'disabled');
-
-                                if (checkedLength) {
-                                    if (enableButton = __operationButtons.status[_getStatus(__list, _default)]) {
-                                        enableButton = enableButton[checkedLength === 1 ? 0 : 1];
-                                        if (enableButton) {
-                                            $(enableButton, __$context).removeAttr('disabled');
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        _children = function (elem, checked) {
-                            var $elem = $(elem),
-                                execMethod = checked ? 'attr' : 'removeAttr';
-
-                            if (!checked) $elem.removeAttr('checked');
-
-                            $('[data-prefix^="' + $elem.attr('data-prefix') + '"]', __$ctn).not($elem)[execMethod]('disabled', 'disabled')[execMethod]('checked', 'checked');
-                        },
-                        _clear = function () {
-                            __$btn.removeAttr('checked');
-                            $(__checkboxSelector, __$context).removeAttr('checked');
-
-                            for (var p in __list) {
-                                __list[p] = null;
-                                delete __list[p];
-                            }
-                            __allCheck = 'unAllcheck';
-                            __list = {};
-                            _updateStyle();
-                        };
-
-
-                    //默认禁用所有按钮
-                    if (__operationButtons && __operationButtons.list) {
-                        $(__operationButtons.list, __$context).attr('disabled', 'disabled');
+                        }
                     }
+                };
 
-                    //监听绑定
-                    //多选按钮的更改事件
-                    __$btn.off('.appSelect').on('click.appSelect', function () {
-                        var checked = this.checked,
-                            checkedMethod = !checked ? 'removeAttr' : 'attr',
-                            execMethod = checked ? _setNode : _removeNode,
-                            i;
+            return function () {
+                context = this;
 
-                        if (__$btn.is(':checkbox') || (__$btn.is(':radio') && !checked)) {
-                            //需要选择子集的
-                            if (__isSelectChildren) {
-                                $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
-                                    execMethod(__list, this);
-                                    _children(this, checked);
-                                });
+                method[arguments.length].apply(this, arguments);
+            };
+        }()),
+        //$AW.off('type1.namespace1.namespace2,type2.namespace1.namespace2,');
+        off: (function () {
+            var removeCallbackByNamespace = function (events, namespace) {
+                var j, event;
 
-                            } else { //不需要选择子集的
+                for (j = events.length; event = events[--j];) {
+                    if (event.namespace.indexOf(namespace) !== -1) {
+                        events.splice(j, 1);
+                        break;
+                    }
+                }
+            };
 
-                                if (__isBCheckState) {
-                                    if (__allCheck === 'allcheck') {
-                                        __allCheck = 'unAllcheck';
+            return function (type) {
+                var types, key,
+                    p, i, namespace;
 
-                                        $.each(__list, function (index, item) {
-                                            // $("#"+$(item.node).attr('id'),__$ctn).removeAttr('checked');
-                                            $('#' + index, __$ctn).prop('checked', true);
-                                        });
-                                        _clear();
+                if (type) {
+                    types = type.split(',');
 
+                    for (i = types.length; type = types[--i];) {
+                        p = type.split('.');
 
+                        namespace = p.slice(1, p.length).join('.') || '';
+                        type = p[0];
+
+                        if (!type) {
+                            for (key in this.cache) {
+                                if (this.cache.hasOwnProperty(key)) {
+                                    if (namespace) {
+                                        removeCallbackByNamespace(this.cache[key] || [], namespace);
                                     } else {
-                                        __allCheck = 'allcheck';
-
-                                        //数据加载
-
-                                        if (__allData[0]) {
-                                            for (i = 0; i < __allData.length; i++) {
-                                                _setNode(__list, $(__allData[i][0]).children(0)[0])
-                                            }
-                                        }
-                                        $.each(__list, function (index, item) {
-                                            // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                            $('#' + index, __$ctn).prop('checked', true);
-                                        });
-
-                                    }
-                                } else {
-                                    $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
-                                        execMethod(__list, this);
-                                    });
-                                }
-
-
-                            }
-                        }
-
-                        _updateStyle();
-                    });
-
-                    //表格更改事件
-                    __$ctn.off('.appSelect').on('click.appSelect', function (ev) {
-                        var e = ev.target || window.event.srcElement,
-                            $e = $(e), checkLen = 0, timer = null;
-
-                        if (($e.is(_default.checkbox) && !ev.isTrigger)) {
-
-                            if ($e.is(':radio')) {
-                                _clear();
-                                $e.attr('checked', true);
-                                _setNode(__list, e);
-                            } else {
-
-
-                                e.checked ? _setNode(__list, e) : _removeNode(__list, e);
-
-
-                                if (__isBCheckState) {
-
-                                    $.each(__list, function (index, item) {
-                                        checkLen++;
-                                        // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                        $('#' + index, __$ctn).prop('checked', true);
-                                    });
-                                    if ($.isEmptyObject(__list)) {
-                                        __allCheck = 'unAllcheck'
-                                    } else if (checkLen === __allData.length) {
-                                        __allCheck = 'allcheck';
-                                    } else {
-                                        __allCheck = 'indeterminate';
+                                        delete this.cache[key];
                                     }
                                 }
                             }
-
-                            if (__isSelectChildren) {
-                                _children(e, e.checked);
-                            }
-
-                            _updateStyle();
-                        }
-                    });
-
-                    //如果是dataTable
-                    if (__isDataTable) {
-                        //翻页事件重新统计选中实例按钮的样式
-                        $('.dataTables_paginate', __$context).off('.appSelect').on('click.appSelect',function (e) {
-
-                            var $e = $(e.target || window.event.srcElement), checked, checkedMethod, item;
-                            if (__$btn[0]) {
-                                checked = __$btn[0].checked;
-                            }
-                            checkedMethod = !checked ? 'removeAttr' : 'attr';
-
-
-                            $(".paginate_button.current").attr("data-dt-idx");
-                            if ($e.hasClass('paginate_button') || $e.parent().hasClass('paginate_button')) {
-                                if (!__isBCheckState) {
-                                    _clear();
-                                }
-
-                                if (__allCheck === "allcheck") {
-
-                                    $(__checkboxSelector, __$ctn)[checkedMethod]('checked', 'checked').each(function () {
-                                        _setNode(__list, this);
-                                    });
-                                    $.each(__list, function (index, item) {
-                                        // $("#"+$(item.node).attr('id'),__$ctn).attr('checked','checked');
-                                        $('#' + index, __$ctn).prop('checked', true);
-                                    });
-
-                                } else if (__allCheck === "unAllcheck") {
-                                    for (item in __list) {
-
-                                        $("#" + item, __$ctn).removeAttr('checked');
-                                    }
-                                    _clear();
-                                } else {
-                                    for (item in __list) {
-                                        // id = $(item.node).attr('id');
-
-                                        $("#" + item, __$ctn).attr('checked', 'checked').prop('checked', true);
-                                    }
-                                    // $.each(__list,function (index,item) {
-                                    //     id = $(item.node).attr('id');
-                                    //
-                                    //     if($("#"+id,__$context).length) {
-                                    //         $("#" + id, __$context).prop('checked', 'checked');
-                                    //     }
-                                    // });
-
-
-                                }
-                                _updateStyle();
-
-                            }
-                        });
-
-                        if (!__isBCheckState) {
-                            $('.dataTables_filter', __$context).find(':input').keyup(_clear);
-                            $('.dataTables_length', __$context).find('select').change(_clear);
                         } else {
-                            $('.dataTables_filter', __$context).find(':input').keyup(_searchChangeFunc);
-                            $('.dataTables_length', __$context).find('select').change(_selectChangeFunc);
+                            if (namespace) {
+                                removeCallbackByNamespace(this.cache[type] || [], namespace);
+                            } else {
+                                delete this.cache[type];
+                            }
                         }
-
                     }
+                } else {
+                    this.cache = {};
+                }
+            }
+        }()),
+        dispatchEvent: function (type) {
+            var types, i,
+                props,
+                namespaces, namespace, k, matchNamespace,
+                events, event, j,
+                args = arguments;
 
+            if (type) {
+                types = type.split(',');
 
-                    //返回组件方法
-                    return {
-                        //返回节列表的副本
-                        nodes: function () {
-                            return $.extend(true, {}, __list);
-                        },
-                        //选中一些checkbox,传入id组成的list
-                        check: function (list) {
-                            var $e, e, $input, firstPage = 0;
+                for (i = types.length; type = types[--i];) {
+                    props = type.split('.');
 
-                            _clear();
-                            __allCheck = '';
-                            $.each(list, function (index, value) {
+                    namespaces = props.slice(1, props.length) || [];
+                    type = props[0];
+                    events = this.cache[type] || [];
 
-                                $e = $('#' + value, __$ctn);
+                    if (namespaces.length) {
 
-                                firstPage++;
+                        for (j = events.length; event = events[--j];) {
+                            matchNamespace = true;
 
-                                if ($e.length && $e.is(_default.checkbox)) {
-                                    e = $e[0];
-
-                                    e.checked = true;
-
-                                    //必需找到指定的元素或者保存分页的情况下找
-                                    if (!$('.dataTables_length', __$context).length || firstPage <= parseInt($('.dataTables_length', __$context).find('select').val(),10)||__isBCheckState) {
-                                        _setNode(__list, e);
-
-                                        if (__isSelectChildren) {
-                                            _children(e, e.checked);
-                                        }
-                                    }
-
-                                } else {
-                                    $input=$('<input id="'+ value+'"/>');
-                                    _setNode(__list, $input[0]);
-                                    if (__isSelectChildren) {
-                                        _children(e, e.checked);
-                                    }
+                            for (k = namespaces.length; namespace = namespaces[--k];) {
+                                if (event.namespace.indexOf(namespace) === -1) {
+                                    matchNamespace = false;
+                                    break;
                                 }
-                            });
-
-                            _updateStyle();
-                        },
-                        //返回节点ID数组
-                        list: function (empty) {
-
-                            var list = [],
-                                p;
-
-                            for (p in __list) {
-                                list.push(p);
                             }
 
-                            if(empty!==false) {
-                                _clear();
+                            if (matchNamespace) {
+                                event.callback.apply(event, args);
                             }
-
-                            return list;
-                        },
-                        //清除select的状态
-                        clear: _clear,
-                        size: function () {
-                            var size = 0,
-                                p;
-
-                            for (p in __list) size++;
-
-                            return size;
-                        },
-                        dispose: function () {
-                            this.list(true);
-                            for (var p in _default) {
-                                _default[p] = null;
-                                delete _default[p];
-                            }
-
-                            if (__isDataTable) {
-                                $('.dataTables_paginate', __$context).off();
-                                $('.dataTables_filter', __$context).find(':input').off();
-                                $('.dataTables_length', __$context).find('select').off();
-                            }
-
-                            __$btn.off(), __$btn = null;
-                            __$ctn.off(), __$ctn = null;
-                            __$context = null;
                         }
-                    };
-                }});
-define('app.setData',['app.stringify'],function () {app.setData=function (name, value, toCookie, expireDays) {
-        function setCookie(name, value, expireDays) {
-            var temp = '_name_=_value_;path=' + document.location.hostname + ';expires=_expireDays_;max-age=_maxAge_',
-                expireDate = new Date();
-
-            expireDays = expireDays ? expireDays : 100;
-            expireDate.setDate(expireDate.getDate() + expireDays);
-            document.cookie = temp.replace(/_name_/, name).replace(/_value_/, value).replace(/_expireDays_/, expireDate.toUTCString()).replace(/_maxAge__/, 3600 * 24 * expireDays);
-
-            return document.cookie; //判断是否禁用cookie
-        }
-
-        var encoder = window.encodeURI || window.encodeURIComponent || window.escape,
-            result = true;
-
-        if (value || !~expireDays) {
-            if (typeof value !== 'string') {
-                value = app.stringify(value);
-            }
-            value = encoder(value);
-
-            if (toCookie) {
-                result = !!setCookie(name, value, expireDays);
-            } else {
-                try {
-                    window.localStorage.setItem(name, value);
-                } catch (e) { //如果禁用localStorage将会抛出异常
-                    result = !!setCookie(name, value, expireDays);
-                }
-            }
-        } else {
-            result = false;
-        }
-
-        return result;
-    }});
-define('app.shelter',['app.getUID'],function () {app.shelter=function(){
-        var Shelter = function () {
-            var context = this,
-                $body = $('body');
-
-            context.maskList = [];
-            context.zIndexList = [];
-            context._zIndexList = [];
-
-
-            context.$mask = $(context.MASK_TEMP);
-            context.$shelter = $(context.SHELTER_TEMP);
-            context.$title = context.$shelter.find('.maskTitle');
-            context.$alert = $('#alertList');
-
-
-            $body.append(context.$mask);
-
-
-            context.timeoutHandler = null;
-
-            //兼容IE8~IE10背景为透明时遮罩不生效
-            if (/MSIE|Trident/.test(navigator.userAgent)) {
-                context.isIE = true;
-                context.$shelterPolyfill = $(context.SHELTER_POLYFILL_TEMP);
-                $body.append(context.$shelterPolyfill)
-            }
-
-            $body.append(context.$shelter);
-
-            //绑定监听，为了兼容IE8，用document不用window
-            $(document).on({
-                'keydown.shelter': function (e) {
-                    var key = e.which || window.event.keyCode,
-                        url, bgStyle;
-                    //如果key为27 遮罩消失
-                    if (key === 27) {
-                        //IE环境按esc键会使所有gif动画暂停，需重新请求gif
-                        if (context.isIE) {
-                            //使路径包含项目名
-                            url = window.location.href.split('#')[0];
-                            bgStyle = 'url(' + url + 'dependence/AWEB/img/loading.gif?timestamp=' + app.getUID() + ') no-repeat';
-                            $('#maskPic').css('background', bgStyle);
-                        }
-
-                        context.hideAll();
-
-                        //兼容IE8gif重新请求后不显示问题，阻止冒泡
-                        return false;
-                    }
-                },
-                'error.shelter': function (e) {
-                    context.hideAll();
-                }
-            });
-        };
-
-
-        Shelter.prototype = {
-
-
-            SHELTER_POLYFILL_TEMP: '<div id="shelterPolyfill" class="mask shelterPolyfill hide"></div>',
-            SHELTER_TEMP: '<div id="shelter" class="mask shelter hide"><div class="maskCtn maskCtt"><div class="maskCtt"><div id="maskPic" class="maskPic"></div><div class="maskTitle"></div></div><div class="maskHelper"></div></div><div class="maskHelper"></div></div>',
-            MASK_TEMP: '<div id="mask" class="hide"/>',
-
-            ALERT_INDEX: 15000,
-            ALERT_TOP: 5,
-
-            MASK_INDEX: 1052,
-
-            DEFAULT_TITLE: '请稍候…',
-            DEFAULT_TIMEOUT: 60000,
-
-
-            show: function (title, timeout, immediate, $context) {
-                var modal, $el;
-                this.maskList.push(arguments);
-                this._upper(true, this.ALERT_INDEX + 1, undefined, false);
-
-                if ($context) {
-                    this._setShelter($context);
-                } else {
-                    app.router && app.router.getCurrentHandler && (modal = app.router.getCurrentHandler());
-                    modal && ($el = modal.$renderTo);
-                    $el && this._setShelter($el.parent());
-                }
-
-                this._showShelter(title, timeout);
-            },
-            hide: function () {
-                this._hide();
-            },
-            hideAll: function () {
-                this.maskList = [];
-                this._zIndexList = [];
-                this._lower(true);
-                this._resetShelter();
-                this._display(false);
-            },
-
-
-            upperZIndex: function (alertZIndex, maskZIndex, alertTop) {
-                this._upper(false, alertZIndex, maskZIndex, alertTop);
-            },
-            lowerZIndex: function () {
-                this._lower();
-            },
-
-            //使遮罩相对于$context垂直水平居中
-            _setShelter: function ($context) {
-                var el = $context.get(0),
-                    position = el.getBoundingClientRect(),
-                    $body = $('body'),
-                    top = position.top,
-                    right = $body.width() - position.right,
-                    bottom = $body.height() - position.bottom,
-                    left = position.left;
-
-
-                this.$shelterPolyfill && this.$shelterPolyfill.css({
-                    top: top + 'px',
-                    right: right + 'px',
-                    bottom: bottom + 'px',
-                    left: left + 'px'
-                });
-
-
-                this.$shelter.css({
-                    top: top + 'px',
-                    right: right + 'px',
-                    bottom: bottom + 'px',
-                    left: left + 'px'
-                })
-
-            },
-            _resetShelter: function () {
-
-                this.$shelterPolyfill && this.$shelterPolyfill.css({
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0
-                });
-
-                this.$shelter.css({
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0
-                })
-            },
-
-            _showShelter: function (title, timeout) {
-                var context = this;
-
-                this._setTitle(title);
-                this._display(true);
-
-                try {
-                    timeout = parseInt(timeout, 10) || this.DEFAULT_TIMEOUT;
-                } catch (e) {
-                    timeout = this.DEFAULT_TIMEOUT;
-                } finally {
-
-                    clearTimeout(this.timeoutHandler);
-
-                    this.timeoutHandler = setTimeout(function () {
-                        context._hide();
-                    }, timeout);
-                }
-            },
-            _hide: function () {
-                var maskList = this.maskList,
-                    args;
-
-                maskList.pop();
-                this._lower(true);
-                this._resetShelter();
-
-                if (maskList.length) {
-                    args = maskList[maskList.length - 1];
-
-                    this._showShelter.apply(this, args);
-                } else {
-                    this._display(false);
-                }
-            },
-            _setTitle: function (title) {
-                this.$title
-                    .empty()
-                    .append(title || this.DEFAULT_TITLE);
-            },
-            _display: function (display) {
-
-
-                if (!!display) {
-                    this.$shelterPolyfill && this.$shelterPolyfill.removeClass('hide');
-                    this.$shelter.removeClass('hide');
-
-
-                } else {
-                    this.$shelterPolyfill && this.$shelterPolyfill.addClass('hide');
-                    this.$shelter.addClass('hide');
-                }
-
-            },
-            _upper: function (inner, alertZIndex, maskZIndex, alertTop) {
-                var $mask = inner ? this.$shelter : this.$mask,
-                    $alert = this.$alert,
-                    zIndexList = inner ? this._zIndexList : this.zIndexList;
-
-                alertZIndex = alertZIndex === false ? '' : (alertZIndex && parseInt(alertZIndex, 10) || this.ALERT_INDEX);
-                maskZIndex = maskZIndex && parseInt(maskZIndex, 10) || this.MASK_INDEX;
-
-                //备份上次的zIndex
-                zIndexList.push({
-                    alertZIndex: this.ALERT_INDEX,
-                    maskZIndex: $mask.css('zIndex')
-                });
-
-                if (maskZIndex !== -1) {
-                    $mask
-                        .addClass('mask')
-                        .css({
-                            'z-index': maskZIndex
-                        });
-                }
-                $alert.css({
-                    'z-index': alertZIndex,
-                    'top': alertTop === false ? '' : (alertTop || this.ALERT_TOP)
-                });
-            },
-            _lower: function (inner) {
-                //恢复上次的zIndex
-                var $mask = inner ? this.$shelter : this.$mask,
-                    $alert = this.$alert,
-                    zIndexList = inner ? this._zIndexList : this.zIndexList,
-                    lastZIndex = zIndexList.length ? zIndexList.pop() : {
-                        maskZIndex: this.MASK_INDEX,
-                        alertZIndex: this.ALERT_INDEX
-                    };
-
-                if (!parseInt(lastZIndex.maskZIndex, 10)) { //如果上一次没有遮罩的话，则将mask移除
-                    $mask.removeClass('mask');
-                    $alert.css('top', '');
-                }
-                $mask.css('z-index', lastZIndex.maskZIndex || '');
-                $alert.css('z-index', lastZIndex.alertZIndex || '');
-            }
-
-        };
-
-        return new Shelter();
-    }()});
-define('app.stringify',[],function () {app.stringify=function (config) {
-        function functionStringify(obj) {
-            if (obj !== undefined && typeof (obj) === "object") {
-                var newObj = (obj instanceof Array) ? [] : {},
-                    i = 0;
-
-                for (var name in obj) {
-                    i++;
-                    if (obj[name] instanceof Function) {
-                        newObj[name] = '_parseFunction_' + obj[name].toString()
-                            .replace(/(\/\/[^\n\r]+)/g, '') //将行注释都抹掉
-                            .replace(/[\n\r\t]/g, '').replace(/(\s)+/g, ' ')
-                            .replace(/\\([ntrs\-\_])/g, '\\\\$1')
-                            .replace(/(?:\/{2,}.*?[\r\n])|(?:\/\*.*?\*\/)/g, '');
-                        //.replace(/\+/g, '##plus##');
                     } else {
-                        newObj[name] = obj[name] && functionStringify(obj[name]);
+                        for (j = events.length; event = events[--j];) {
+                            event.callback.apply(event, args);
+                        }
                     }
                 }
-                if (!i) {
-                    newObj = obj;
-                }
-                return newObj;
+            }
+        },
+        //$AW.trigger('type1.namespace1.namespace2,type2.namespace1.namespace2,');
+        trigger: function (type) {
+            var context = this,
+                args = arguments;
+
+            if (this.timeout) {
+                window.clearTimeout(this.delayHandler[type]);
+                this.delayHandler[type] = window.setTimeout(function () {
+                    context.dispatchEvent.apply(context, args);
+                }, this.timeout);
             } else {
-                return obj;
+                context.dispatchEvent.apply(context, args);
             }
         }
+    };
 
-        return config ? JSON.stringify(functionStringify(config)) : '';
-    }});
-define('app.tips',['app.alert','app.modal'],function () {app.tips=function(){
-    require(['widget','awebFresher'],function(){
-        var colors={
-            SUCCESS:$AW.fresher.variablesCopy['@sSuccessColor']||'#23ad44',
-            ERROR:$AW.fresher.variablesCopy['@sErrorColor']||'#f05050',
-            INFO:$AW.fresher.variablesCopy['@sInfoColor']||'#3db9ff',
-            WARNING:$AW.fresher.variablesCopy['@sWarningColor']||'#ffba00'
-        };
-        colors._DEFAULT=colors.INFO;
-
-        app.tips=function(title,msg,type){
-
-            if(!type || type==='_DEFAULT'){
-                type='INFO';
-            }
-
-            if(colors[type]){
-                app.modal({
-                    title:title,
-                    content: '<div class="aui-ide-modal-content">' +
-                                '<i class="'+ app.alert[type.toLowerCase()] +'" style="color:'+ colors[type] +'"></i>'+
-                                '<p data-role="message">'+ msg +'</p>'+
-                            '</div>',
-                    isDialog:true,
-                    isLargeModal:false,
-                    btnConfirm:false,
-                    btnCancel:false
-                  })
-            }
-        }; 
-        
-        for(var k in colors){
-            if(colors.hasOwnProperty(k)){
-                app.tips[k]=k;
-            }
-        }
-
-    })
+    return function (timeout) {
+        return new Event(timeout);
+    };
 }()});
-define('app.title',[],function () {app.title=function (title) {
-        var doc = window.top && window.top.document || document;
-
-        if (typeof title === 'string') {
-            doc.title = title;
-        }
-
-        return doc.title;
-    }});
 define('app.validate',[],function () {app.validate=function () {
                     var setting = {
                         TYPE: {
@@ -6018,4 +6018,4 @@ define('app.validate',[],function () {app.validate=function () {
                     $.extend(validate, setting);
 
                     return validate;
-                }()});  require(['app.Controller','app.ajax','app.alert','app.alertAction','app.behavior','app.collapse','app.deepClone','app.dispatcher','app.domain','app.eval','app.getData','app.getFormatData','app.getNewQueryStringURL','app.getQueryStringMap','app.getUA','app.getUID','app.hsla','app.modal','app.page','app.parseJSObject','app.performance','app.popover','app.position','app.queryString','app.removeData','app.reset','app.screen','app.scrollTop','app.select','app.setData','app.shelter','app.stringify','app.tips','app.title','app.validate' ]) })
+                }()});  require(['app.queryString','app.stringify','app.screen','app.popover','app.tips','app.reset','app.getData','app.alert','app.Controller','app.title','app.domain','app.alertAction','app.ajax','app.shelter','app.parseJSObject','app.getFormatData','app.select','app.getUID','app.eval','app.performance','app.scrollTop','app.deepClone','app.setData','app.collapse','app.removeData','app.modal','app.getQueryStringMap','app.position','app.page','app.getUA','app.getNewQueryStringURL','app.behavior','app.hsla','app.dispatcher','app.validate' ]) })
